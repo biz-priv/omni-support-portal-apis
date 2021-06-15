@@ -4,11 +4,10 @@ service: omni-support-portal-api
 provider:
   name: aws
   runtime: nodejs14.x
-  region: us-east-1
-  profile: sujit # change this if required
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'devint'}
   memorySize: 128 # optional, in MB, default is 1024 -- 128 mb
   timeout: 15 # optional, in seconds, default is 6 -- 180 secs
-  stage: devint
 
 custom:
   prune:
