@@ -1,0 +1,39 @@
+service: omni-support-portal-api
+
+# The `provider` block defines where your service will be deployed
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  profile: sujit # change this if required
+  memorySize: 128 # optional, in MB, default is 1024 -- 128 mb
+  timeout: 15 # optional, in seconds, default is 6 -- 180 secs
+  stage: devint
+
+custom:
+  prune:
+    automatic: true
+    number: 3
+  
+# Define lambda functions  
+functions:
+
+    - ${file(config/CustomerOnboarding/DeleteCustomer/deleteCustomer.yml)}
+    - ${file(config/CustomerOnboarding/GetCustomersList/getCustomersList.yml)} 
+    - ${file(config/CustomerOnboarding/PostCustomer/PostCustomer.yml)}
+    - ${file(config/CustomerOnboarding/UpdateCustomer/updateCustomer.yml)}
+
+    - ${file(config/KeyManagement/PostKey/postKey.yml)}    
+    - ${file(config/KeyManagement/UpdateKey/updateKey.yml)}
+
+    - ${file(config/Subscription/DeleteSubscription/deleteSubscription.yml)}
+    - ${file(config/Subscription/GetSubscriptionsList/getSubscriptionsList.yml)}
+    - ${file(config/Subscription/PostSubscription/postSubscription.yml)}
+    - ${file(config/Subscription/UpdateSubscription/updateSubscription.yml)}
+
+    - ${file(config/UserActivity/GetUserActivityList/getUserActivityList.yml)}    
+    - ${file(config/UserActivity/PostUserActivity/postUserActivity.yml)}
+
+plugins:
+  - serverless-offline
+  - serverless-prune-plugin

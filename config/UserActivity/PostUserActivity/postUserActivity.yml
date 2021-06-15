@@ -1,0 +1,7 @@
+PostUserActivity:
+      handler: src/UserActivity/PostUserActivity/api/index.handler
+      events:
+        - http:
+            path: /activity/{id}
+            method: post
+            cors: true

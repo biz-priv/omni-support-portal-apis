@@ -1,0 +1,7 @@
+DeleteCustomer:
+  handler: src/CustomerOnboarding/DeleteCustomer/api/index.handler
+  events:
+    - http:
+        path: customers
+        method: delete
+        cors: true            

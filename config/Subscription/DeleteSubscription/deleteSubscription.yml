@@ -1,0 +1,7 @@
+DeleteSubscription:
+      handler: src/Subscription/DeleteSubscription/api/index.handler
+      events:
+        - http:
+            path: subscriptions
+            method: delete
+            cors: true

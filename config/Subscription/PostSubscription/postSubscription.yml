@@ -1,0 +1,7 @@
+PostSubscription:
+      handler: src/Subscription/PostSubscriptions/api/index.handler
+      events:
+        - http:
+            path: subscriptions
+            method: post
+            cors: true

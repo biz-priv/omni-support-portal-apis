@@ -1,0 +1,7 @@
+UpdateCustomer:
+      handler: src/CustomerOnboarding/UpdateCustomer/api/index.handler
+      events:
+        - http:
+            path: customers
+            method: put
+            cors: true

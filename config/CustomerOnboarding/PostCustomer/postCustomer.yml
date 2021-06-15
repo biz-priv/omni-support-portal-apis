@@ -1,0 +1,7 @@
+PostCustomer:
+      handler: src/CustomerOnboarding/PostCustomer/api/index.handler
+      events:
+        - http:
+            path: customers
+            method: post
+            cors: true
