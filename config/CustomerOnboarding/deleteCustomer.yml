@@ -1,0 +1,9 @@
+DeleteCustomer:
+  handler: src/CustomerOnboarding/DeleteCustomer/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  events:
+    - http:
+        path: customers
+        method: delete
+        cors: true            

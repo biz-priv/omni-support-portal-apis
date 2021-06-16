@@ -1,0 +1,9 @@
+PostCustomer:
+  handler: src/CustomerOnboarding/PostCustomer/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  events:
+    - http:
+        path: customers
+        method: post
+        cors: true

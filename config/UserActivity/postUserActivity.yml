@@ -1,0 +1,9 @@
+PostUserActivity:
+  handler: src/UserActivity/PostUserActivity/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  events:
+    - http:
+        path: /activity/{id}
+        method: post
+        cors: true

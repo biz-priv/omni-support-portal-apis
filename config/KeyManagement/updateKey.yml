@@ -1,0 +1,9 @@
+UpdateKey:
+  handler: src/KeyManagement/UpdateKey/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  events:
+    - http:
+        path: keys
+        method: put
+        cors: true

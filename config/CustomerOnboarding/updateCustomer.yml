@@ -1,0 +1,9 @@
+UpdateCustomer:
+  handler: src/CustomerOnboarding/UpdateCustomer/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  events:
+    - http:
+        path: customers
+        method: put
+        cors: true

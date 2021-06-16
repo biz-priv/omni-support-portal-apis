@@ -1,0 +1,9 @@
+GetUserActivityList:
+  handler: src/UserActivity/GetUserActivityList/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  events:
+    - http:
+        path: /activity/{id}
+        method: get
+        cors: true
