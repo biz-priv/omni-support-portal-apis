@@ -11,8 +11,8 @@ var createCustomerValidator = Joi.object().keys({
 
 var updateCustomerValidator = Joi.object().keys({
     CustomerId: Joi.number().required(),
-    Name: Joi.string().required(),
-    BillToAccNumber: Joi.number().required(),
+    Name: Joi.string(),
+    BillToAccNumber: Joi.number(),
     CustomerNumber: Joi.number(),
     DeclaredType: Joi.string(),
     Station: Joi.string()
@@ -38,12 +38,18 @@ var updateSubscriptionValidator = Joi.object().keys({
     CustomerName: Joi.string(), 
     Event: Joi.string(),
     Endpoint: Joi.string().pattern(new RegExp('^(https?:\\/\\/)?' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))'+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ '(\\?[;&a-z\\d%_.~+=-]*)?'+ '(\\#[-a-z\\d_]*)?$','i')),
-    // Endpoint: Joi.string().uri({
-    //     scheme: [
-    //        /https?/
-    //     ]
-    //   }),
     SharedSecret: Joi.string()
+})
+
+var updateUserActivityValidator = Joi.object().keys({
+    CustomerId: Joi.number(),
+    Type: Joi.string(),
+    Timestamp: Joi.date().iso(),
+    Description: Joi.string()
+})
+
+var userActivityIdValidator = Joi.object().keys({
+    id: Joi.number().required()
 })
 
 /*============================================================= */
@@ -53,5 +59,7 @@ module.exports = {
     customerIdValidator,
     statusValidator,
     createSubscriptionValidator,
-    updateSubscriptionValidator
+    updateSubscriptionValidator,
+    updateUserActivityValidator,
+    userActivityIdValidator
 }

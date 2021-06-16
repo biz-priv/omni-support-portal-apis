@@ -1,0 +1,9 @@
+UpdateSubscription:
+  handler: src/Subscription/UpdateSubscription/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  events:
+    - http:
+        path: subscriptions
+        method: put
+        cors: true

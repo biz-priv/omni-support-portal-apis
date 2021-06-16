@@ -1,0 +1,9 @@
+DeleteSubscription:
+  handler: src/Subscription/DeleteSubscription/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  events:
+    - http:
+        path: subscriptions
+        method: delete
+        cors: true

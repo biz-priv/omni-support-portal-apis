@@ -1,0 +1,9 @@
+PostSubscription:
+  handler: src/Subscription/PostSubscriptions/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  events:
+    - http:
+        path: subscriptions
+        method: post
+        cors: true

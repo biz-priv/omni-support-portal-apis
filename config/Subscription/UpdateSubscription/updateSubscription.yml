@@ -1,7 +1,0 @@
-UpdateSubscription:
-      handler: src/Subscription/UpdateSubscription/api/index.handler
-      events:
-        - http:
-            path: subscriptions
-            method: put
-            cors: true

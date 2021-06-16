@@ -1,8 +1,0 @@
-GetCustomersList:
-  handler: src/CustomerOnboarding/GetCustomersList/api/index.handler
-  events:
-    - http:
-        path: customers
-        method: get
-        cors: true
-            

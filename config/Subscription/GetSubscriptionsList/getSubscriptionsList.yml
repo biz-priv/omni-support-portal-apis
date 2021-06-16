@@ -1,7 +1,0 @@
-GetSubscriptionsList:
-      handler: src/Subscription/GetSubscriptionsList/api/index.handler
-      events:
-        - http:
-            path: subscriptions
-            method: get
-            cors: true

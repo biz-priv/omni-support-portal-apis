@@ -96,3 +96,5 @@ dist
 
 # FuseBox cache
 .fusebox/
+# package json file
+package-lock.json

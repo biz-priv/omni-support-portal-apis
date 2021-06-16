@@ -1,7 +1,0 @@
-PostKey:
-      handler: src/KeyManagement/PostKey/api/index.handler
-      events:
-        - http:
-            path: keys
-            method: post
-            cors: true

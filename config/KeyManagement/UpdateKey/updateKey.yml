@@ -1,7 +1,0 @@
-UpdateKey:
-      handler: src/KeyManagement/UpdateKey/api/index.handler
-      events:
-        - http:
-            path: keys
-            method: put
-            cors: true

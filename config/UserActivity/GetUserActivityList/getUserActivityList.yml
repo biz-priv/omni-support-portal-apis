@@ -1,7 +1,0 @@
-GetUserActivityList:
-      handler: src/UserActivity/GetUserActivityList/api/index.handler
-      events:
-        - http:
-            path: /activity/{id}
-            method: get
-            cors: true
