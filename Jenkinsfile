@@ -6,11 +6,7 @@ pipeline {
                 script{
                     echo "GIT_BRANCH: ${GIT_BRANCH}"
                     echo sh(script: 'env|sort', returnStdout: true)
-                    if ("${GIT_BRANCH}".startsWith("PR-")){
-                        if("${CHANGE_TARGET}".contains("devint")){
-                            env.ENVIRONMENT=env.getProperty("environment_devint")
-                        }
-                    } else if ("${GIT_BRANCH}".contains("feature") || "${GIT_BRANCH}".contains("bugfix")) {
+                    if ("${GIT_BRANCH}".contains("feature") || "${GIT_BRANCH}".contains("bugfix")) {
                         env.ENVIRONMENT=env.getProperty("environment_devint")
                     }
                     sh """
