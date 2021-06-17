@@ -1,5 +1,15 @@
 const { success, failure } = require('../../shared/utils/responses');
-const { updateCustomerValidator } = require('../../shared/utils/vaildator');
+const Joi = require('joi');
+
+/*=================update customer parameters validate==============*/
+var updateCustomerValidator = Joi.object().keys({
+    CustomerId: Joi.number().required(),
+    Name: Joi.string(),
+    BillToAccNumber: Joi.number(),
+    CustomerNumber: Joi.number(),
+    DeclaredType: Joi.string(),
+    Station: Joi.string()
+})
 
 //update customer
 module.exports.handler = async (event) => {

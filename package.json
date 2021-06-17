@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "aws-sdk": "^2.930.0",
     "cors": "^2.8.5",
     "joi": "^17.4.0",
     "serverless": "^1.83.3",

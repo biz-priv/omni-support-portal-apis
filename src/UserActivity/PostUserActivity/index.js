@@ -1,5 +1,14 @@
 const { success, failure } = require('../../shared/utils/responses');
-const { updateUserActivityValidator, userActivityIdValidator } = require('../../shared/utils/vaildator');
+const { userActivityIdValidator } = require('../../shared/utils/vaildator');
+const Joi = require('joi');
+
+/*=================update user activity parameters validate==============*/
+var updateUserActivityValidator = Joi.object().keys({
+    CustomerId: Joi.number(),
+    Type: Joi.string(),
+    Timestamp: Joi.date().iso(),
+    Description: Joi.string()
+})
 
 //post user activity
 module.exports.handler = async (event) => {
