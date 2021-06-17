@@ -31,7 +31,7 @@ pipeline {
                 }
             }
             steps {
-                withAWS(credentials: 'omni-aws-creds'){
+                withAWS(credentials: 'bizdev-aws-creds'){
                     sh """
                     npm i serverless@1.34.0
                     npm i
