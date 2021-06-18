@@ -8,10 +8,6 @@ provider:
   memorySize: 128 
   timeout: 15 
 
-package:
-  exclude:
-    - 'node_modules/**'
-
 custom:
   prune:
     automatic: true
@@ -46,6 +42,6 @@ layers:
     path: lib
     compatibleRuntimes:
       - nodejs14.x
-    package:
+    package:      
       include:
         - node_modules/**

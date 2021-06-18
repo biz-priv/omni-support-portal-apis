@@ -1,12 +1,12 @@
 /*============================================================= */
 // success response
-const success = async (http_code, data = null) => {
+function success(http_code, data = null){
 
     return send_callback(data, http_code);
 }
 /*============================================================= */
 // failure response
-const failure = async (http_code, message, error) => {
+function failure(http_code, message, error){
     const response = {
         message: message,
         error: error
@@ -15,7 +15,7 @@ const failure = async (http_code, message, error) => {
 }
 /*============================================================= */
 // send response 
-const send_callback = async (resp = null, http_code) => {
+function send_callback(resp = null, http_code){
     var resonseData = ""   
     if(resp){
            var responseData = resp

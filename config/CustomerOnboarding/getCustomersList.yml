@@ -3,8 +3,14 @@ GetCustomersList:
   layers:
     - { Ref: CommonLibsLambdaLayer }  
   environment:
-    accountInfo: ${ssm:/omni/devint/account/info/table/name}
-    tokenValidator: ${ssm:/omni/devint/account/info/table/name}        
+    ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/name}
+    TOKEN_VALIDATOR: ${ssm:/omni/devint/account/info/table/name} 
+  package:
+    individually: true
+    exclude: 
+      - ./**   
+    include:
+      - ./src/CustomerOnboarding/GetCustomersList/**      
   events:
     - http:
         path: customers

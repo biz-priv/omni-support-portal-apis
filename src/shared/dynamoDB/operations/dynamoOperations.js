@@ -1,4 +1,6 @@
 var AWS = require('aws-sdk');
+
+
 var options = {
     region: process.env.REGION,
 };
@@ -6,7 +8,6 @@ var credentials = new AWS.SharedIniFileCredentials({ profile: process.env.profil
 AWS.config.credentials = credentials;
 
 var documentClient = new AWS.DynamoDB.DocumentClient(options);
-var dynamoDB = new AWS.DynamoDB();
 
 
 var Dynamo = {
@@ -60,6 +61,7 @@ var Dynamo = {
             return results
         }
     },
+
 
     /* search for an item by key value */
     async searchTable(TableName, keyName, keyValue) {
