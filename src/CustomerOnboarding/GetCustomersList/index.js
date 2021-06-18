@@ -15,7 +15,7 @@ var statusValidator = Joi.object().keys({
 //get customers list 
 async function handler(event){
     var query = (!event.queryStringParameters ? null : event.queryStringParameters);
-    console.info("Event\n" + JSON.stringify(event, null, 2));
+    // console.info("Event\n" + JSON.stringify(event, null, 2));
     if (query == null) {
         query = { status: 'false', page: 1, size: 10 }
     }
@@ -29,13 +29,15 @@ async function handler(event){
         let results
         if (status == 'Active') {
             let accountInfo = await Dynamo.searchTable(ACCOUNTINFOTABLE, 'Status', status);
-            results = await Dynamo.fetchApiKey(TOKENVALIDATORTABLE, accountInfo);
+            results = await Dynamo.fetchApiKey(accountInfo);
         } else {
             results = await Dynamo.fetchAllCustomers(ACCOUNTINFOTABLE);
         }
+
+        console.log("line 37", results);
         if (!results.error) {
             let response = {
-                "Customers": results
+                "Customers": results.data
             }
             console.info("Response\n" + JSON.stringify(response, null, 2));
             return success(200, response);

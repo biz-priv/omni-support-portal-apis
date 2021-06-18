@@ -8,7 +8,7 @@ var credentials = new AWS.SharedIniFileCredentials({ profile: process.env.profil
 AWS.config.credentials = credentials;
 
 var documentClient = new AWS.DynamoDB.DocumentClient(options);
-
+var apigateway = new AWS.APIGateway();
 
 var Dynamo = {
 
@@ -42,24 +42,48 @@ var Dynamo = {
     },
 
     /* fetch api key for active customer */
-    async fetchApiKey(tableName, custResults) {
-        var results = await this.getAllItems(tableName);
-        // console.log(results);
-        var data = [];
-        if (!results.error) {
-            results.data.forEach((item) => {
-                custResults.forEach((custItem) => {
-                    if (item['CustomerID'] == custItem['CustomerID']) {
-                        custItem['ApiKey'] = item['ApiKey']
-                        custItem['Name'] = item['Customer_name']
-                        data.push(custItem);
+    async fetchApiKey(custResults) {
+        return new Promise((resolve,reject) => {
+            var CustomerData = [];
+            var params = {
+                includeValues: true
+            };
+            apigateway.getApiKeys(params, function(err, data) {
+                if (err){
+                    console.log("API Gateway Key Error : ",err, err.stack); // an error occurred
+                    custResults.forEach((custItem) => {
+                        custItem['Created'] = "NA"
+                        custItem['Updated'] = "NA"
+                        CustomerData.push(custItem);    
+                    });
+                    let response = {
+                        "data" : CustomerData
                     }
-                })
+                    resolve(response);
+                }
+                else{
+                    // console.log(data);
+                    data.items.forEach((apiKeyObject) => {
+                        custResults.forEach((custItem) => {
+                            if (apiKeyObject['name'] == custItem['CustomerID']) {
+                                custItem['Created'] = apiKeyObject['createdDate']
+                                custItem['Updated'] = apiKeyObject['lastUpdatedDate']
+                                CustomerData.push(custItem);
+                            }
+                            else if(!custItem['Created']){
+                                custItem['Created'] = "NA"
+                                custItem['Updated'] = "NA"
+                                CustomerData.push(custItem);
+                            }
+                        });
+                    });
+                    let response = {
+                        "data" : CustomerData
+                    }
+                    resolve(response);
+                }
             });
-            return data;
-        } else {
-            return results
-        }
+        })
     },
 
 
@@ -82,7 +106,7 @@ var Dynamo = {
     async fetchAllCustomers(TableName) {
         var results = await this.getAllItems(TableName);
         if (!results.error) {
-            return results.data;
+            return results;
         } else {
             return results
         }

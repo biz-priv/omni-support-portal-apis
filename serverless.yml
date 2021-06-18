@@ -13,7 +13,11 @@ custom:
     automatic: true
     number: 3
   
-  
+package:
+    individually: true
+    exclude: 
+      - node_modules/**
+
 functions:
 
     - ${file(config/CustomerOnboarding/deleteCustomer.yml)}
