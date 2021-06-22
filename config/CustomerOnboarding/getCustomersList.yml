@@ -6,12 +6,10 @@ GetCustomersList:
     ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/name}
     TOKEN_VALIDATOR: ${ssm:/omni/devint/account/info/table/name} 
   package:
+    individually: true
     include:
-      - src/CustomerOnboarding/GetCustomersList/**  
-      - src/shared/**
-    exclude: 
-      - node_modules/**
-      - config/**
+        - 'src/CustomerOnboarding/GetCustomersList/**'
+        - 'src/shared/**'
   events:
     - http:
         path: customers
