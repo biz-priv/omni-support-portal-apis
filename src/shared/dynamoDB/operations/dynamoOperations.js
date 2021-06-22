@@ -1,19 +1,13 @@
 var AWS = require('aws-sdk');
 
-
 var options = {
     region: process.env.REGION,
 };
-var credentials = new AWS.SharedIniFileCredentials({ profile: process.env.profile });
-AWS.config.credentials = credentials;
-
 var documentClient = new AWS.DynamoDB.DocumentClient(options);
-var apigateway = new AWS.APIGateway();
 
-var Dynamo = {
 
     /* fetch all items from table */
-    async getAllItems(TableName) {
+    async function getAllItems(TableName) {
         var params = {
             TableName: TableName
         };
@@ -39,10 +33,11 @@ var Dynamo = {
         }
         let data = await dbRead(params);
         return data;
-    },
+    }
 
     /* fetch api key for active customer */
-    async fetchApiKey(custResults) {
+    async function fetchApiKey(custResults) {
+        var apigateway = new AWS.APIGateway();
         return new Promise((resolve,reject) => {
             var CustomerData = [];
             var params = {
@@ -84,12 +79,12 @@ var Dynamo = {
                 }
             });
         })
-    },
+    }
 
 
     /* search for an item by key value */
-    async searchTable(TableName, keyName, keyValue) {
-        var results = await this.getAllItems(TableName);
+    async function searchTable(TableName, keyName, keyValue) {
+        var results = await getAllItems(TableName);
         var data = [];
         if (!results.error) {
             results.data.forEach((item) => {
@@ -101,17 +96,49 @@ var Dynamo = {
         } else {
             return results
         }
-    },
+    }
     /* search all items */
-    async fetchAllCustomers(TableName) {
-        var results = await this.getAllItems(TableName);
+    async function fetchAllCustomers(TableName) {
+        var results = await getAllItems(TableName);
         if (!results.error) {
             return results;
         } else {
             return results
         }
-    },
+    }
 
 
-};
-module.exports = Dynamo;
+const promisify = (fetchAll) =>
+  new Promise((resolve, reject) => {
+    fetchAll((error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+
+const getCustomer = (params) =>
+// console.log(params);
+  promisify((callback) =>
+    documentClient.scan(params,
+      callback,
+    ),
+  ).then(async(result) => {
+        let data = result.Items ? result.Items : result;
+        if (result.LastEvaluatedKey) {
+            params.ExclusiveStartKey = result.LastEvaluatedKey;
+            data = data.concat(await getUser(params));
+        }
+        let dataResp = {
+            "data": data
+        }
+        return dataResp;
+  });
+module.exports = {
+            fetchAllCustomers,
+            searchTable,
+            fetchApiKey, 
+            getCustomer
+        };
