@@ -7,6 +7,26 @@ provider:
   stage: ${opt:stage, 'devint'}
   memorySize: 128 
   timeout: 15 
+  iam: 
+    role:
+      name: custom-role
+      path: /
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: '*'
 
 custom:
   prune:
