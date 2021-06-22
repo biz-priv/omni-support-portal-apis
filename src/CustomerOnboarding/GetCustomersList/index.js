@@ -3,7 +3,7 @@ const Joi = require('joi');
 const Dynamo = require('../../shared/dynamoDB/operations/dynamoOperations');
 
 const ACCOUNTINFOTABLE = process.env.ACCOUNT_INFO;
-const TOKENVALIDATORTABLE = process.env.TOKEN_VALIDATOR;
+// const TOKENVALIDATORTABLE = process.env.TOKEN_VALIDATOR;
 
 /*=================get customers parameters validate==============*/
 var statusValidator = Joi.object().keys({
@@ -15,7 +15,7 @@ var statusValidator = Joi.object().keys({
 //get customers list 
 async function handler(event){
     var query = (!event.queryStringParameters ? null : event.queryStringParameters);
-    // console.info("Event\n" + JSON.stringify(event, null, 2));
+    console.info("Event\n" + JSON.stringify(event, null, 2));
     if (query == null) {
         query = { status: 'false', page: 1, size: 10 }
     }
@@ -26,15 +26,15 @@ async function handler(event){
         return failure(400, "missing required parameters", error);
     } else {
         let status = (query.status == 'true') ? "Active" : "Inactive";
+        let tableName = (ACCOUNTINFOTABLE ? ACCOUNTINFOTABLE : event.ACCOUNTINFOTABLE);
         let results
         if (status == 'Active') {
-            let accountInfo = await Dynamo.searchTable(ACCOUNTINFOTABLE, 'Status', status);
+            let accountInfo = await Dynamo.searchTable(tableName, 'Status', status);
             results = await Dynamo.fetchApiKey(accountInfo);
         } else {
-            results = await Dynamo.fetchAllCustomers(ACCOUNTINFOTABLE);
+            results = await Dynamo.getCustomer({TableName: tableName});
         }
 
-        console.log("line 37", results);
         if (!results.error) {
             let response = {
                 "Customers": results.data
