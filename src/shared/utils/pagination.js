@@ -1,12 +1,8 @@
-async function createPagination(event, results, status, page, size) {
-
-  let response = {
-    "Customers": results.Items,
-  }
-  if(results.LastEvaluatedKey){
+async function createPagination(response,host, path, LastEvaluatedKey, page, size) {
+  if(LastEvaluatedKey){
         page = parseInt(page);
         page += 1
-        response['nextPage'] = "http://" + event['headers']['Host'] + event['path'] + "/?status=" + status + "&page=" + page + "&size=" + size + "&startkey=" + results.LastEvaluatedKey.CustomerID;
+        response['nextPage'] = "http://" + host + path + "&page=" + page + "&size=" + size + "&startkey=" + LastEvaluatedKey;
   }
     return response
 }
