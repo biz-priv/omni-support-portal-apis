@@ -90,7 +90,6 @@ async function fetchAllCustomers(TableName, status, limit, startkey) {
     }
 }
 
-
 const promisify = (fetchAll) =>
     new Promise((resolve, reject) => {
         fetchAll((error, result) => {
