@@ -9,7 +9,7 @@ provider:
   timeout: 15 
   iam: 
     role:
-      name: custom-role
+      name: custom-role-devint
       path: /
       statements:
         - Effect: 'Allow'

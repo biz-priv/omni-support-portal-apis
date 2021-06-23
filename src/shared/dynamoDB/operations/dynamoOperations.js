@@ -1,4 +1,5 @@
 var AWS = require('aws-sdk');
+var moment = require("moment");
 
 var options = {
     region: process.env.REGION,
@@ -9,21 +10,21 @@ var documentClient = new AWS.DynamoDB.DocumentClient(options);
 // var Dynamo = {
 
 /* fetch all items from table */
-async function getAllItems(TableName) {
+async function getAllItems(TableName, status,  limit, startkey) {
     var params = {
-        TableName: TableName
+        TableName: TableName,
+        Limit: limit
     };
+    if (startkey) {
+        //params['ExclusiveStartKey'] = { 'CustomerID': startkey }
+       params['ExclusiveStartKey'] = { 'EventStatus': status, 'CustomerID': startkey }
+    }
     async function dbRead(params) {
         try {
             let promise = documentClient.scan(params).promise();
             let result = await promise;
-            let data = result.Items;
-            if (result.LastEvaluatedKey) {
-                params.ExclusiveStartKey = result.LastEvaluatedKey;
-                data = data.concat(await dbRead(params));
-            }
             let dataResp = {
-                "data": data
+                "data": result
             }
             return dataResp;
         } catch (err) {
@@ -38,7 +39,8 @@ async function getAllItems(TableName) {
 }
 
 /* fetch api key for active customer */
-async function fetchApiKey(custResults) {
+async function fetchApiKey(accountInfo) {
+    let custResults = accountInfo.data.Items
     var apigateway = new AWS.APIGateway();
     return new Promise((resolve, reject) => {
         var CustomerData = [];
@@ -51,6 +53,7 @@ async function fetchApiKey(custResults) {
                 custResults.forEach((custItem) => {
                     custItem['Created'] = "NA"
                     custItem['Updated'] = "NA"
+                    custItem['Age'] = "NA"
                     CustomerData.push(custItem);
                 });
                 let response = {
@@ -65,43 +68,83 @@ async function fetchApiKey(custResults) {
                         if (apiKeyObject['name'] == custItem['CustomerID']) {
                             custItem['Created'] = apiKeyObject['createdDate']
                             custItem['Updated'] = apiKeyObject['lastUpdatedDate']
+                            duration = moment.duration(moment().diff(apiKeyObject['createdDate']))
+                            custItem['Age'] = parseInt(duration.asDays())
                             CustomerData.push(custItem);
                         }
                         else if (!custItem['Created']) {
                             custItem['Created'] = "NA"
                             custItem['Updated'] = "NA"
+                            custItem['Age'] = "NA"
                             CustomerData.push(custItem);
                         }
                     });
                 });
-                let response = {
-                    "data": CustomerData
+
+                let resp = {
+                    "Items": CustomerData
                 }
+                if(accountInfo.data.LastEvaluatedKey){
+                    resp["LastEvaluatedKey"] = accountInfo.data.LastEvaluatedKey
+               }
+                 let response = {
+                     "data": resp
+                 }   
                 resolve(response);
             }
         });
     })
 }
 
+async function getConditionItems(TableName, status, limit, startkey) {
+
+    var params = {
+        TableName : TableName,
+        Limit: limit,
+        KeyConditions: {
+             'EventStatus':{
+                 ComparisonOperator: "EQ",
+                 AttributeValueList: ["Active"]
+             }
+         }
+      };
+    if (startkey) {
+        params['ExclusiveStartKey'] = { 'EventStatus': status, 'CustomerID': startkey }
+    }
+    async function dbRead(params) {
+        try {
+            let promise = documentClient.query(params).promise();
+            let result = await promise;
+            let dataResp = {
+                "data": result
+            }
+            return dataResp;
+        } catch (err) {
+            let errResp = {
+                "error": err
+            }
+            return errResp
+        }
+    }
+    let data = await dbRead(params);
+    return data;
+
+}
 
 /* search for an item by key value */
-async function searchTable(TableName, keyName, keyValue) {
-    var results = await getAllItems(TableName);
-    var data = [];
+async function searchTable(TableName, status, limit, startkey) {
+    var results = await getConditionItems(TableName, status, limit, startkey);
     if (!results.error) {
-        results.data.forEach((item) => {
-            if (item[keyName] == keyValue) {
-                data.push(item);
-            }
-        });
-        return data;
+        return results;
     } else {
         return results
     }
 }
+
+
 /* search all items */
-async function fetchAllCustomers(TableName) {
-    var results = await getAllItems(TableName);
+async function fetchAllCustomers(TableName, status, limit, startkey) {
+    var results = await getAllItems(TableName, status, limit, startkey);
     if (!results.error) {
         return results;
     } else {
