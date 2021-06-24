@@ -1,5 +1,5 @@
 var AWS = require('aws-sdk');
-
+var dynamoSvc = new AWS.DynamoDB();
 var documentClient = new AWS.DynamoDB.DocumentClient();
 
 
@@ -12,6 +12,7 @@ async function fetchAllItems(TableName, limit, startkey) {
     if (startkey) {
         params['ExclusiveStartKey'] = startkey
     }
+    console.log(params);
     try {
         let promise = documentClient.scan(params).promise();
         let result = await promise;
@@ -57,40 +58,27 @@ async function fetchByIndex(TableName, status, limit, startkey) {
 
 }
 
-async function dbRead(params, flag) {
-    try {
-        if (flag == 0) {
-            var promise = documentClient.scan(params).promise();
-        }
-        if (flag == 1) {
-            var promise = documentClient.query(params).promise();
-        }
-
-        let result = await promise;
-        let data = result.Items;
-        if (result.LastEvaluatedKey) {
-            params.ExclusiveStartKey = result.LastEvaluatedKey;
-            data = data.concat(await dbRead(params, flag));
-        }
-        let dataResp = {
-            "data": data
-        }
-        return dataResp;
-    } catch (err) {
-        let errResp = {
-            "error": err
-        }
-        return errResp
-    }
-
-}
 /* retrieve all items count from table */
 async function getAllItemsScanCount(TableName) {
     var params = {
-        TableName: TableName
+        TableName: TableName,
     };
-    let data = await dbRead(params, 0);
-    return data;
+    return new Promise((resolve, reject) => {
+        dynamoSvc.describeTable(params, function(err, data) {
+            if (err) {
+                let dataResp = {
+                    "error": err
+                }
+                reject(dataResp);
+            } else {
+                var table = data['Table'];
+                let dataResp = {
+                    "data": parseInt(table['ItemCount'])
+                }
+                resolve(dataResp);
+            }
+        });
+    });
 }
 
 /* retrieve all items count from table */
@@ -101,10 +89,17 @@ async function getAllItemsQueryCount(TableName, status) {
         KeyConditionExpression: 'EventStatus = :hkey',
         ExpressionAttributeValues: {
             ':hkey': status
-        }
+        },
+        Count: 'true'
     };
-    let data = await dbRead(params, 1);
-    return data;
+    
+    var promise = documentClient.query(params).promise();
+    let result = await promise;
+    let data = result.Count;
+    let dataResp = {
+        "data": data
+    }
+    return dataResp;
 }
 
 module.exports = {

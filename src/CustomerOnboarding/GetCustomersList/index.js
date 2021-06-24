@@ -12,7 +12,7 @@ var statusValidator = Joi.object().keys({
     status: Joi.boolean().default(false),
     page: Joi.number().default(1),
     size: Joi.number().default(10),
-    startkey: Joi.string()
+    startkey: Joi.string().default(null)
 })
 
 //get customers list 
@@ -35,18 +35,18 @@ async function handler(event) {
         let totalCount = ""
         if (status == 'Active') {
             startKey["EventStatus"] = status
-            startKey = (startKey.CustomerID == undefined) ? null : startKey;
+            startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
             let accountInfo = await Dynamo.fetchByIndex(tableName, status, value.size, startKey);
             results = await fetchApiKey(accountInfo);
             let totalRecords = await Dynamo.getAllItemsQueryCount(tableName, status);
-            totalCount = (totalRecords.data).length
+            totalCount = totalRecords.data;
             // console.log("totalCount---> ", (totalCount.data).length)
         } else {
-            startKey = (startKey.CustomerID == undefined) ? null : startKey;
+            startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
             results = await Dynamo.fetchAllItems(tableName, value.size, startKey);
             let totalRecords = await Dynamo.getAllItemsScanCount(tableName);
-            totalCount = (totalRecords.data).length
-            // console.log("totalCount---> ", (totalCount.data).length)
+            totalCount = totalRecords.data;
+            // console.log("totalCount---> ", totalCount)
         }
 
         if (!results.error) {
@@ -56,11 +56,18 @@ async function handler(event) {
 
             let elementCount = (results.data.Items).length;
             let deployStage = event["requestContext"]["stage"]; 
+            let lastCustomerId = 0
             if (results.data.LastEvaluatedKey) {
-                var LastEvaluatedkeyCustomerID = "&startkey=" + results.data.LastEvaluatedKey.CustomerID;
+                lastCustomerId = results.data.LastEvaluatedKey.CustomerID;
+                var LastEvaluatedkeyCustomerID = "&startkey=" + lastCustomerId;
             }
 
             var response = await pagination.createPagination(resp, event['headers']['Host'] + "/"+ deployStage, event['path'] + "?status=" + value.status, value.page, value.size, elementCount, LastEvaluatedkeyCustomerID, totalCount);
+            
+            response.Page["StartKey"] = lastCustomerId;
+            if(value.status == true){
+                response.Page["EventStatus"] = value.status;
+            }
 
             console.info("Response\n" + JSON.stringify(response, null, 2));
             return success(200, response);

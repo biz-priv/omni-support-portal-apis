@@ -9,8 +9,6 @@ provider:
   timeout: 15 
   iam: 
     role:
-      name: custom-role-devint
-      path: /
       statements:
         - Effect: 'Allow'
           Action:
@@ -34,6 +32,8 @@ custom:
     number: 3
   
 package:
+  individually: true
+  excludeDevDependencies: false
   exclude:
     - 'node_modules/**'
     - 'src/**'
