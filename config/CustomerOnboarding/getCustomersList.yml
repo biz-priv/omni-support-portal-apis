@@ -5,7 +5,6 @@ GetCustomersList:
   environment:
     ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/name}
     TOKEN_VALIDATOR: ${ssm:/omni/devint/account/info/table/name} 
-    ACCOUNT_INFO_DEV: ${ssm:/omni/devint/account/info/table/dev/name}
   package:
     individually: true
     include:

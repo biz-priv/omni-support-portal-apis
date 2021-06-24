@@ -3,16 +3,16 @@ const Joi = require('joi');
 const Dynamo = require('../../shared/dynamoDB/operations/dynamoOperations');
 const { fetchApiKey } = require('./dynamoFunctions');
 const pagination = require('../../shared/utils/pagination');
-const ACCOUNTINFOTABLE = process.env.ACCOUNT_INFO_DEV;
+// const ACCOUNTINFOTABLE = process.env.ACCOUNT_INFO;
+const ACCOUNTINFOTABLE = 'account-info-dev';
 // const TOKENVALIDATORTABLE = process.env.TOKEN_VALIDATOR;
 
 /*=================get customers parameters validate==============*/
 var statusValidator = Joi.object().keys({
-    status: Joi.boolean(),
-    page: Joi.number(),
-    size: Joi.number(),
-    startkey: Joi.string(),
-    eventstatus: Joi.string()
+    status: Joi.boolean().default(false),
+    page: Joi.number().default(1),
+    size: Joi.number().default(10),
+    startkey: Joi.string()
 })
 
 //get customers list 
@@ -20,8 +20,6 @@ async function handler(event) {
     var query = (!event.queryStringParameters ? null : event.queryStringParameters);
     console.info("Event\n" + JSON.stringify(event, null, 2));
     if (query == null) { query = { status: 'false' } };
-    let page = (query.page == undefined) ? 1 : query.page;
-    let size = (query.size == undefined) ? 10 : query.size;
 
     //validate query parameter
     const { error, value } = await statusValidator.validate(query);
@@ -32,23 +30,37 @@ async function handler(event) {
         let status = (query.status == 'true') ? "Active" : "Inactive";
         let tableName = (ACCOUNTINFOTABLE ? ACCOUNTINFOTABLE : event.ACCOUNTINFOTABLE);
         let results
+
+        let startKey = { "CustomerID": value.startkey }
+        let totalCount = ""
         if (status == 'Active') {
-            let accountInfo = await Dynamo.searchTable(tableName, status, size, query.startkey);
+            startKey["EventStatus"] = status
+            startKey = (startKey.CustomerID == undefined) ? null : startKey;
+            let accountInfo = await Dynamo.fetchByIndex(tableName, status, value.size, startKey);
             results = await fetchApiKey(accountInfo);
+            let totalRecords = await Dynamo.getAllItemsQueryCount(tableName, status);
+            totalCount = (totalRecords.data).length
+            // console.log("totalCount---> ", (totalCount.data).length)
         } else {
-            results = await Dynamo.fetchAllCustomers(tableName, query.eventstatus, size, query.startkey);
+            startKey = (startKey.CustomerID == undefined) ? null : startKey;
+            results = await Dynamo.fetchAllItems(tableName, value.size, startKey);
+            let totalRecords = await Dynamo.getAllItemsScanCount(tableName);
+            totalCount = (totalRecords.data).length
+            // console.log("totalCount---> ", (totalCount.data).length)
         }
 
         if (!results.error) {
             let resp = {
                 "Customers": results.data.Items,
             }
+
+            let elementCount = (results.data.Items).length;
+            let deployStage = event["requestContext"]["stage"]; 
             if (results.data.LastEvaluatedKey) {
-                var LastEvaluatedkeyCustomerID = results.data.LastEvaluatedKey.CustomerID;
-                var LastEvaluatedkeyEventStatus = results.data.LastEvaluatedKey.EventStatus;
+                var LastEvaluatedkeyCustomerID = "&startkey=" + results.data.LastEvaluatedKey.CustomerID;
             }
 
-            var response = await pagination.createPagination(resp, event['headers']['Host'], event['path'] + "?status=" + query.status, LastEvaluatedkeyCustomerID, LastEvaluatedkeyEventStatus, page, size);
+            var response = await pagination.createPagination(resp, event['headers']['Host'] + "/"+ deployStage, event['path'] + "?status=" + value.status, value.page, value.size, elementCount, LastEvaluatedkeyCustomerID, totalCount);
 
             console.info("Response\n" + JSON.stringify(response, null, 2));
             return success(200, response);
@@ -57,7 +69,6 @@ async function handler(event) {
             return failure(400, "Bad Request", results.error);
         }
     }
-
 }
 
 module.exports = {
