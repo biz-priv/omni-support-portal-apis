@@ -61,6 +61,7 @@ functions:
 plugins:
   - serverless-offline
   - serverless-prune-plugin
+  - serverless-jest-plugin
 
 
 layers:

@@ -32,32 +32,32 @@ async function fetchApiKey(accountInfo) {
                 resolve(response);
             }
             else {
-                if((data.items).length){
+                if ((data.items).length) {
                     data.items.forEach((apiKeyObject) => {
-                    custResults.forEach((custItem) => {
-                        if (apiKeyObject['name'] == custItem['CustomerID']) {
-                            custItem['Created'] = apiKeyObject['createdDate']
-                            custItem['Updated'] = apiKeyObject['lastUpdatedDate']
-                            duration = moment.duration(moment().diff(apiKeyObject['createdDate']))
-                            custItem['Age'] = parseInt(duration.asDays())
-                            CustomerData.push(custItem);
-                        }
-                        else if (!custItem['Created']) {
-                            custItem['Created'] = "NA"
-                            custItem['Updated'] = "NA"
-                            custItem['Age'] = "NA"
-                            CustomerData.push(custItem);
-                        }
+                        custResults.forEach((custItem) => {
+                            if (apiKeyObject['name'] == custItem['CustomerID']) {
+                                custItem['Created'] = apiKeyObject['createdDate']
+                                custItem['Updated'] = apiKeyObject['lastUpdatedDate']
+                                duration = moment.duration(moment().diff(apiKeyObject['createdDate']))
+                                custItem['Age'] = parseInt(duration.asDays())
+                                CustomerData.push(custItem);
+                            }
+                            else if (!custItem['Created']) {
+                                custItem['Created'] = "NA"
+                                custItem['Updated'] = "NA"
+                                custItem['Age'] = "NA"
+                                CustomerData.push(custItem);
+                            }
+                        });
                     });
-                });
-            }else {
-                custResults.forEach((custItem) => {
-                    custItem['Created'] = "NA"
-                    custItem['Updated'] = "NA"
-                    custItem['Age'] = "NA"
-                    CustomerData.push(custItem);
-                });
-            }
+                } else {
+                    custResults.forEach((custItem) => {
+                        custItem['Created'] = "NA"
+                        custItem['Updated'] = "NA"
+                        custItem['Age'] = "NA"
+                        CustomerData.push(custItem);
+                    });
+                }
 
                 let resp = {
                     "Items": CustomerData

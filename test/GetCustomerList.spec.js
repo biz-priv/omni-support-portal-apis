@@ -26,7 +26,7 @@ describe('module test', () => {
     }
 
     let actual = await handler(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({"Customers":[{"CustomerID":"1234","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active"},{"CustomerID":"12345","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active"},{"CustomerID":"123456","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Inactive"},{"CustomerID":"1234567","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Inactive"}],"Page":{"Size":4,"TotalElement":4,"Number":1},"_links":{"self":{"href":"localhost:3000/devint/customers?status=false&page=1&size=10&startkey=0"}}});
+    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active" }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Inactive" }, { "CustomerID": "1234567", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Inactive" }], "Page": { "Size": 4, "TotalElement": 4, "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=false&page=1&size=10&startkey=0" } } });
 
   });
 
@@ -49,8 +49,7 @@ describe('module test', () => {
     }
 
     let actual = await handler(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({"Customers":[{"CustomerID":"1234","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active"},{"CustomerID":"12345","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active"},{"CustomerID":"123456","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Inactive"},{"CustomerID":"1234567","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Inactive"}],"Page":{"Size":4,"TotalElement":4,"TotalPages":1,"Number":1,"StartKey":"123456"},"_links":{"self":{"href":"localhost:3000/devint/customers?status=false&page=1&size=3&startkey=0","nextHref":"localhost:3000/devint/customers?status=false&page=2&size=3&startkey=123456"}}});
-
+    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active" }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Inactive" }, { "CustomerID": "1234567", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Inactive" }], "Page": { "Size": 4, "TotalElement": 4, "TotalPages": 1, "Number": 1, "StartKey": "123456" }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=false&page=1&size=3&startkey=0", "nextHref": "localhost:3000/devint/customers?status=false&page=2&size=3&startkey=123456" } } });
   });
 
   it('get active customers record with api keys (match key in apigateway)', async () => {
@@ -76,7 +75,7 @@ describe('module test', () => {
 
     let actual = await handler(event);
     let age = (JSON.parse(actual.body)).Customers[0].Age
-    expect(JSON.parse(actual.body)).toStrictEqual({"Customers":[{"CustomerID":"1234","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"2021-06-18T06:54:54.000Z","Updated":"2021-06-26T06:54:54.000Z","Age":age},{"CustomerID":"12345","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"NA","Updated":"NA","Age":"NA"},{"CustomerID":"123456","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"NA","Updated":"NA","Age":"NA"}],"Page":{"Size":3,"TotalElement":10,"TotalPages":3,"Number":1},"_links":{"self":{"href":"localhost:3000/devint/customers?status=true&page=1&size=3&startkey=0"}}})
+    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "2021-06-18T06:54:54.000Z", "Updated": "2021-06-26T06:54:54.000Z", "Age": age }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }], "Page": { "Size": 3, "TotalElement": 10, "TotalPages": 3, "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=true&page=1&size=3&startkey=0" } } })
 
   });
 
@@ -102,7 +101,7 @@ describe('module test', () => {
     }
 
     let actual = await handler(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({"Customers":[{"CustomerID":"1234","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"NA","Updated":"NA","Age":"NA"},{"CustomerID":"12345","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"NA","Updated":"NA","Age":"NA"},{"CustomerID":"123456","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"NA","Updated":"NA","Age":"NA"}],"Page":{"Size":3,"TotalElement":10,"TotalPages":3,"Number":1},"_links":{"self":{"href":"localhost:3000/devint/customers?status=true&page=1&size=3&startkey=0"}}})
+    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }], "Page": { "Size": 3, "TotalElement": 10, "TotalPages": 3, "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=true&page=1&size=3&startkey=0" } } })
 
   });
 
@@ -128,7 +127,7 @@ describe('module test', () => {
     }
 
     let actual = await handler(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({"Customers":[{"CustomerID":"1234","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"NA","Updated":"NA","Age":"NA"},{"CustomerID":"12345","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"NA","Updated":"NA","Age":"NA"},{"CustomerID":"123456","BillToAcct":"15733","CustomerNo":"WX","DeclaredType":"LL","SourceSystem":"TR","Station":"TT","CustomerStatus":"Active","Created":"NA","Updated":"NA","Age":"NA"}],"Page":{"Size":3,"TotalElement":10,"TotalPages":3,"Number":1},"_links":{"self":{"href":"localhost:3000/devint/customers?status=true&page=1&size=3&startkey=0"}}})
+    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }], "Page": { "Size": 3, "TotalElement": 10, "TotalPages": 3, "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=true&page=1&size=3&startkey=0" } } })
 
   });
 
@@ -151,7 +150,7 @@ describe('module test', () => {
     }
 
     let actual = await handler(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({"Customers":[],"Page":{"Number":1},"_links":{"self":{"href":"localhost:3000/devint/customers?status=false&page=1&size=3&startkey=0"}}});
+    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [], "Page": { "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=false&page=1&size=3&startkey=0" } } });
   });
 
   it('bad request error', async () => {
