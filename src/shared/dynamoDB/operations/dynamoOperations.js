@@ -1,10 +1,8 @@
 var AWS = require('aws-sdk');
-var dynamoSvc = new AWS.DynamoDB();
-var documentClient = new AWS.DynamoDB.DocumentClient();
-
 
 /* fetch all items from table */
 async function fetchAllItems(TableName, limit, startkey) {
+    var documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     var params = {
         TableName: TableName,
         Limit: limit
@@ -12,7 +10,6 @@ async function fetchAllItems(TableName, limit, startkey) {
     if (startkey) {
         params['ExclusiveStartKey'] = startkey
     }
-    console.log(params);
     try {
         let promise = documentClient.scan(params).promise();
         let result = await promise;
@@ -29,11 +26,12 @@ async function fetchAllItems(TableName, limit, startkey) {
 }
 
 async function fetchByIndex(TableName, status, limit, startkey) {
+    var documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     var params = {
         TableName: TableName,
         Limit: limit,
-        IndexName: 'EventStatusIndex',
-        KeyConditionExpression: 'EventStatus = :hkey',
+        IndexName: 'CustomerStatusIndex',
+        KeyConditionExpression: 'CustomerStatus = :hkey',
         ExpressionAttributeValues: {
             ':hkey': status
         }
@@ -60,11 +58,12 @@ async function fetchByIndex(TableName, status, limit, startkey) {
 
 /* retrieve all items count from table */
 async function getAllItemsScanCount(TableName) {
+    var dynamoSvc = new AWS.DynamoDB({ region: process.env.DEFAULT_AWS });
     var params = {
         TableName: TableName,
     };
     return new Promise((resolve, reject) => {
-        dynamoSvc.describeTable(params, function(err, data) {
+        dynamoSvc.describeTable(params, function (err, data) {
             if (err) {
                 let dataResp = {
                     "error": err
@@ -83,16 +82,17 @@ async function getAllItemsScanCount(TableName) {
 
 /* retrieve all items count from table */
 async function getAllItemsQueryCount(TableName, status) {
+    var documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     var params = {
         TableName: TableName,
-        IndexName: 'EventStatusIndex',
-        KeyConditionExpression: 'EventStatus = :hkey',
+        IndexName: 'CustomerStatusIndex',
+        KeyConditionExpression: 'CustomerStatus = :hkey',
         ExpressionAttributeValues: {
             ':hkey': status
         },
         Count: 'true'
     };
-    
+
     var promise = documentClient.query(params).promise();
     let result = await promise;
     let data = result.Count;

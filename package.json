@@ -4,13 +4,16 @@
   "description": "This is serverless app using aws and lambda",
   "main": "",
   "scripts": {
+    "test": "jest",
     "deploy": "sls deploy"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "aws-sdk": "^2.930.0",
+    "aws-sdk-mock": "^5.2.1",
     "cors": "^2.8.5",
+    "jest": "^27.0.5",
     "joi": "^17.4.0",
     "moment": "^2.29.1",
     "serverless": "^1.83.3",

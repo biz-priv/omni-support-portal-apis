@@ -1,9 +1,9 @@
 var AWS = require('aws-sdk');
-var apigateway = new AWS.APIGateway();
-var moment = require("moment");
 
 /* fetch api key for active customer */
 async function fetchApiKey(accountInfo) {
+    var moment = require("moment");
+    var apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
     let custResults = accountInfo.data.Items;
     return new Promise((resolve, reject) => {
         var CustomerData = [];
@@ -19,14 +19,21 @@ async function fetchApiKey(accountInfo) {
                     custItem['Age'] = "NA"
                     CustomerData.push(custItem);
                 });
-                let response = {
-                    "data": CustomerData
+                let resp = {
+                    "Items": CustomerData
                 }
+                if (accountInfo.data.LastEvaluatedKey) {
+                    resp["LastEvaluatedKey"] = accountInfo.data.LastEvaluatedKey
+                }
+                let response = {
+                    "data": resp
+                }
+
                 resolve(response);
             }
             else {
-                // console.log(data);
-                data.items.forEach((apiKeyObject) => {
+                if((data.items).length){
+                    data.items.forEach((apiKeyObject) => {
                     custResults.forEach((custItem) => {
                         if (apiKeyObject['name'] == custItem['CustomerID']) {
                             custItem['Created'] = apiKeyObject['createdDate']
@@ -43,16 +50,24 @@ async function fetchApiKey(accountInfo) {
                         }
                     });
                 });
+            }else {
+                custResults.forEach((custItem) => {
+                    custItem['Created'] = "NA"
+                    custItem['Updated'] = "NA"
+                    custItem['Age'] = "NA"
+                    CustomerData.push(custItem);
+                });
+            }
 
                 let resp = {
                     "Items": CustomerData
                 }
-                if(accountInfo.data.LastEvaluatedKey){
+                if (accountInfo.data.LastEvaluatedKey) {
                     resp["LastEvaluatedKey"] = accountInfo.data.LastEvaluatedKey
-               }
-                 let response = {
-                     "data": resp
-                 }   
+                }
+                let response = {
+                    "data": resp
+                }
                 resolve(response);
             }
         });

@@ -3,8 +3,9 @@ GetCustomersList:
   layers:
     - { Ref: CommonLibsLambdaLayer }  
   environment:
-    ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/name}
-    TOKEN_VALIDATOR: ${ssm:/omni/devint/account/info/table/name} 
+    ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/dev/name}
+    # TOKEN_VALIDATOR: ${ssm:/omni/devint/account/info/table/name} 
+    DEFAULT_AWS: ${self:provider.region} 
   package:
     individually: true
     include:
