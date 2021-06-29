@@ -41,6 +41,9 @@ package:
     - 'src/**'
     - '*.*'
     - 'config/**'
+    - '__tests__/**'
+    - 'coverage/**'
+    - 'Jenkinsfile'
 
 functions:
 
