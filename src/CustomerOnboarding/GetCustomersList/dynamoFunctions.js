@@ -1,5 +1,16 @@
 var AWS = require('aws-sdk');
 
+function noDataHandler(dbItems){
+    CustomerTempData = [];
+    dbItems.forEach((custItem) => {
+        custItem['Created'] = "NA"
+        custItem['Updated'] = "NA"
+        custItem['Age'] = "NA"
+        CustomerTempData.push(custItem);
+    });
+    return CustomerTempData;
+}
+
 /* fetch api key for active customer */
 async function fetchApiKey(accountInfo) {
     var moment = require("moment");
@@ -12,26 +23,11 @@ async function fetchApiKey(accountInfo) {
         };
         apigateway.getApiKeys(params, function (err, data) {
             if (err) {
-                console.error("API Gateway Key Error : ", err, err.stack); // an error occurred
-                custResults.forEach((custItem) => {
-                    custItem['Created'] = "NA"
-                    custItem['Updated'] = "NA"
-                    custItem['Age'] = "NA"
-                    CustomerData.push(custItem);
-                });
-                let resp = {
-                    "Items": CustomerData
-                }
-                if (accountInfo.data.LastEvaluatedKey) {
-                    resp["LastEvaluatedKey"] = accountInfo.data.LastEvaluatedKey
-                }
-                let response = {
-                    "data": resp
-                }
-
-                resolve(response);
+                console.error("API Gateway Key Error : ", err); // an error occurred
+                CustomerData = noDataHandler(custResults);
             }
-            else {
+            else 
+            {
                 if ((data.items).length) {
                     data.items.forEach((apiKeyObject) => {
                         custResults.forEach((custItem) => {
@@ -51,25 +47,18 @@ async function fetchApiKey(accountInfo) {
                         });
                     });
                 } else {
-                    custResults.forEach((custItem) => {
-                        custItem['Created'] = "NA"
-                        custItem['Updated'] = "NA"
-                        custItem['Age'] = "NA"
-                        CustomerData.push(custItem);
-                    });
+                    CustomerData = noDataHandler(custResults);
                 }
-
-                let resp = {
-                    "Items": CustomerData
-                }
-                if (accountInfo.data.LastEvaluatedKey) {
-                    resp["LastEvaluatedKey"] = accountInfo.data.LastEvaluatedKey
-                }
-                let response = {
-                    "data": resp
-                }
-                resolve(response);
             }
+            let resp = {
+                "Items": CustomerData
+            }
+            if (accountInfo.data.LastEvaluatedKey) {
+                resp["LastEvaluatedKey"] = accountInfo.data.LastEvaluatedKey
+            }
+            resolve({
+                "data": resp
+            });
         });
     })
 }

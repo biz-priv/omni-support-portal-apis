@@ -11,17 +11,14 @@ async function fetchAllItems(TableName, limit, startkey) {
         params['ExclusiveStartKey'] = startkey
     }
     try {
-        let promise = documentClient.scan(params).promise();
-        let result = await promise;
-        let dataResp = {
+        let result = await documentClient.scan(params).promise();
+        return {
             "data": result
-        }
-        return dataResp;
+        };
     } catch (err) {
-        let errResp = {
+        return {
             "error": err
         }
-        return errResp
     }
 }
 
@@ -41,17 +38,14 @@ async function fetchByIndex(TableName, status, limit, startkey) {
         params['ExclusiveStartKey'] = startkey
     }
     try {
-        let promise = documentClient.query(params).promise();
-        let result = await promise;
-        let dataResp = {
+        let result = await documentClient.query(params).promise();
+        return {
             "data": result
-        }
-        return dataResp;
+        };
     } catch (err) {
-        let errResp = {
+        return {
             "error": err
         }
-        return errResp
     }
 
 }
@@ -65,16 +59,10 @@ async function getAllItemsScanCount(TableName) {
     return new Promise((resolve, reject) => {
         dynamoSvc.describeTable(params, function (err, data) {
             if (err) {
-                let dataResp = {
-                    "error": err
-                }
-                reject(dataResp);
+                reject({ "error": err });
             } else {
                 var table = data['Table'];
-                let dataResp = {
-                    "data": parseInt(table['ItemCount'])
-                }
-                resolve(dataResp);
+                resolve({ "data": parseInt(table['ItemCount']) });
             }
         });
     });
@@ -93,13 +81,8 @@ async function getAllItemsQueryCount(TableName, status) {
         Count: 'true'
     };
 
-    var promise = documentClient.query(params).promise();
-    let result = await promise;
-    let data = result.Count;
-    let dataResp = {
-        "data": data
-    }
-    return dataResp;
+    let result = await documentClient.query(params).promise();
+    return { "data": result.Count };
 }
 
 module.exports = {

@@ -1,6 +1,6 @@
 const { success, failure } = require('../../shared/utils/responses');
 const Joi = require('joi');
-const Dynamo = require('../../shared/dynamoDB/operations/dynamoOperations');
+const Dynamo = require('../../shared/dynamo/db');
 const { fetchApiKey } = require('./dynamoFunctions');
 const pagination = require('../../shared/utils/pagination');
 const ACCOUNTINFOTABLE = process.env.ACCOUNT_INFO;
@@ -26,15 +26,15 @@ async function handler(event) {
         return failure(400, "missing required parameters", error);
     } else {
         let status = (query.status == 'true') ? "Active" : "Inactive";
-        let tableName = (ACCOUNTINFOTABLE ? ACCOUNTINFOTABLE : event.ACCOUNTINFOTABLE);
-        let results
+        let tableName = ACCOUNTINFOTABLE;
+        let results, accountInfo, totalRecords
 
         let startKey = { "CustomerID": value.startkey }
         let totalCount = ""
         if (status == 'Active') {
             startKey["CustomerStatus"] = status
             startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
-            const [accountInfo, totalRecords] = await Promise.all([Dynamo.fetchByIndex(tableName, status, value.size, startKey), Dynamo.getAllItemsQueryCount(tableName, status)]);
+            [accountInfo, totalRecords] = await Promise.all([Dynamo.fetchByIndex(tableName, status, value.size, startKey), Dynamo.getAllItemsQueryCount(tableName, status)]);
             results = await fetchApiKey(accountInfo);
             totalCount = totalRecords.data;
         } else {
