@@ -11,7 +11,7 @@ var statusValidator = Joi.object().keys({
     status: Joi.boolean().default(false),
     page: Joi.number().default(1),
     size: Joi.number().default(10),
-    startkey: Joi.string().default(null)
+    startkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')})
 })
 
 //get customers list 

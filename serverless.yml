@@ -30,6 +30,8 @@ custom:
   prune:
     automatic: true
     number: 3
+  jest: 
+    collectCoverage: true  
   
 package:
   individually: true
