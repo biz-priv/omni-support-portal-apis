@@ -47,21 +47,21 @@ package:
 
 functions:
 
-    # - ${file(config/CustomerOnboarding/deleteCustomer.yml)}
+    - ${file(config/CustomerOnboarding/deleteCustomer.yml)}
     - ${file(config/CustomerOnboarding/getCustomersList.yml)} 
-    # - ${file(config/CustomerOnboarding/PostCustomer.yml)}
-    # - ${file(config/CustomerOnboarding/updateCustomer.yml)}
+    - ${file(config/CustomerOnboarding/PostCustomer.yml)}
+    - ${file(config/CustomerOnboarding/updateCustomer.yml)}
 
-    # - ${file(config/KeyManagement/postKey.yml)}    
-    # - ${file(config/KeyManagement/updateKey.yml)}
+    - ${file(config/KeyManagement/postKey.yml)}    
+    - ${file(config/KeyManagement/updateKey.yml)}
 
-    # - ${file(config/Subscription/deleteSubscription.yml)}
-    # - ${file(config/Subscription/getSubscriptionsList.yml)}
-    # - ${file(config/Subscription/postSubscription.yml)}
-    # - ${file(config/Subscription/updateSubscription.yml)}
+    - ${file(config/Subscription/deleteSubscription.yml)}
+    - ${file(config/Subscription/getSubscriptionsList.yml)}
+    - ${file(config/Subscription/postSubscription.yml)}
+    - ${file(config/Subscription/updateSubscription.yml)}
 
-    # - ${file(config/UserActivity/getUserActivityList.yml)}    
-    # - ${file(config/UserActivity/postUserActivity.yml)}
+    - ${file(config/UserActivity/getUserActivityList.yml)}    
+    - ${file(config/UserActivity/postUserActivity.yml)}
 
 plugins:
   - serverless-offline

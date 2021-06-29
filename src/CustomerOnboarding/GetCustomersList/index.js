@@ -4,7 +4,6 @@ const Dynamo = require('../../shared/dynamoDB/operations/dynamoOperations');
 const { fetchApiKey } = require('./dynamoFunctions');
 const pagination = require('../../shared/utils/pagination');
 const ACCOUNTINFOTABLE = process.env.ACCOUNT_INFO;
-// const TOKENVALIDATORTABLE = process.env.TOKEN_VALIDATOR;
 
 /*=================get customers parameters validate==============*/
 var statusValidator = Joi.object().keys({
@@ -23,7 +22,7 @@ async function handler(event) {
     //validate query parameter
     const { error, value } = await statusValidator.validate(query);
     if (error) {
-        console.log("Error\n" + JSON.stringify(error, null, 2));
+        console.error("Error\n" + JSON.stringify(error, null, 2));
         return failure(400, "missing required parameters", error);
     } else {
         let status = (query.status == 'true') ? "Active" : "Inactive";
@@ -72,7 +71,7 @@ async function handler(event) {
                 return success(200, response);
             
         } else { 
-            console.log("Error\n" + JSON.stringify(results.error, null, 2));
+            console.error("Error\n" + JSON.stringify(results.error, null, 2));
             return failure(400, "Bad Request", results.error);
         }
     }

@@ -12,7 +12,7 @@ async function fetchApiKey(accountInfo) {
         };
         apigateway.getApiKeys(params, function (err, data) {
             if (err) {
-                console.log("API Gateway Key Error : ", err, err.stack); // an error occurred
+                console.error("API Gateway Key Error : ", err, err.stack); // an error occurred
                 custResults.forEach((custItem) => {
                     custItem['Created'] = "NA"
                     custItem['Updated'] = "NA"
