@@ -6,6 +6,7 @@ const pagination = require('../../shared/utils/pagination');
 const ACCOUNTINFOTABLE = process.env.ACCOUNT_INFO;
 
 /*=================get customers parameters validate==============*/
+
 var statusValidator = Joi.object().keys({
     status: Joi.boolean().default(false),
     page: Joi.number().default(1),
@@ -15,9 +16,8 @@ var statusValidator = Joi.object().keys({
 
 //get customers list 
 async function handler(event) {
-    var query = (!event.queryStringParameters ? null : event.queryStringParameters);
+    var query = (!event.queryStringParameters ? { status: 'false' } : event.queryStringParameters);
     console.info("Event\n" + JSON.stringify(event, null, 2));
-    if (query == null) { query = { status: 'false' } };
 
     //validate query parameter
     const { error, value } = await statusValidator.validate(query);
@@ -25,7 +25,7 @@ async function handler(event) {
         console.error("Error\n" + JSON.stringify(error, null, 2));
         return failure(400, "missing required parameters", error);
     } else {
-        let status = (query.status == 'true') ? "Active" : "Inactive";
+        let status = (value.status == 'true') ? "Active" : "Inactive";
         let tableName = ACCOUNTINFOTABLE;
         let results, accountInfo, totalRecords
 
