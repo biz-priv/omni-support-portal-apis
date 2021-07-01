@@ -26,9 +26,9 @@ module.exports.handler = async (event) => {
         console.error("Error\n" + JSON.stringify(error, null, 2));
         return failure(400, "missing required parameters", error);
     } else {
-        let CustomerID = uuid();
-        let apiKeyValue = uuid().replace(/-/g, "");
-        let accountInfoTableItems = {
+        const CustomerID = uuid();
+        const apiKeyValue = uuid().replace(/-/g, "");
+        const accountInfoTableItems = {
             "Name": value.Name,
             "CustomerID": CustomerID,
             "BillToAcct": value.BillToAccNumber,
@@ -38,14 +38,14 @@ module.exports.handler = async (event) => {
             "SourceSystem": value.SourceSystem,
             "Station": value.Station
         }
-        let apiParams = {
+        const apiParams = {
             description: CustomerID,
             enabled: true,
             name: CustomerID, 
             stageKeys: [],
             value: apiKeyValue
         };
-        let tokenTableItems = {
+        const tokenTableItems = {
             "CustomerID": CustomerID,
             "ApiKey": apiKeyValue,
             "Customer_name": value.CustomerName,

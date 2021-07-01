@@ -1,9 +1,9 @@
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 
 /* fetch all items from table */
 async function fetchAllItems(TableName, limit, startkey) {
-    var documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
-    var params = {
+    let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
         TableName: TableName,
         Limit: limit
     };
@@ -11,9 +11,8 @@ async function fetchAllItems(TableName, limit, startkey) {
         params['ExclusiveStartKey'] = startkey
     }
     try {
-        let result = await documentClient.scan(params).promise();
         return {
-            "data": result
+            "data": await documentClient.scan(params).promise()
         };
     } catch (err) {
         return {
@@ -23,8 +22,8 @@ async function fetchAllItems(TableName, limit, startkey) {
 }
 
 async function fetchByIndex(TableName, status, limit, startkey) {
-    var documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
-    var params = {
+    let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
         TableName: TableName,
         Limit: limit,
         IndexName: 'CustomerStatusIndex',
@@ -38,9 +37,8 @@ async function fetchByIndex(TableName, status, limit, startkey) {
         params['ExclusiveStartKey'] = startkey
     }
     try {
-        let result = await documentClient.query(params).promise();
         return {
-            "data": result
+            "data": await documentClient.query(params).promise()
         };
     } catch (err) {
         return {
@@ -52,8 +50,8 @@ async function fetchByIndex(TableName, status, limit, startkey) {
 
 /* retrieve all items count from table */
 async function getAllItemsScanCount(TableName) {
-    var dynamoSvc = new AWS.DynamoDB({ region: process.env.DEFAULT_AWS });
-    var params = {
+    let dynamoSvc = new AWS.DynamoDB({ region: process.env.DEFAULT_AWS });
+    const params = {
         TableName: TableName,
     };
     return new Promise((resolve, reject) => {
@@ -70,8 +68,8 @@ async function getAllItemsScanCount(TableName) {
 
 /* retrieve all items count from table */
 async function getAllItemsQueryCount(TableName, status) {
-    var documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
-    var params = {
+    let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
         TableName: TableName,
         IndexName: 'CustomerStatusIndex',
         KeyConditionExpression: 'CustomerStatus = :hkey',
@@ -87,14 +85,13 @@ async function getAllItemsQueryCount(TableName, status) {
 
 /* insert record in table */
 async function itemInsert(tableName, record) {
-    var documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
-    var params = {
+    let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
         TableName: tableName,
         Item: record
     }
     try {
-        let result = documentClient.put(params).promise()
-        return { "data": result }
+        return { "data": await documentClient.put(params).promise() }
     } catch (err) {
         return { "error": err }
     }
@@ -110,8 +107,7 @@ async function apiKeyCreate(apiParams, usagePlanName) {
             keyType: 'API_KEY',
             usagePlanId: usagePlanName
         };
-
-        let usagePlanResult = await apigateway.createUsagePlanKey(params).promise();
+        await apigateway.createUsagePlanKey(params).promise();
         return { "data": result }
    
     } catch (err) {
