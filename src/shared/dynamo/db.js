@@ -85,9 +85,47 @@ async function getAllItemsQueryCount(TableName, status) {
     return { "data": result.Count };
 }
 
+/* insert record in table */
+async function itemInsert(tableName, record) {
+    var documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    var params = {
+        TableName: tableName,
+        Item: record
+    }
+    try {
+        let result = documentClient.put(params).promise()
+        return { "data": result }
+    } catch (err) {
+        return { "error": err }
+    }
+}
+
+async function apiKeyCreate(apiParams, usagePlanName) {
+    let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    try {
+        let result = await apigateway.createApiKey(apiParams).promise();
+        
+        let params = {
+            keyId: result.id,
+            keyType: 'API_KEY',
+            usagePlanId: usagePlanName
+        };
+
+        let usagePlanResult = await apigateway.createUsagePlanKey(params).promise();
+        return { "data": result }
+   
+    } catch (err) {
+        return { "error": err }
+    }
+
+}
+
+
 module.exports = {
     fetchAllItems,
     fetchByIndex,
     getAllItemsScanCount,
-    getAllItemsQueryCount
+    getAllItemsQueryCount,
+    itemInsert,
+    apiKeyCreate
 };

@@ -25,7 +25,7 @@ async function handler(event) {
         console.error("Error\n" + JSON.stringify(error, null, 2));
         return failure(400, "missing required parameters", error);
     } else {
-        let status = (value.status == 'true') ? "Active" : "Inactive";
+        let status = (value.status == true) ? "Active" : "Inactive";
         let tableName = ACCOUNTINFOTABLE;
         let results, accountInfo, totalRecords
 
