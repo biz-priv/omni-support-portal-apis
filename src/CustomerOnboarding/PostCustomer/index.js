@@ -7,8 +7,7 @@ const USAGEPLAN = process.env.USAGE_PLAN;
 const { uuid } = require('uuidv4');
 
 /*=================create customer parameters validate==============*/
-var createCustomerValidator = Joi.object().keys({
-    Name: Joi.string().required(),
+const createCustomerValidator = Joi.object().keys({
     BillToAccNumber: Joi.string().required(),
     SourceSystem: Joi.string().required(),
     CustomerNumber: Joi.string().default('NA'),
@@ -27,9 +26,7 @@ module.exports.handler = async (event) => {
         return failure(400, "missing required parameters", error);
     } else {
         const CustomerID = uuid();
-        const apiKeyValue = uuid().replace(/-/g, "");
         const accountInfoTableItems = {
-            "Name": value.Name,
             "CustomerID": CustomerID,
             "BillToAcct": value.BillToAccNumber,
             "CustomerNo": value.CustomerNumber,
@@ -41,20 +38,22 @@ module.exports.handler = async (event) => {
         const apiParams = {
             description: CustomerID,
             enabled: true,
-            name: CustomerID, 
-            stageKeys: [],
-            value: apiKeyValue
+            name: CustomerID
         };
         const tokenTableItems = {
             "CustomerID": CustomerID,
-            "ApiKey": apiKeyValue,
             "Customer_name": value.CustomerName,
             "Status": 'Active'
         }
-        const [accountTableResult, apiKeyResult, tokenTableResult] = await Promise.all([Dynamo.itemInsert(ACCOUNTINFOTABLE, accountInfoTableItems), Dynamo.apiKeyCreate(apiParams, USAGEPLAN), Dynamo.itemInsert(TOKENVALIDATOR, tokenTableItems)]);
-        if (!accountTableResult.error || !apiKeyResult.error || !tokenTableResult.error) {
+        const [accountTableResult, apiKeyResult] = await Promise.all([Dynamo.itemInsert(ACCOUNTINFOTABLE, accountInfoTableItems), Dynamo.apiKeyCreate(apiParams, USAGEPLAN)]);
+        if (!apiKeyResult.error) {
+            tokenTableItems["ApiKey"] = apiKeyResult.data.value;
+            await Dynamo.itemInsert(TOKENVALIDATOR, tokenTableItems)
+        }
+        if (!accountTableResult.error && !apiKeyResult.error) {
             return success(202);
         } else {
+            console.error("Error\n" + JSON.stringify('bab request', null, 2));
             return failure(400, "bad request")
         }
     }

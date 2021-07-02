@@ -49,7 +49,7 @@ functions:
 
     - ${file(config/CustomerOnboarding/deleteCustomer.yml)}
     - ${file(config/CustomerOnboarding/getCustomersList.yml)} 
-    - ${file(config/CustomerOnboarding/PostCustomer.yml)}
+    - ${file(config/CustomerOnboarding/postCustomer.yml)}
     - ${file(config/CustomerOnboarding/updateCustomer.yml)}
 
     - ${file(config/KeyManagement/postKey.yml)}    

@@ -10,8 +10,8 @@ PostCustomer:
   package:
     individually: true
     include:
-        - 'src/CustomerOnboarding/PostCustomer/**'
-        - 'src/shared/**'  
+      - 'src/CustomerOnboarding/PostCustomer/**'
+      - 'src/shared/**'
   events:
     - http:
         path: customers

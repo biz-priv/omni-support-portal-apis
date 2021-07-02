@@ -2,6 +2,11 @@ DeleteSubscription:
   handler: src/Subscription/DeleteSubscription/index.handler
   layers:
     - { Ref: CommonLibsLambdaLayer }
+  package:
+    individually: true
+    include:
+        - 'src/Subscription/DeleteSubscription/**'
+        - 'src/shared/**'    
   events:
     - http:
         path: subscriptions

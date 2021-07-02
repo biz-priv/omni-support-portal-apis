@@ -11,7 +11,7 @@ var statusValidator = Joi.object().keys({
     status: Joi.boolean().default(false),
     page: Joi.number().default(1),
     size: Joi.number().default(10),
-    startkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')})
+    startkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0') })
 })
 
 //get customers list 
@@ -44,33 +44,33 @@ async function handler(event) {
         }
         if (!results.error) {
             let resp = {}
-                resp["Customers"] = results.data.Items
+            resp["Customers"] = results.data.Items
 
-                let elementCount = (results.data.Items).length;
-                let deployStage = event["requestContext"]["stage"];
-                let lastCustomerId = 0
-                if (results.data.LastEvaluatedKey) {
-                    lastCustomerId = results.data.LastEvaluatedKey.CustomerID;
-                    var LastEvaluatedkeyCustomerID = "&startkey=" + lastCustomerId;
-                }   
-                let prevLinkStartKey = 0
-                if(value.startkey != null){
-                    prevLinkStartKey = value.startkey    
-                }
-                let prevLink = event['headers']['Host'] + "/" + deployStage + event['path'] + "?status=" + value.status + "&page="+ value.page + "&size=" + value.size + "&startkey=" + prevLinkStartKey
-                var response = await pagination.createPagination(resp, event['headers']['Host'] + "/" + deployStage, event['path'] + "?status=" + value.status, value.page, value.size, elementCount, LastEvaluatedkeyCustomerID, totalCount, prevLink);
-                
-                if(lastCustomerId != 0){
-                    response.Page["StartKey"] = lastCustomerId;
-                    if (value.status == true) {
-                        response.Page["CustomerStatus"] = value.status;
-                    }
-                }
+            let elementCount = (results.data.Items).length;
+            let deployStage = event["requestContext"]["stage"];
+            let lastCustomerId = 0
+            if (results.data.LastEvaluatedKey) {
+                lastCustomerId = results.data.LastEvaluatedKey.CustomerID;
+                var LastEvaluatedkeyCustomerID = "&startkey=" + lastCustomerId;
+            }
+            let prevLinkStartKey = 0
+            if (value.startkey != null) {
+                prevLinkStartKey = value.startkey
+            }
+            let prevLink = event['headers']['Host'] + "/" + deployStage + event['path'] + "?status=" + value.status + "&page=" + value.page + "&size=" + value.size + "&startkey=" + prevLinkStartKey
+            var response = await pagination.createPagination(resp, event['headers']['Host'] + "/" + deployStage, event['path'] + "?status=" + value.status, value.page, value.size, elementCount, LastEvaluatedkeyCustomerID, totalCount, prevLink);
 
-                console.info("Response\n" + JSON.stringify(response, null, 2));
-                return success(200, response);
-            
-        } else { 
+            if (lastCustomerId != 0) {
+                response.Page["StartKey"] = lastCustomerId;
+                if (value.status == true) {
+                    response.Page["CustomerStatus"] = value.status;
+                }
+            }
+
+            console.info("Response\n" + JSON.stringify(response, null, 2));
+            return success(200, response);
+
+        } else {
             console.error("Error\n" + JSON.stringify(results.error, null, 2));
             return failure(400, "Bad Request", results.error);
         }

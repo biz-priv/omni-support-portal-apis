@@ -2,6 +2,11 @@ UpdateSubscription:
   handler: src/Subscription/UpdateSubscription/index.handler
   layers:
     - { Ref: CommonLibsLambdaLayer }
+  package:
+    individually: true
+    include:
+        - 'src/Subscription/UpdateSubscription/**'
+        - 'src/shared/**'    
   events:
     - http:
         path: subscriptions

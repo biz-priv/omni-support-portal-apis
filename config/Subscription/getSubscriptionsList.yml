@@ -2,6 +2,11 @@ GetSubscriptionsList:
   handler: src/Subscription/GetSubscriptionsList/index.handler
   layers:
     - { Ref: CommonLibsLambdaLayer }
+  package:
+    individually: true
+    include:
+        - 'src/Subscription/GetSubscriptionsList/**'
+        - 'src/shared/**'    
   events:
     - http:
         path: subscriptions

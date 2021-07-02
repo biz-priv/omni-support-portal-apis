@@ -2,6 +2,11 @@ PostKey:
   handler: src/KeyManagement/PostKey/index.handler
   layers:
     - { Ref: CommonLibsLambdaLayer }  
+  package:
+    individually: true
+    include:
+        - 'src/KeyManagement/PostKey/**'
+        - 'src/shared/**'    
   events:
     - http:
         path: keys

@@ -1,7 +1,12 @@
 UpdateCustomer:
   handler: src/CustomerOnboarding/UpdateCustomer/index.handler
   layers:
-    - { Ref: CommonLibsLambdaLayer }  
+    - { Ref: CommonLibsLambdaLayer }
+  package:
+    individually: true
+    include:
+        - 'src/CustomerOnboarding/UpdateCustomer/**'
+        - 'src/shared/**'      
   events:
     - http:
         path: customers

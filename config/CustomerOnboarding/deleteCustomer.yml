@@ -2,6 +2,11 @@ DeleteCustomer:
   handler: src/CustomerOnboarding/DeleteCustomer/index.handler
   layers:
     - { Ref: CommonLibsLambdaLayer }
+  package:
+    individually: true
+    include:
+        - 'src/CustomerOnboarding/DeleteCustomer/**'
+        - 'src/shared/**'    
   events:
     - http:
         path: customers
