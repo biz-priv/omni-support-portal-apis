@@ -46,11 +46,10 @@ module.exports.handler = async (event) => {
             "Status": 'Active'
         }
         const [accountTableResult, apiKeyResult] = await Promise.all([Dynamo.itemInsert(ACCOUNTINFOTABLE, accountInfoTableItems), Dynamo.apiKeyCreate(apiParams, USAGEPLAN)]);
-        if (!apiKeyResult.error) {
+        
+        if (!accountTableResult.error && !apiKeyResult.error) {
             tokenTableItems["ApiKey"] = apiKeyResult.data.value;
             await Dynamo.itemInsert(TOKENVALIDATOR, tokenTableItems)
-        }
-        if (!accountTableResult.error && !apiKeyResult.error) {
             return success(202);
         } else {
             console.error("Error\n" + JSON.stringify('bab request', null, 2));
