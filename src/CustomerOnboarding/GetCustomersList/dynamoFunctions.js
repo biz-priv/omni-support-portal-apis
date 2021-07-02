@@ -1,4 +1,4 @@
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 
 function noDataHandler(dbItems){
     CustomerTempData = [];
@@ -13,9 +13,9 @@ function noDataHandler(dbItems){
 
 /* fetch api key for active customer */
 async function fetchApiKey(accountInfo) {
-    var moment = require("moment");
-    var apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
-    let custResults = accountInfo.data.Items;
+    const moment = require("moment");
+    const apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    let custResults = accountInfo.Items;
     return new Promise((resolve, reject) => {
         var CustomerData = [];
         var params = {
@@ -52,12 +52,10 @@ async function fetchApiKey(accountInfo) {
             let resp = {
                 "Items": CustomerData
             }
-            if (accountInfo.data.LastEvaluatedKey) {
-                resp["LastEvaluatedKey"] = accountInfo.data.LastEvaluatedKey
+            if (accountInfo.LastEvaluatedKey) {
+                resp["LastEvaluatedKey"] = accountInfo.LastEvaluatedKey
             }
-            resolve({
-                "data": resp
-            });
+            resolve(resp);
         });
     })
 }
