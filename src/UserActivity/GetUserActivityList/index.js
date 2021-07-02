@@ -1,5 +1,5 @@
 const { success, failure } = require('../../shared/utils/responses');
-const { userActivityIdValidator } = require('../../shared/utils/vaildator');
+const { userActivityIdValidator } = require('../../shared/utils/validator');
 //static response
 let response = [{
     "CustomerId": 1,

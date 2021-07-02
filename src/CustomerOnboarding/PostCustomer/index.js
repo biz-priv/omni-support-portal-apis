@@ -1,5 +1,15 @@
 const { success, failure } = require('../../shared/utils/responses');
-const { createCustomerValidator } = require('../../shared/utils/vaildator');
+const Joi = require('joi');
+
+/*=================create customer parameters validate==============*/
+var createCustomerValidator = Joi.object().keys({
+    Name: Joi.string().required(),
+    BillToAccNumber: Joi.number().required(),
+    CustomerNumber: Joi.number(),
+    DeclaredType: Joi.string(),
+    Station: Joi.string()
+})
+
 
 //post customer 
 module.exports.handler = async (event) => {

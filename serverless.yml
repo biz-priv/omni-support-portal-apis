@@ -7,17 +7,44 @@ provider:
   stage: ${opt:stage, 'devint'}
   memorySize: 128 
   timeout: 15 
-
-package:
-  exclude:
-    - 'node_modules/**'
+  iam: 
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: '*'
 
 custom:
   prune:
     automatic: true
     number: 3
+  jest: 
+    collectCoverage: true
   
-  
+package:
+  individually: true
+  excludeDevDependencies: false
+  exclude:
+    - 'node_modules/**'
+    - 'src/**'
+    - '*.*'
+    - 'config/**'
+    - '__tests__/**'
+    - 'coverage/**'
+    - 'Jenkinsfile'
+
 functions:
 
     - ${file(config/CustomerOnboarding/deleteCustomer.yml)}
@@ -37,15 +64,15 @@ functions:
     - ${file(config/UserActivity/postUserActivity.yml)}
 
 plugins:
+  - serverless-jest-plugin
   - serverless-offline
   - serverless-prune-plugin
-
 
 layers:
   commonLibs:
     path: lib
     compatibleRuntimes:
       - nodejs14.x
-    package:
+    package:      
       include:
         - node_modules/**
