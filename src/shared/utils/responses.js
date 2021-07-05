@@ -1,25 +1,10 @@
-/*============================================================= 
-// success response
-function success(http_code, data = null){
 
-    return send_callback(data, http_code);
-}
-/*============================================================= 
-// failure response
-function failure(http_code, message, error){
-    const response = {
-        message: message,
-        error: error
-    }
-    return send_callback(response, http_code);
-}
-/*============================================================= 
 // send response 
-function send_callback(resp = null, http_code){
-    var resonseData = ""   
-    if(resp){
-           var responseData = resp
-            }
+function send_response(http_code, resp = null) {
+    var resonseData = ""
+    if (resp) {
+        var responseData = resp
+    }
 
     return {
         statusCode: http_code,
@@ -31,14 +16,13 @@ function send_callback(resp = null, http_code){
         },
         body: JSON.stringify(responseData)
     }
-}*/
+}
 /*============================================================= */
 module.exports = {
-    // success,
-    // failure,
-    // send_callback,
+    send_response,
     handleError
 }
+
 
 const errors = [
     //createOrder - parking
@@ -48,13 +32,15 @@ const errors = [
     { code: 1003, httpStatus: 400, message: 'Error getting items.' },
     { code: 1004, httpStatus: 400, message: 'Error fetching items.' },
     { code: 1005, httpStatus: 400, message: 'Unknown error occured.' },
+    { code: 1006, httpStatus: 400, message: 'Error creating apikey.' },
+    { code: 1007, httpStatus: 400, message: 'Error inserting items.' },
 ];
 
-function getError (code) {
+function getError(code) {
     return errors.find(e => e.code === code);
 }
 
-function handleError (code, exception=null, msg=null) {
+function handleError(code, exception = null, msg = null) {
     if (exception) {
         console.error('Exception: ', exception);
     }
@@ -70,9 +56,9 @@ function handleError (code, exception=null, msg=null) {
 }
 
 function errorResponse(httpStatus, errCode, message) {
-    return JSON.stringify({
+    return {
         httpStatus: httpStatus,
         code: errCode,
         message: message
-    });
+    }
 }

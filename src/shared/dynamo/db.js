@@ -51,8 +51,8 @@ async function getAllItemsScanCount(TableName) {
         TableName: TableName,
     };
     return new Promise((resolve, reject) => {
-        dynamoSvc.describeTable(params, function (err, data) {
-            if (err) {
+        dynamoSvc.describeTable(params, function (e, data) {
+            if (e) {
                 // reject({ "error": err });
                 console.error("getAllItemsScanCount Error: ", e);
                 throw handleError(1004, e, get(e, 'details[0].message', null));
@@ -93,9 +93,10 @@ async function itemInsert(tableName, record) {
         Item: record
     }
     try {
-        return { "data": await documentClient.put(params).promise() }
-    } catch (err) {
-        return { "error": err }
+        return await documentClient.put(params).promise() 
+    } catch (e) {
+        console.error("itemInsert Error: ", e);
+        throw handleError(1007, e, get(e, 'details[0].message', null));
     }
 }
 
@@ -104,16 +105,17 @@ async function apiKeyCreate(apiParams, usagePlanName) {
     try {
         let result = await apigateway.createApiKey(apiParams).promise();
         
-        let params = {
+        const params = {
             keyId: result.id,
             keyType: 'API_KEY',
             usagePlanId: usagePlanName
         };
         await apigateway.createUsagePlanKey(params).promise();
-        return { "data": result }
+        return result
    
-    } catch (err) {
-        return { "error": err }
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+        throw handleError(1006, e, get(e, 'details[0].message', null));
     }
 
 }

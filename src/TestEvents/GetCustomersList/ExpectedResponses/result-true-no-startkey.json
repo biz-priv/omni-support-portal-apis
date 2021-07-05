@@ -45,7 +45,7 @@
     },
     "_links": {
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=Active&page=1&size=3&startkey=0"
+            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=1&size=3&startkey=0"
         }
     }
 }

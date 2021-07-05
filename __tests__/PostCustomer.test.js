@@ -8,6 +8,9 @@ const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
 const AWSMock = require('aws-sdk-mock');
 
+const createApiGatewayResponse = require('../src/TestEvents/PostCustomer/MockResponses/apigateway-createapikey.json');
+const createUsagePlanResponse = require('../src/TestEvents/PostCustomer/MockResponses/apigateway-createusageplankey.json');
+
 describe('post module test', () => {
 
     afterEach(() => {
@@ -21,37 +24,13 @@ describe('post module test', () => {
         })
 
         AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
-            callback(null, {
-                id: '6rdi1enz93',
-                value: 'F8zwa5OkvTaXlUyfk5Xjh7DjEEpsiTBm3wpOpIs2',
-                name: 'cb69f554-8c3b-4e20-97cb-6b2045530938',
-                description: 'cb69f554-8c3b-4e20-97cb-6b2045530938',
-                enabled: true,
-                createdDate: "2021-07-02T10:01:41.000Z",
-                lastUpdatedDate: "2021-07-02T10:01:41.000Z",
-                stageKeys: []
-            });
+            callback(null, createApiGatewayResponse);
         });
 
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
-            callback(null, {
-                id: '8n9fzw4ep4',
-                type: 'API_KEY',
-                value: 'oOVxcaAQ2x5Cbltw41aB4aDlFRNCvys34RzEe77i',
-                name: 'cb69f554-8c3b-4e20-97cb-6b2045530938'
-            })
+            callback(null, createUsagePlanResponse)
         })
-
-        let event = {}
-        let body = {
-            "BillToAccNumber": "21214",
-            "SourceSystem": "WT",
-            "CustomerNumber": "9876543212",
-            "DeclaredType": "LL",
-            "Station": "LAX",
-            "CustomerName": "test1"
-        }
-        event["body"] = JSON.stringify(body);
+        const event = require('../src/TestEvents/PostCustomer/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
         expect(actual.statusCode).toStrictEqual(202);
     })
@@ -63,39 +42,17 @@ describe('post module test', () => {
         })
 
         AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
-            callback(null, {
-                id: '6rdi1enz93',
-                value: 'F8zwa5OkvTaXlUyfk5Xjh7DjEEpsiTBm3wpOpIs2',
-                name: 'cb69f554-8c3b-4e20-97cb-6b2045530938',
-                description: 'cb69f554-8c3b-4e20-97cb-6b2045530938',
-                enabled: true,
-                createdDate: "2021-07-02T10:01:41.000Z",
-                lastUpdatedDate: "2021-07-02T10:01:41.000Z",
-                stageKeys: []
-            });
+            callback(null, createApiGatewayResponse);
         });
 
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
-            callback(null, {
-                id: '8n9fzw4ep4',
-                type: 'API_KEY',
-                value: 'oOVxcaAQ2x5Cbltw41aB4aDlFRNCvys34RzEe77i',
-                name: 'cb69f554-8c3b-4e20-97cb-6b2045530938'
-            })
+            callback(null, createUsagePlanResponse)
         })
 
-        let event = {}
-        let body = {
-            "BillToAccNumber": "21214",
-            "SourceSystem": "WT",
-            "CustomerNumber": "9876543212",
-            "DeclaredType": "LL",
-            "Station": "LAX",
-            "CustomerName": "test1"
-        }
-        event["body"] = JSON.stringify(body);
+        const event = require('../src/TestEvents/PostCustomer/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
-        expect(actual.body).toStrictEqual('{"message":"bad request"}');
+        const error = '{"httpStatus":400,"code":1007,"message":"Error inserting items."}'
+        expect(actual.body).toStrictEqual(error);
     })
 
     it('error from createapi key', async () => {
@@ -112,49 +69,26 @@ describe('post module test', () => {
             callback({ "error": "usageplan error" }, null)
         })
 
-        let event = {}
-        let body = {
-            "BillToAccNumber": "21214",
-            "SourceSystem": "WT",
-            "CustomerNumber": "9876543212",
-            "DeclaredType": "LL",
-            "Station": "LAX",
-            "CustomerName": "test1"
-        }
-        event["body"] = JSON.stringify(body);
+        const event = require('../src/TestEvents/PostCustomer/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
-        expect(actual.body).toStrictEqual('{"message":"bad request"}');
+        const error = '{"httpStatus":400,"code":1006,"message":"Error creating apikey."}'
+        expect(actual.body).toStrictEqual(error);
     })
 
     it('validation missing field error', async () => {
 
-        let event = {}
-        let body = {
-            "SourceSystem": "WT",
-            "CustomerNumber": "9876543212",
-            "DeclaredType": "LL",
-            "Station": "LAX",
-            "CustomerName": "test1"
-        }
-        event["body"] = JSON.stringify(body);
+        const event = require('../src/TestEvents/PostCustomer/Events/event-missing-body-parameter.json');
         let actual = await wrapped.run(event);
-        expect(actual.body).toStrictEqual('{"message":"missing required parameters","error":{"_original":{"SourceSystem":"WT","CustomerNumber":"9876543212","DeclaredType":"LL","Station":"LAX","CustomerName":"test1"},"details":[{"message":"\\"BillToAccNumber\\" is required","path":["BillToAccNumber"],"type":"any.required","context":{"label":"BillToAccNumber","key":"BillToAccNumber"}}]}}');
+        const error = '{"httpStatus":400,"code":1001,"message":"\\"BillToAccNumber\\" is required"}'
+        expect(actual.body).toStrictEqual(error);
     });
 
     it('validation invalid request parameter type', async () => {
 
-        let event = {}
-        let body = {
-            "BillToAccNumber": 234234,
-            "SourceSystem": "WT",
-            "CustomerNumber": "9876543212",
-            "DeclaredType": "LL",
-            "Station": "LAX",
-            "CustomerName": "test1"
-        }
-        event["body"] = JSON.stringify(body);
+        const event = require('../src/TestEvents/PostCustomer/Events/event-invalid-body-parameter.json');
         let actual = await wrapped.run(event);
-        expect(actual.body).toStrictEqual('{"message":"missing required parameters","error":{"_original":{"BillToAccNumber":234234,"SourceSystem":"WT","CustomerNumber":"9876543212","DeclaredType":"LL","Station":"LAX","CustomerName":"test1"},"details":[{"message":"\\"BillToAccNumber\\" must be a string","path":["BillToAccNumber"],"type":"string.base","context":{"label":"BillToAccNumber","value":234234,"key":"BillToAccNumber"}}]}}');
+        const error = '{"httpStatus":400,"code":1001,"message":"\\"BillToAccNumber\\" must be a string"}'
+        expect(actual.body).toStrictEqual(error);
     });
 
 });
