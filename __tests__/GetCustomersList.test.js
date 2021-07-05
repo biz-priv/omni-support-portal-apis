@@ -8,6 +8,11 @@ const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
 const AWSMock = require('aws-sdk-mock');
 
+const scanResponse = require('../src/TestEvents/GetCustomersList/MockResponses/dynamo-scan.json');
+const scanResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockResponses/dynamo-scan-no-last-key.json');
+const queryResponse = require('../src/TestEvents/GetCustomersList/MockResponses/query-response.json');
+const queryResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockResponses/query-response-no-lastkey.json');
+
 describe('module test', () => {
 
   afterEach(() => {
@@ -17,124 +22,86 @@ describe('module test', () => {
   it('get all customers record with default page, limit and startkey', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-      callback(null, { Items: [{ CustomerID: "1234", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "12345", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "123456", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Inactive" }, { CustomerID: "1234567", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Inactive" }] });
-    })
+      callback(null, scanResponseNoLastKey);
+    });
 
     AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
       callback(null, { Table: { ItemCount: '4' } });
-    })
+    });
 
-    let event = {
-      "queryStringParameters": { status: 'false' },
-      "ACCOUNTINFOTABLE": "test-table",
-      "headers": { "Host": "localhost:3000" },
-      "path": "/customers",
-      "requestContext": { "stage": "devint" }
-    }
-
-    let actual = await wrapped.run(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active" }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Inactive" }, { "CustomerID": "1234567", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Inactive" }], "Page": { "Size": 4, "TotalElement": 4, "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=false&page=1&size=10&startkey=0" } } });
+    const event = require('../src/TestEvents/GetCustomersList/Events/event.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result.json');
+    expect(result).toStrictEqual(expectedResponse);
 
   });
 
   it('get all customers record with page, size and startkey', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-      callback(null, { Items: [{ CustomerID: "1234", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "12345", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "123456", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Inactive" }, { CustomerID: "1234567", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Inactive" }], LastEvaluatedKey: { 'CustomerID': '123456' } });
+      callback(null, scanResponse);
     })
 
     AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
       callback(null, { Table: { ItemCount: '4' } });
     })
 
-    let event = {
-      "queryStringParameters": { status: 'false', page: 1, size: 3, startkey: '123456' },
-      "ACCOUNTINFOTABLE": "test-table",
-      "headers": { "Host": "localhost:3000" },
-      "path": "/customers",
-      "requestContext": { "stage": "devint" }
-    }
-
-    let actual = await wrapped.run(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active" }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Inactive" }, { "CustomerID": "1234567", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Inactive" }], "Page": { "Size": 4, "TotalElement": 4, "TotalPages": 1, "Number": 1, "StartKey": "123456" }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=false&page=1&size=3&startkey=123456", "nextHref": "localhost:3000/devint/customers?status=false&page=2&size=3&startkey=123456" } } });
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-with-startkey.json');
+    const result = await wrapped.run(event);    
+    const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-startkey.json');
+    expect(result).toStrictEqual(expectedResponse);
   });
 
   it('get active customers record with api keys (match key in apigateway) with startkey', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-      callback(null, {
-        Items: [{ CustomerID: "1234", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "12345", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "123456", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }], LastEvaluatedKey: { 'CustomerID': '123456' },
-        Count: 10
-      });
+      callback(null, queryResponse);
     })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback(null, { items: [{ id: 'sdfkj1', value: "1234", name: "1234", customerId: "1234", description: "test", enabled: "true", createdDate: "2021-06-18T06:54:54.000Z", lastUpdatedDate: "2021-06-26T06:54:54.000Z", stageKeys: "test", tags: "tag" }] });
     });
 
-    let event = {
-      "queryStringParameters": { status: 'true', page: 1, size: 3, startkey: '123456' },
-      "ACCOUNTINFOTABLE": "test-table",
-      "headers": { "Host": "localhost:3000" },
-      "path": "/customers",
-      "requestContext": { "stage": "devint" }
-    }
-
-    let actual = await wrapped.run(event);
-    let age = (JSON.parse(actual.body)).Customers[0].Age
-    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "2021-06-18T06:54:54.000Z", "Updated": "2021-06-26T06:54:54.000Z", "Age": age }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }], "Page": { "Size": 3, "TotalElement": 10, "TotalPages": 3, "CustomerStatus": true, "StartKey": "123456", "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=true&page=1&size=3&startkey=123456", "nextHref": "localhost:3000/devint/customers?status=true&page=2&size=3&startkey=123456" } } })
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
+    const result = await wrapped.run(event);
+    let expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-true-startkey.json');
+    let age = result.Customers[0].Age;
+    expectedResponse.Customers[0].Age = age;
+    expect(result).toStrictEqual(expectedResponse);
 
   });
 
   it('get active customers record (no api key in api gateway)', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-      callback(null, {
-        Items: [{ CustomerID: "1234", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "12345", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "123456", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }],
-        Count: 10
-      });
+      callback(null, queryResponseNoLastKey);
     })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback(null, { items: [] });
     });
 
-    let event = {
-      "queryStringParameters": { status: 'true', page: 1, size: 3 },
-      "ACCOUNTINFOTABLE": "test-table",
-      "headers": { "Host": "localhost:3000" },
-      "path": "/customers",
-      "requestContext": { "stage": "devint" }
-    }
-
-    let actual = await wrapped.run(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }], "Page": { "Size": 3, "TotalElement": 10, "TotalPages": 3, "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=true&page=1&size=3&startkey=0" } } })
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-true-no-startkey.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-true-no-startkey.json');
+    expect(result).toStrictEqual(expectedResponse)
 
   });
 
   it('error from api gateway', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-      callback(null, {
-        Items: [{ CustomerID: "1234", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "12345", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }, { CustomerID: "123456", BillToAcct: "15733", CustomerNo: "WX", DeclaredType: "LL", SourceSystem: "TR", Station: "TT", CustomerStatus: "Active" }], LastEvaluatedKey: { 'CustomerID': '123456' },
-        Count: 10
-      });
+      callback(null, queryResponse);
     })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback({ error: "apigateway error" }, null);
     });
 
-    let event = {
-      "queryStringParameters": { status: 'true', page: 1, size: 3, startkey: '123456' },
-      "ACCOUNTINFOTABLE": "test-table",
-      "headers": { "Host": "localhost:3000" },
-      "path": "/customers",
-      "requestContext": { "stage": "devint" }
-    }
-
-    let actual = await wrapped.run(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [{ "CustomerID": "1234", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "12345", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }, { "CustomerID": "123456", "BillToAcct": "15733", "CustomerNo": "WX", "DeclaredType": "LL", "SourceSystem": "TR", "Station": "TT", "CustomerStatus": "Active", "Created": "NA", "Updated": "NA", "Age": "NA" }], "Page": { "Size": 3, "TotalElement": 10, "TotalPages": 3, "Number": 1, "StartKey": "123456","CustomerStatus": true }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=true&page=1&size=3&startkey=123456", "nextHref": "localhost:3000/devint/customers?status=true&page=2&size=3&startkey=123456" } } })
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/api-gw-error.json');
+    expect(result).toStrictEqual(expectedResponse)
 
   });
 
@@ -148,16 +115,11 @@ describe('module test', () => {
       callback(null, { Table: { ItemCount: '0' } });
     })
 
-    let event = {
-      "queryStringParameters": { status: 'false', page: 1, size: 3 },
-      "ACCOUNTINFOTABLE": "test-table",
-      "headers": { "Host": "localhost:3000" },
-      "path": "/customers",
-      "requestContext": { "stage": "devint" }
-    }
-
-    let actual = await wrapped.run(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({ "Customers": [], "Page": { "Number": 1 }, "_links": { "self": { "href": "localhost:3000/devint/customers?status=false&page=1&size=3&startkey=0" } } });
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-false.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/no-records.json');
+    console.log("RESULT: ", JSON.stringify(result));
+    expect(result).toStrictEqual(expectedResponse);
   });
 
   it('bad request error from scan operation', async () => {
@@ -170,31 +132,29 @@ describe('module test', () => {
       callback(null, { Table: { ItemCount: '0' } })
     })
 
-    let event = {
-      "queryStringParameters": { status: 'false' },
-      "ACCOUNTINFOTABLE": "test-table",
-      "headers": { "Host": "localhost:3000" },
-      "path": "/customers",
-      "requestContext": { "stage": "devint" }
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-false-only.json');
+    let thrownError;
+    try {
+      await wrapped.run(event);
+    } catch (e) {
+      thrownError = e;
     }
-
-    let actual = await wrapped.run(event);
-    expect(JSON.parse(actual.body)).toStrictEqual({ "message": "Bad Request", "error": { "error": "error found" } });
+    const error = '{\"httpStatus\":400,\"code\":1004,\"message\":\"Error fetching items.\"}';
+    expect(thrownError).toEqual(error);
 
   });
 
   it('validation error check', async () => {
 
-    let event = {
-      "queryStringParameters": { status: 'sdkjf', page: 1, size: 3 },
-      "ACCOUNTINFOTABLE": "test-table",
-      "headers": { "Host": "localhost:3000" },
-      "path": "/customers",
-      "requestContext": { "stage": "devint" }
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-invalid-status.json');
+    let thrownError;
+    try {
+      await wrapped.run(event);
+    } catch (e) {
+      thrownError = e;
     }
-
-    let actual = await wrapped.run(event);
-    expect(actual.body).toStrictEqual('{"message":"missing required parameters","error":{"_original":{"status":"sdkjf","page":1,"size":3},"details":[{"message":"\\"status\\" must be a boolean","path":["status"],"type":"boolean.base","context":{"label":"status","value":"sdkjf","key":"status"}}]}}');
+    const error = '{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"queryStringParameters.status\\\" must be a boolean\"}';
+    expect(thrownError).toEqual(error);
   });
 
 });

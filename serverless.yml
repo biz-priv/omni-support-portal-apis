@@ -31,7 +31,7 @@ custom:
     automatic: true
     number: 3
   jest: 
-    collectCoverage: true  
+    collectCoverage: true
   
 package:
   individually: true
@@ -64,10 +64,9 @@ functions:
     - ${file(config/UserActivity/postUserActivity.yml)}
 
 plugins:
+  - serverless-jest-plugin
   - serverless-offline
   - serverless-prune-plugin
-  - serverless-jest-plugin
-
 
 layers:
   commonLibs:
