@@ -1,11 +1,10 @@
 
 // send response 
 function send_response(http_code, resp = null) {
-    var resonseData = ""
+    let resonseData = ""
     if (resp) {
-        var responseData = resp
+        responseData = resp
     }
-
     return {
         statusCode: http_code,
         headers: {
