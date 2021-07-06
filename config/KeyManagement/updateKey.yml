@@ -1,7 +1,12 @@
 UpdateKey:
   handler: src/KeyManagement/UpdateKey/index.handler
   layers:
-    - { Ref: CommonLibsLambdaLayer }  
+    - { Ref: CommonLibsLambdaLayer } 
+  package:
+    individually: true
+    include:
+        - 'src/KeyManagement/UpdateKey/**'
+        - 'src/shared/**'     
   events:
     - http:
         path: keys

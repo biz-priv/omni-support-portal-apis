@@ -51,8 +51,8 @@ async function getAllItemsScanCount(TableName) {
         TableName: TableName,
     };
     return new Promise((resolve, reject) => {
-        dynamoSvc.describeTable(params, function (err, data) {
-            if (err) {
+        dynamoSvc.describeTable(params, function (e, data) {
+            if (e) {
                 // reject({ "error": err });
                 console.error("getAllItemsScanCount Error: ", e);
                 throw handleError(1004, e, get(e, 'details[0].message', null));
@@ -85,9 +85,47 @@ async function getAllItemsQueryCount(TableName, status) {
     }
 }
 
+/* insert record in table */
+async function itemInsert(tableName, record) {
+    let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
+        TableName: tableName,
+        Item: record
+    }
+    try {
+        return await documentClient.put(params).promise() 
+    } catch (e) {
+        console.error("itemInsert Error: ", e);
+        throw handleError(1007, e, get(e, 'details[0].message', null));
+    }
+}
+
+async function apiKeyCreate(apiParams, usagePlanName) {
+    let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    try {
+        let result = await apigateway.createApiKey(apiParams).promise();
+        
+        const params = {
+            keyId: result.id,
+            keyType: 'API_KEY',
+            usagePlanId: usagePlanName
+        };
+        await apigateway.createUsagePlanKey(params).promise();
+        return result
+   
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+        throw handleError(1006, e, get(e, 'details[0].message', null));
+    }
+
+}
+
+
 module.exports = {
     fetchAllItems,
     fetchByIndex,
     getAllItemsScanCount,
-    getAllItemsQueryCount
+    getAllItemsQueryCount,
+    itemInsert,
+    apiKeyCreate
 };

@@ -46,8 +46,8 @@
     },
     "_links": {
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=Inactive&page=1&size=3&startkey=[object Object]",
-            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=Inactive&page=2&size=3&startkey=123456"
+            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=3&startkey=123456",
+            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=2&size=3&startkey=123456"
         }
     }
 }

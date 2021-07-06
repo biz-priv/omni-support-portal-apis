@@ -12,6 +12,7 @@ const scanResponse = require('../src/TestEvents/GetCustomersList/MockResponses/d
 const scanResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockResponses/dynamo-scan-no-last-key.json');
 const queryResponse = require('../src/TestEvents/GetCustomersList/MockResponses/query-response.json');
 const queryResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockResponses/query-response-no-lastkey.json');
+const apiKeysResponse = require('../src/TestEvents/GetCustomersList/MockResponses/api-gw-apikeys.json');
 
 describe('module test', () => {
 
@@ -32,7 +33,7 @@ describe('module test', () => {
     const event = require('../src/TestEvents/GetCustomersList/Events/event.json');
     const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result.json');
-    expect(result).toStrictEqual(expectedResponse);
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
 
   });
 
@@ -47,9 +48,9 @@ describe('module test', () => {
     })
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-with-startkey.json');
-    const result = await wrapped.run(event);    
+    const result = await wrapped.run(event);  
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-startkey.json');
-    expect(result).toStrictEqual(expectedResponse);
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
   });
 
   it('get active customers record with api keys (match key in apigateway) with startkey', async () => {
@@ -59,15 +60,15 @@ describe('module test', () => {
     })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
-      callback(null, { items: [{ id: 'sdfkj1', value: "1234", name: "1234", customerId: "1234", description: "test", enabled: "true", createdDate: "2021-06-18T06:54:54.000Z", lastUpdatedDate: "2021-06-26T06:54:54.000Z", stageKeys: "test", tags: "tag" }] });
+      callback(null, apiKeysResponse);
     });
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
     const result = await wrapped.run(event);
     let expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-true-startkey.json');
-    let age = result.Customers[0].Age;
+    let age = JSON.parse(result.body).Customers[0].Age;
     expectedResponse.Customers[0].Age = age;
-    expect(result).toStrictEqual(expectedResponse);
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
 
   });
 
@@ -84,7 +85,7 @@ describe('module test', () => {
     const event = require('../src/TestEvents/GetCustomersList/Events/event-true-no-startkey.json');
     const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-true-no-startkey.json');
-    expect(result).toStrictEqual(expectedResponse)
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse)
 
   });
 
@@ -101,7 +102,7 @@ describe('module test', () => {
     const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
     const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/api-gw-error.json');
-    expect(result).toStrictEqual(expectedResponse)
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse)
 
   });
 
@@ -119,7 +120,7 @@ describe('module test', () => {
     const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/no-records.json');
     console.log("RESULT: ", JSON.stringify(result));
-    expect(result).toStrictEqual(expectedResponse);
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
   });
 
   it('bad request error from scan operation', async () => {
@@ -129,7 +130,7 @@ describe('module test', () => {
     })
 
     AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
-      callback(null, { Table: { ItemCount: '0' } })
+      callback({ "error": "error found count"}, null)
     })
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-false-only.json');
@@ -139,7 +140,7 @@ describe('module test', () => {
     } catch (e) {
       thrownError = e;
     }
-    const error = '{\"httpStatus\":400,\"code\":1004,\"message\":\"Error fetching items.\"}';
+    const error = {"code": 1004, "httpStatus": 400, "message": "Error fetching items."};
     expect(thrownError).toEqual(error);
 
   });
@@ -147,14 +148,10 @@ describe('module test', () => {
   it('validation error check', async () => {
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-invalid-status.json');
-    let thrownError;
-    try {
-      await wrapped.run(event);
-    } catch (e) {
-      thrownError = e;
-    }
-    const error = '{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"queryStringParameters.status\\\" must be a boolean\"}';
-    expect(thrownError).toEqual(error);
+    let actual = await wrapped.run(event);
+    console.log(actual);
+    const error = '{"httpStatus":400,"code":1001,"message":"\\"queryStringParameters.status\\" must be a boolean"}';
+    expect(actual.body).toEqual(error);
   });
 
 });

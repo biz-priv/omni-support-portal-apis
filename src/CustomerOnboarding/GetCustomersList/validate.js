@@ -15,7 +15,7 @@ async function validate(event){
     try{
         event = await schema.validateAsync(event);
     } catch(e){
-        throw handleError(1001, e, get(e, 'details[0].message', null));
+        return handleError(1001, e, get(e, 'details[0].message', null));
     }
     return event;
 }

@@ -2,6 +2,11 @@ PostUserActivity:
   handler: src/UserActivity/PostUserActivity/index.handler
   layers:
     - { Ref: CommonLibsLambdaLayer }
+  package:
+    individually: true
+    include:
+        - 'src/UserActivity/PostUserActivity/**'
+        - 'src/shared/**'    
   events:
     - http:
         path: /activity/{id}

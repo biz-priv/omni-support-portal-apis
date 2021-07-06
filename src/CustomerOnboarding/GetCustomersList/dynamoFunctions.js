@@ -36,13 +36,15 @@ async function fetchApiKey(accountInfo) {
                                 custItem['Updated'] = apiKeyObject['lastUpdatedDate']
                                 duration = moment.duration(moment().diff(apiKeyObject['createdDate']))
                                 custItem['Age'] = parseInt(duration.asDays())
+                                CustomerData.push(custItem);
                             }
                             else if (!custItem['Created']) {
                                 custItem['Created'] = "NA"
                                 custItem['Updated'] = "NA"
                                 custItem['Age'] = "NA"
+                                CustomerData.push(custItem);
                             }
-                            CustomerData.push(custItem);
+
                         });
                     });
                 } else {

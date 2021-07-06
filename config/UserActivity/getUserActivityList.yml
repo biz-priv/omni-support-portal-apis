@@ -2,6 +2,11 @@ GetUserActivityList:
   handler: src/UserActivity/GetUserActivityList/index.handler
   layers:
     - { Ref: CommonLibsLambdaLayer }
+  package:
+    individually: true
+    include:
+        - 'src/UserActivity/GetUserActivityList/**'
+        - 'src/shared/**'    
   events:
     - http:
         path: /activity/{id}
