@@ -12,17 +12,17 @@ const get = require('lodash.get');
 module.exports.handler = async (event) => {
     console.info("Event\n" + JSON.stringify(event, null, 2));
     //validate body parameters
-    event = await validate(JSON.parse(event.body));
+    event = await validate(event);
     if (!event.code) {
         const CustomerID = uuid();
         const accountInfoTableItems = {
             "CustomerID": CustomerID,
-            "BillToAcct": get(event, 'BillToAccNumber'),
-            "CustomerNo": get(event, 'CustomerNumber'),
+            "BillToAcct": get(event, 'body.BillToAccNumber'),
+            "CustomerNo": get(event, 'body.CustomerNumber'),
             "CustomerStatus": 'Active',
-            "DeclaredType": get(event, 'DeclaredType'),
-            "SourceSystem": get(event, 'SourceSystem'),
-            "Station": get(event, 'Station')
+            "DeclaredType": get(event, 'body.DeclaredType'),
+            "SourceSystem": get(event, 'body.SourceSystem'),
+            "Station": get(event, 'body.Station')
         }
         const apiParams = {
             description: CustomerID,
@@ -31,7 +31,7 @@ module.exports.handler = async (event) => {
         };
         const tokenTableItems = {
             "CustomerID": CustomerID,
-            "Customer_name": get(event, 'CustomerName'),
+            "Customer_name": get(event, 'body.CustomerName'),
             "Status": 'Active'
         }
         try {
