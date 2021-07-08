@@ -16,12 +16,6 @@ function send_response(http_code, resp = null) {
         body: JSON.stringify(responseData)
     }
 }
-/*============================================================= */
-module.exports = {
-    send_response,
-    handleError
-}
-
 
 const errors = [
     //createOrder - parking
@@ -63,4 +57,10 @@ function errorResponse(httpStatus, errCode, message) {
         code: errCode,
         message: message
     }
+}
+
+/*============================================================= */
+module.exports = {
+    send_response,
+    handleError
 }

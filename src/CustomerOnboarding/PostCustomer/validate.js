@@ -13,7 +13,7 @@ const custom = Joi.extend((joi) => {
                 return { value: JSON.parse(value) };
             }
             catch (err) {
-                console.log(err);
+                return err;
             }
         }
     };

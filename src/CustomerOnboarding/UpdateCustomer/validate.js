@@ -3,17 +3,15 @@ const get = require('lodash.get');
 const { handleError } = require('../../shared/utils/responses');
 
 const custom = Joi.extend((joi) => {
-
   return {
     type: 'object',
     base: joi.object(),
     coerce(value, schema) {
-
       try {
         return { value: JSON.parse(value) };
       }
       catch (err) {
-        console.log(err);
+        return err;
       }
     }
   };

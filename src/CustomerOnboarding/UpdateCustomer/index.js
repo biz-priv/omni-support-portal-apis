@@ -11,19 +11,20 @@ module.exports.handler = async (event) => {
     //validate customerId
     event = await validate(event);
     if (!event.code) {
-        let updateExpression = 'set';
-        let attributesValues = {}
-        if (get(event, 'body.DeclaredType')) {
-            updateExpression += ` DeclaredType = :x`
-            attributesValues[':x'] = get(event, 'body.DeclaredType')
-        }
-
-        if (get(event, 'body.Station')) {
-            updateExpression += (get(event, 'body.DeclaredType')) ? ' , ' : ''
-            updateExpression += ` Station = :y `
-            attributesValues[':y'] = get(event, 'body.Station')
-        }
         try {
+            let updateExpression = 'set';
+            let attributesValues = {}
+            if (get(event, 'body.DeclaredType')) {
+                updateExpression += ` DeclaredType = :x`
+                attributesValues[':x'] = get(event, 'body.DeclaredType')
+            }
+
+            if (get(event, 'body.Station')) {
+                updateExpression += (get(event, 'body.DeclaredType')) ? ' , ' : ''
+                updateExpression += ` Station = :y `
+                attributesValues[':y'] = get(event, 'body.Station')
+            }
+
             const result = await Dynamo.getItem(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') });
             if (result.Item) {
                 await Dynamo.updateItems(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') }, updateExpression, attributesValues);
