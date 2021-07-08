@@ -57,8 +57,7 @@ async function getAllItemsScanCount(TableName) {
                 console.error("getAllItemsScanCount Error: ", e);
                 throw handleError(1004, e, get(e, 'details[0].message', null));
             } else {
-                let table = data['Table'];
-                resolve(parseInt(table['ItemCount']));
+                resolve(parseInt(data['Table']['ItemCount']));
             }
         });
     });
@@ -79,7 +78,7 @@ async function getAllItemsQueryCount(TableName, status) {
     try {
         const result = await documentClient.query(params).promise();
         return result.Count;
-    } catch(e){
+    } catch (e) {
         console.error("getAllItemsQueryCount Error: ", e);
         throw handleError(1003, e, get(e, 'details[0].message', null));
     }
@@ -93,7 +92,7 @@ async function itemInsert(tableName, record) {
         Item: record
     }
     try {
-        return await documentClient.put(params).promise() 
+        return await documentClient.put(params).promise()
     } catch (e) {
         console.error("itemInsert Error: ", e);
         throw handleError(1007, e, get(e, 'details[0].message', null));
@@ -104,7 +103,7 @@ async function apiKeyCreate(apiParams, usagePlanName) {
     let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
     try {
         let result = await apigateway.createApiKey(apiParams).promise();
-        
+
         const params = {
             keyId: result.id,
             keyType: 'API_KEY',
@@ -112,7 +111,7 @@ async function apiKeyCreate(apiParams, usagePlanName) {
         };
         await apigateway.createUsagePlanKey(params).promise();
         return result
-   
+
     } catch (e) {
         console.error("apigateway Error: ", e);
         throw handleError(1006, e, get(e, 'details[0].message', null));
@@ -120,6 +119,36 @@ async function apiKeyCreate(apiParams, usagePlanName) {
 
 }
 
+/* retrieve item from table */
+async function getItem(TableName, hashKey) {
+    const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
+        TableName: TableName,
+        Key: hashKey
+    };
+    try {
+        return await documentClient.get(params).promise();
+    } catch (e) {
+        console.error("getItem Error: ", e);
+        throw handleError(1003, e, get(e, 'details[0].message', null));
+    }
+}
+
+async function updateItems(tableName, hashKey, updateExpression, attributesValues) {
+    let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
+        TableName: tableName,
+        Key: hashKey,
+        UpdateExpression: updateExpression,
+        ExpressionAttributeValues: attributesValues
+    }
+    try {
+        return await documentClient.update(params).promise();
+    } catch (e) {
+        console.error("updateItems Error: ", e);
+        throw handleError(1008, e, get(e, 'details[0].message', null));
+    }
+}
 
 module.exports = {
     fetchAllItems,
@@ -127,5 +156,7 @@ module.exports = {
     getAllItemsScanCount,
     getAllItemsQueryCount,
     itemInsert,
-    apiKeyCreate
+    apiKeyCreate,
+    getItem,
+    updateItems
 };

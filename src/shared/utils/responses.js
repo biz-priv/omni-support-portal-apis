@@ -1,9 +1,9 @@
 
 // send response 
 function send_response(http_code, resp = null) {
-    let resonseData = ""
+    var resonseData
     if (resp) {
-        responseData = resp
+      var responseData = resp
     }
     return {
         statusCode: http_code,
@@ -16,12 +16,6 @@ function send_response(http_code, resp = null) {
         body: JSON.stringify(responseData)
     }
 }
-/*============================================================= */
-module.exports = {
-    send_response,
-    handleError
-}
-
 
 const errors = [
     //createOrder - parking
@@ -33,6 +27,9 @@ const errors = [
     { code: 1005, httpStatus: 400, message: 'Unknown error occured.' },
     { code: 1006, httpStatus: 400, message: 'Error creating apikey.' },
     { code: 1007, httpStatus: 400, message: 'Error inserting items.' },
+    { code: 1008, httpStatus: 400, message: 'Error updating items.' },
+    { code: 1009, httpStatus: 400, message: 'Item not found.' },
+
 ];
 
 function getError(code) {
@@ -60,4 +57,10 @@ function errorResponse(httpStatus, errCode, message) {
         code: errCode,
         message: message
     }
+}
+
+/*============================================================= */
+module.exports = {
+    send_response,
+    handleError
 }

@@ -1,7 +1,7 @@
 {
     "resource": "/customers",
     "path": "/customers",
-    "httpMethod": "POST",
+    "httpMethod": "PUT",
     "headers": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate, br",
@@ -109,7 +109,7 @@
     "requestContext": {
         "resourceId": "pqyy9c",
         "resourcePath": "/customers",
-        "httpMethod": "POST",
+        "httpMethod": "PUT",
         "extendedRequestId": "BsX_-FiXIAMFdfQ=",
         "requestTime": "29/Jun/2021:15:19:27 +0000",
         "path": "/devint/customers",
@@ -136,6 +136,6 @@
         "domainName": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com",
         "apiId": "cqa8nhinr1"
     },
-    "body": "{\r\n    \"BillToAccNumber\": 235623,\r\n    \"SourceSystem\": \"WT\",\r\n    \"CustomerNumber\": \"987656\",\r\n    \"DeclaredType\": \"LL\",\r\n    \"Station\": \"LAX\",\r\n    \"CustomerName\": \"test1\"\r\n}",
+    "body": "{\r\n    \"CustomerId\": \"123456\",\r\n    \"DeclaredType\": 23452,\r\n    \"Station\": \"LAX1\"\r\n}",
     "isBase64Encoded": false
 }

@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 
-function noDataHandler(dbItems){
+function noDataHandler(dbItems) {
     CustomerTempData = [];
     dbItems.forEach((custItem) => {
         custItem['Created'] = "NA"
@@ -26,8 +26,7 @@ async function fetchApiKey(accountInfo) {
                 console.error("API Gateway Key Error : ", err); // an error occurred
                 CustomerData = noDataHandler(custResults);
             }
-            else 
-            {
+            else {
                 if ((data.items).length) {
                     data.items.forEach((apiKeyObject) => {
                         custResults.forEach((custItem) => {
@@ -36,7 +35,9 @@ async function fetchApiKey(accountInfo) {
                                 custItem['Updated'] = apiKeyObject['lastUpdatedDate']
                                 duration = moment.duration(moment().diff(apiKeyObject['createdDate']))
                                 custItem['Age'] = parseInt(duration.asDays())
-                                CustomerData.push(custItem);
+                                if (!CustomerData.some(el => el.CustomerID === custItem['CustomerID'])) {
+                                    CustomerData.push(custItem);
+                                }
                             }
                             else if (!custItem['Created']) {
                                 custItem['Created'] = "NA"

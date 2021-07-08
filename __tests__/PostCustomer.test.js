@@ -79,7 +79,7 @@ describe('post module test', () => {
 
         const event = require('../src/TestEvents/PostCustomer/Events/event-missing-body-parameter.json');
         let actual = await wrapped.run(event);
-        const error = '{"httpStatus":400,"code":1001,"message":"\\"BillToAccNumber\\" is required"}'
+        const error = '{"httpStatus":400,"code":1001,"message":"\\"body.BillToAccNumber\\" is required"}'
         expect(actual.body).toStrictEqual(error);
     });
 
@@ -87,7 +87,7 @@ describe('post module test', () => {
 
         const event = require('../src/TestEvents/PostCustomer/Events/event-invalid-body-parameter.json');
         let actual = await wrapped.run(event);
-        const error = '{"httpStatus":400,"code":1001,"message":"\\"BillToAccNumber\\" must be a string"}'
+        const error = '{"httpStatus":400,"code":1001,"message":"\\"body.BillToAccNumber\\" must be a string"}'
         expect(actual.body).toStrictEqual(error);
     });
 
