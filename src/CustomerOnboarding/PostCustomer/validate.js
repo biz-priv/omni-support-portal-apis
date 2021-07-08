@@ -3,7 +3,6 @@ const get = require('lodash.get');
 const { handleError } = require('../../shared/utils/responses');
 
 const custom = Joi.extend((joi) => {
-
     return {
         type: 'object',
         base: joi.object(),

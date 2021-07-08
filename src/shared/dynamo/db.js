@@ -57,8 +57,7 @@ async function getAllItemsScanCount(TableName) {
                 console.error("getAllItemsScanCount Error: ", e);
                 throw handleError(1004, e, get(e, 'details[0].message', null));
             } else {
-                let table = data['Table'];
-                resolve(parseInt(table['ItemCount']));
+                resolve(parseInt(data['Table']['ItemCount']));
             }
         });
     });
@@ -128,7 +127,7 @@ async function getItem(TableName, hashKey) {
         Key: hashKey
     };
     try {
-        return result = await documentClient.get(params).promise();
+        return await documentClient.get(params).promise();
     } catch (e) {
         console.error("getItem Error: ", e);
         throw handleError(1003, e, get(e, 'details[0].message', null));
@@ -144,7 +143,7 @@ async function updateItems(tableName, hashKey, updateExpression, attributesValue
         ExpressionAttributeValues: attributesValues
     }
     try {
-        return result = await documentClient.update(params).promise();
+        return await documentClient.update(params).promise();
     } catch (e) {
         console.error("updateItems Error: ", e);
         throw handleError(1008, e, get(e, 'details[0].message', null));

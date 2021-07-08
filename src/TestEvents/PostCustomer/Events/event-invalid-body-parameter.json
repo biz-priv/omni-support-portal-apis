@@ -1,7 +1,7 @@
 {
     "resource": "/customers",
     "path": "/customers",
-    "httpMethod": "GET",
+    "httpMethod": "POST",
     "headers": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate, br",
@@ -109,7 +109,7 @@
     "requestContext": {
         "resourceId": "pqyy9c",
         "resourcePath": "/customers",
-        "httpMethod": "GET",
+        "httpMethod": "POST",
         "extendedRequestId": "BsX_-FiXIAMFdfQ=",
         "requestTime": "29/Jun/2021:15:19:27 +0000",
         "path": "/devint/customers",
