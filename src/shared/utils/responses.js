@@ -29,6 +29,8 @@ const errors = [
     { code: 1007, httpStatus: 400, message: 'Error inserting items.' },
     { code: 1008, httpStatus: 400, message: 'Error updating items.' },
     { code: 1009, httpStatus: 400, message: 'Item not found.' },
+    { code: 1010, httpStatus: 400, message: 'Error getting apikey.' },
+    { code: 1011, httpStatus: 400, message: 'Error disassociating apikey.' },
 
 ];
 

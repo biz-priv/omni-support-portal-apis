@@ -150,6 +150,35 @@ async function updateItems(tableName, hashKey, updateExpression, attributesValue
     }
 }
 
+async function getapikey(apiKeyName) {
+    let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    const params = {
+        nameQuery: apiKeyName,
+        includeValues: true
+    };
+    try {
+        return await apigateway.getApiKeys(params).promise();
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+        throw handleError(1010, e, get(e, 'details[0].message', null));
+    }
+}
+
+async function disassociateApiKeyFromUsagePlan(apiKeyId, usageId){
+    let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    var params = {
+        keyId: apiKeyId, 
+        usagePlanId: usageId 
+      };
+      try {
+        return await apigateway.deleteUsagePlanKey(params).promise();
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+        throw handleError(1011, e, get(e, 'details[0].message', null));
+    }
+}
+
+
 module.exports = {
     fetchAllItems,
     fetchByIndex,
@@ -158,5 +187,7 @@ module.exports = {
     itemInsert,
     apiKeyCreate,
     getItem,
-    updateItems
+    updateItems,
+    getapikey,
+    disassociateApiKeyFromUsagePlan
 };
