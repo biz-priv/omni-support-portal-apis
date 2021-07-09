@@ -31,8 +31,8 @@ module.exports.handler = async (event) => {
         };
         const tokenTableItems = {
             "CustomerID": CustomerID,
-            "Customer_name": get(event, 'body.CustomerName'),
-            "Status": 'Active'
+            "CustomerName": get(event, 'body.CustomerName'),
+            "CustomerStatus": 'Active'
         }
         try {
             const [accountTableResult, apiKeyResult] = await Promise.all([Dynamo.itemInsert(ACCOUNTINFOTABLE, accountInfoTableItems), Dynamo.apiKeyCreate(apiParams, USAGEPLAN)]);

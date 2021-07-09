@@ -134,6 +134,22 @@ async function getItem(TableName, hashKey) {
     }
 }
 
+/* retrieve item from table */
+async function getItemQuery(TableName, keyCondition, expressionAttribute) {
+    const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
+        TableName: TableName,
+        KeyConditionExpression: keyCondition,
+        ExpressionAttributeValues: expressionAttribute
+    };
+    try {
+        return await documentClient.query(params).promise();
+    } catch (e) {
+        console.error("getItem Error: ", e);
+        throw handleError(1003, e, get(e, 'details[0].message', null));
+    }
+}
+
 async function updateItems(tableName, hashKey, updateExpression, attributesValues) {
     let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     const params = {
@@ -150,31 +166,31 @@ async function updateItems(tableName, hashKey, updateExpression, attributesValue
     }
 }
 
-async function getapikey(apiKeyName) {
+
+async function getapikey(apiKeyName, usageId) {
     let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
     const params = {
         nameQuery: apiKeyName,
         includeValues: true
     };
     try {
-        return await apigateway.getApiKeys(params).promise();
+        let apiKeyResult = await apigateway.getApiKeys(params).promise();
+        if ((apiKeyResult.items).length) {
+            const params = {
+                keyId: apiKeyResult.items[0].id,
+                usagePlanId: usageId
+            };
+            try {
+                await apigateway.deleteUsagePlanKey(params).promise();
+            } catch (e) {
+                console.log("apigateway Error: ", e);
+            }
+            return apiKeyResult
+        } else {
+            console.log("apigateway Error: ", handleError(1009))
+        }
     } catch (e) {
-        console.error("apigateway Error: ", e);
-        throw handleError(1010, e, get(e, 'details[0].message', null));
-    }
-}
-
-async function disassociateApiKeyFromUsagePlan(apiKeyId, usageId){
-    let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
-    var params = {
-        keyId: apiKeyId, 
-        usagePlanId: usageId 
-      };
-      try {
-        return await apigateway.deleteUsagePlanKey(params).promise();
-    } catch (e) {
-        console.error("apigateway Error: ", e);
-        throw handleError(1011, e, get(e, 'details[0].message', null));
+        console.log("apigateway Error: ", e);
     }
 }
 
@@ -189,5 +205,5 @@ module.exports = {
     getItem,
     updateItems,
     getapikey,
-    disassociateApiKeyFromUsagePlan
+    getItemQuery
 };
