@@ -16,7 +16,7 @@ module.exports.handler = async (event) => {
         try {
             let apiKeyResult = await Dynamo.apiKeyCreate({ name: get(event, 'body.CustomerId'), enabled: true, description: get(event, 'body.CustomerId') }, USAGEPLAN);
             await Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "ApiKey": apiKeyResult.value, "CustomerStatus": 'Active', "CustomerName": 'NA' })
-            console.log("Info\n" + JSON.stringify({"ApiKey": apiKeyResult.value}))
+            console.info("Info\n" + JSON.stringify({"ApiKey": apiKeyResult.value}))
             return await send_response(202, { "ApiKey": apiKeyResult.value })
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
