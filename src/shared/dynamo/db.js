@@ -169,29 +169,32 @@ async function updateItems(tableName, hashKey, updateExpression, attributesValue
 
 async function getapikey(apiKeyName, usageId) {
     let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    let apiKeyResult
     const params = {
         nameQuery: apiKeyName,
         includeValues: true
     };
     try {
-        let apiKeyResult = await apigateway.getApiKeys(params).promise();
+        apiKeyResult = await apigateway.getApiKeys(params).promise();
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+    }
+    try {
         if ((apiKeyResult.items).length) {
             const params = {
                 keyId: apiKeyResult.items[0].id,
                 usagePlanId: usageId
             };
-            try {
-                await apigateway.deleteUsagePlanKey(params).promise();
-            } catch (e) {
-                console.log("apigateway Error: ", e);
-            }
+            await apigateway.deleteUsagePlanKey(params).promise();
             return apiKeyResult
         } else {
-            console.log("apigateway Error: ", handleError(1009))
+            console.error("apigateway Error: ", handleError(1009))
         }
     } catch (e) {
-        console.log("apigateway Error: ", e);
+        console.error("apigateway Error: ", e);
     }
+
+
 }
 
 

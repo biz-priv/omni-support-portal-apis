@@ -32,21 +32,19 @@ const userActivityIdSchema = Joi.object({
 /*=========================customer id validate==============*/
 async function customerIdValidator(event){
     try{
-        event = await customerIdSchema.validateAsync(event);
+        return await customerIdSchema.validateAsync(event);
     } catch(e){
          return await handleError(1001, e, get(e, 'details[0].message', null));
     }
-    return event;
 }
 
 /*=========================user activity id validate==============*/
 async function userActivityIdValidator(event){
     try{
-        event = await userActivityIdSchema.validateAsync(event);
+        return await userActivityIdSchema.validateAsync(event);
     } catch(e){
         return handleError(1001, e, get(e, 'details[0].message', null));
     }
-    return event;
 }
 
 module.exports = {
