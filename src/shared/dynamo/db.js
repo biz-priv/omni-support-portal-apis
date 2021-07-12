@@ -134,6 +134,22 @@ async function getItem(TableName, hashKey) {
     }
 }
 
+/* retrieve item from table */
+async function getItemQuery(TableName, keyCondition, expressionAttribute) {
+    const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
+        TableName: TableName,
+        KeyConditionExpression: keyCondition,
+        ExpressionAttributeValues: expressionAttribute
+    };
+    try {
+        return await documentClient.query(params).promise();
+    } catch (e) {
+        console.error("getItem Error: ", e);
+        throw handleError(1003, e, get(e, 'details[0].message', null));
+    }
+}
+
 async function updateItems(tableName, hashKey, updateExpression, attributesValues) {
     let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     const params = {
@@ -150,6 +166,38 @@ async function updateItems(tableName, hashKey, updateExpression, attributesValue
     }
 }
 
+
+async function getapikey(apiKeyName, usageId) {
+    let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    let apiKeyResult
+    const params = {
+        nameQuery: apiKeyName,
+        includeValues: true
+    };
+    try {
+        apiKeyResult = await apigateway.getApiKeys(params).promise();
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+    }
+    try {
+        if ((apiKeyResult.items).length) {
+            const params = {
+                keyId: apiKeyResult.items[0].id,
+                usagePlanId: usageId
+            };
+            await apigateway.deleteUsagePlanKey(params).promise();
+            return apiKeyResult
+        } else {
+            console.error("apigateway Error: ", handleError(1009))
+        }
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+    }
+
+
+}
+
+
 module.exports = {
     fetchAllItems,
     fetchByIndex,
@@ -158,5 +206,7 @@ module.exports = {
     itemInsert,
     apiKeyCreate,
     getItem,
-    updateItems
+    updateItems,
+    getapikey,
+    getItemQuery
 };
