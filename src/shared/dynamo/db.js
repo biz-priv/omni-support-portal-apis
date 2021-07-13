@@ -134,6 +134,22 @@ async function getItem(TableName, hashKey) {
     }
 }
 
+/* retrieve item from table using filter */
+async function getItemQueryFilter(TableName, keyCondition, filterExpression, expressionAttribute) {
+    const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
+        TableName: TableName,
+        KeyConditionExpression: keyCondition,
+        FilterExpression: filterExpression,
+        ExpressionAttributeValues: expressionAttribute
+    };
+    try {
+        return await documentClient.query(params).promise();
+    } catch (e) {
+        console.error("getItem Error: ", e);
+        throw handleError(1003, e, get(e, 'details[0].message', null));
+    }
+}
 /* retrieve item from table */
 async function getItemQuery(TableName, keyCondition, expressionAttribute) {
     const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
@@ -193,8 +209,34 @@ async function getapikey(apiKeyName, usageId) {
     } catch (e) {
         console.error("apigateway Error: ", e);
     }
+}
 
-
+async function checkApiKeyUsagePlan(keyName, usageId) {
+    let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    let keyResult
+    const params = {
+        nameQuery: keyName,
+        includeValues: true
+    };
+    try {
+        keyResult = await apigateway.getApiKeys(params).promise();
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+        throw handleError(1010, e, get(e, 'details[0].message', null));
+    }
+    try {
+        if ((keyResult.items).length) {
+            const params = {
+                keyId: keyResult.items[0].id,
+                usagePlanId: usageId
+            };
+            return await apigateway.getUsagePlanKey(params).promise();
+        } else {
+            console.error("apigateway Error: ", handleError(1009));
+        }
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+    }
 }
 
 
@@ -208,5 +250,7 @@ module.exports = {
     getItem,
     updateItems,
     getapikey,
-    getItemQuery
+    getItemQuery,
+    getItemQueryFilter,
+    checkApiKeyUsagePlan
 };
