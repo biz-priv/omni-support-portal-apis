@@ -31,6 +31,8 @@ const errors = [
     { code: 1009, httpStatus: 400, message: 'Item not found.' },
     { code: 1010, httpStatus: 400, message: 'Error getting apikey.' },
     { code: 1011, httpStatus: 400, message: 'Error disassociating apikey.' },
+    { code: 1012, httpStatus: 400, message: 'Error getting usageplan.' },
+    { code: 1013, httpStatus: 400, message: 'ApiKey already exist.' },
 
 ];
 
