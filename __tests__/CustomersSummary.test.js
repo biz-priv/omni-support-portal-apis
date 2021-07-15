@@ -19,10 +19,6 @@ describe('Get count module test', () => {
 
     it('get total count, active count and inactive count', async () => {
 
-        AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
-            callback(null, { Table: { ItemCount: '8' } });
-        });
-
         AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
             callback(null, queryActiveCustomersResponse);
         });
@@ -38,32 +34,7 @@ describe('Get count module test', () => {
 
     });
 
-    it('error from getting total count', async () => {
-
-        AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
-            callback({"error": "error from db"}, null);
-        });
-
-        AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-            callback(null, queryActiveCustomersResponse);
-        });
-
-        AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-            callback(null, queryInactiveCustomersResponse);
-        });
-
-        const event = require('../src/TestEvents/CustomersSummary/Events/event.json');
-        const result = await wrapped.run(event);
-        const error = '{"httpStatus":400,"code":1004,"message":"Error fetching items."}' 
-        expect(result.body).toStrictEqual(error);
-
-    });
-
     it('error from getting active or inactive count', async () => {
-
-        AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
-            callback(null, { Table: { ItemCount: '10' } });
-        });
 
         AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
             callback({"error": "error from db"}, null);
