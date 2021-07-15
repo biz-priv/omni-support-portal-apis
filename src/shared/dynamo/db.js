@@ -20,6 +20,7 @@ async function fetchAllItems(TableName, limit, startkey) {
     }
 }
 
+/* fetch record using index */
 async function fetchByIndex(TableName, status, limit, startkey) {
     const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     let params = {
@@ -99,6 +100,7 @@ async function itemInsert(tableName, record) {
     }
 }
 
+/* create apikey and associate to usageplan */
 async function apiKeyCreate(apiParams, usagePlanName) {
     let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
     try {
@@ -166,6 +168,7 @@ async function getItemQuery(TableName, keyCondition, expressionAttribute) {
     }
 }
 
+/* update record */
 async function updateItems(tableName, hashKey, updateExpression, attributesValues) {
     let documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     const params = {
@@ -182,7 +185,35 @@ async function updateItems(tableName, hashKey, updateExpression, attributesValue
     }
 }
 
+/* get apikey from apigateway and delete it */
+async function deleteApiKey(apiKeyName) {
+    let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
+    let apiKeyResult
+    const params = {
+        nameQuery: apiKeyName,
+        includeValues: true
+    };
+    try {
+        apiKeyResult = await apigateway.getApiKeys(params).promise();
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+    }
+    try {
+        if ((apiKeyResult.items).length) {
+            const params = {
+                apiKey: apiKeyResult.items[0].id
+            }
+            await apigateway.deleteApiKey(params).promise();
+            return apiKeyResult
+        } else {
+            console.error("apigateway Error: ", handleError(1009))
+        }
+    } catch (e) {
+        console.error("apigateway Error: ", e);
+    }
+}
 
+/* get apikey from apigateway and diassociate from usageplan */
 async function getapikey(apiKeyName, usageId) {
     let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
     let apiKeyResult
@@ -211,6 +242,7 @@ async function getapikey(apiKeyName, usageId) {
     }
 }
 
+/* get apikey from apigateway and check in usageplan */
 async function checkApiKeyUsagePlan(keyName, usageId) {
     let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
     let keyResult
@@ -252,5 +284,6 @@ module.exports = {
     getapikey,
     getItemQuery,
     getItemQueryFilter,
-    checkApiKeyUsagePlan
+    checkApiKeyUsagePlan,
+    deleteApiKey
 };
