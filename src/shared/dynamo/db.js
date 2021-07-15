@@ -54,9 +54,8 @@ async function getAllItemsScanCount(TableName) {
     return new Promise((resolve, reject) => {
         dynamoSvc.describeTable(params, function (e, data) {
             if (e) {
-                // reject({ "error": err });
                 console.error("getAllItemsScanCount Error: ", e);
-                throw handleError(1004, e, get(e, 'details[0].message', null));
+                 reject(handleError(1004, e, get(e, 'details[0].message', null)));
             } else {
                 resolve(parseInt(data['Table']['ItemCount']));
             }

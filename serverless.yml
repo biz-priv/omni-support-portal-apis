@@ -51,6 +51,7 @@ functions:
     - ${file(config/CustomerOnboarding/getCustomersList.yml)} 
     - ${file(config/CustomerOnboarding/postCustomer.yml)}
     - ${file(config/CustomerOnboarding/updateCustomer.yml)}
+    - ${file(config/CustomerOnboarding/customersSummary.yml)}    
 
     - ${file(config/KeyManagement/postKey.yml)}    
     - ${file(config/KeyManagement/updateKey.yml)}
