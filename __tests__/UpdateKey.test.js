@@ -29,6 +29,10 @@ describe('update module test', () => {
             callback(null, apiKeysResponse);
         });
 
+        AWSMock.mock('APIGateway', 'deleteApiKey', function (APIparams, callback) {
+            callback(null, {});
+        });
+
         AWSMock.mock('APIGateway', 'deleteUsagePlanKey', function (APIparams, callback) {
             callback(null, {});
         });
@@ -75,6 +79,10 @@ describe('update module test', () => {
 
         AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
             callback(null, { items: [] });
+        });
+
+        AWSMock.mock('APIGateway', 'deleteApiKey', function (APIparams, callback) {
+            callback(null, {});
         });
 
         AWSMock.mock('APIGateway', 'deleteUsagePlanKey', function (APIparams, callback) {
@@ -125,6 +133,10 @@ describe('update module test', () => {
             callback(null, apiKeysResponse);
         });
 
+        AWSMock.mock('APIGateway', 'deleteApiKey', function (APIparams, callback) {
+            callback(null, {});
+        });
+
         AWSMock.mock('APIGateway', 'deleteUsagePlanKey', function (APIparams, callback) {
             callback(null, {});
         });
@@ -158,6 +170,10 @@ describe('update module test', () => {
         })
 
         AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+            callback({"error": "apigateway error"}, null);
+        });
+
+        AWSMock.mock('APIGateway', 'deleteApiKey', function (APIparams, callback) {
             callback({"error": "apigateway error"}, null);
         });
 
@@ -197,6 +213,10 @@ describe('update module test', () => {
             callback(null, apiKeysResponse);
         });
 
+        AWSMock.mock('APIGateway', 'deleteApiKey', function (APIparams, callback) {
+            callback(null, {});
+        });
+
         AWSMock.mock('APIGateway', 'deleteUsagePlanKey', function (APIparams, callback) {
             callback(null, {});
         });
@@ -231,6 +251,10 @@ describe('update module test', () => {
 
         AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
             callback(null, apiKeysResponse);
+        });
+
+        AWSMock.mock('APIGateway', 'deleteApiKey', function (APIparams, callback) {
+            callback(null, {});
         });
 
         AWSMock.mock('APIGateway', 'deleteUsagePlanKey', function (APIparams, callback) {
