@@ -3,14 +3,14 @@ const get = require('lodash.get');
 const { handleError } = require('../utils/responses');
 
 /* fetch all items from table */
-async function fetchAllItems(TableName, limit, startkey) {
+async function fetchAllItems(tableName, limit, startKey) {
     const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     let params = {
-        TableName: TableName,
+        TableName: tableName,
         Limit: limit
     };
-    if (startkey) {
-        params['ExclusiveStartKey'] = startkey;
+    if (startKey) {
+        params['ExclusiveStartKey'] = startKey;
     }
     try {
         return await documentClient.scan(params).promise();
@@ -21,10 +21,10 @@ async function fetchAllItems(TableName, limit, startkey) {
 }
 
 /* fetch record using index */
-async function fetchByIndex(TableName, status, limit, startkey) {
+async function fetchByIndex(tableName, status, limit, startKey) {
     const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     let params = {
-        TableName: TableName,
+        TableName: tableName,
         Limit: limit,
         IndexName: 'CustomerStatusIndex',
         KeyConditionExpression: 'CustomerStatus = :hkey',
@@ -33,8 +33,8 @@ async function fetchByIndex(TableName, status, limit, startkey) {
         }
     };
 
-    if (startkey) {
-        params['ExclusiveStartKey'] = startkey
+    if (startKey) {
+        params['ExclusiveStartKey'] = startKey
     }
     try {
         return await documentClient.query(params).promise();
@@ -46,17 +46,16 @@ async function fetchByIndex(TableName, status, limit, startkey) {
 }
 
 /* retrieve all items count from table */
-async function getAllItemsScanCount(TableName) {
+async function getAllItemsScanCount(tableName) {
     const dynamoSvc = new AWS.DynamoDB({ region: process.env.DEFAULT_AWS });
     const params = {
-        TableName: TableName,
+        TableName: tableName,
     };
     return new Promise((resolve, reject) => {
         dynamoSvc.describeTable(params, function (e, data) {
             if (e) {
-                // reject({ "error": err });
                 console.error("getAllItemsScanCount Error: ", e);
-                throw handleError(1004, e, get(e, 'details[0].message', null));
+                 reject(handleError(1004, e, get(e, 'details[0].message', null)));
             } else {
                 resolve(parseInt(data['Table']['ItemCount']));
             }
@@ -65,10 +64,10 @@ async function getAllItemsScanCount(TableName) {
 }
 
 /* retrieve all items count from table */
-async function getAllItemsQueryCount(TableName, status) {
+async function getAllItemsQueryCount(tableName, status) {
     const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     const params = {
-        TableName: TableName,
+        TableName: tableName,
         IndexName: 'CustomerStatusIndex',
         KeyConditionExpression: 'CustomerStatus = :hkey',
         ExpressionAttributeValues: {
@@ -122,10 +121,10 @@ async function apiKeyCreate(apiParams, usagePlanName) {
 }
 
 /* retrieve item from table */
-async function getItem(TableName, hashKey) {
+async function getItem(tableName, hashKey) {
     const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     const params = {
-        TableName: TableName,
+        TableName: tableName,
         Key: hashKey
     };
     try {
@@ -137,10 +136,10 @@ async function getItem(TableName, hashKey) {
 }
 
 /* retrieve item from table using filter */
-async function getItemQueryFilter(TableName, keyCondition, filterExpression, expressionAttribute) {
+async function getItemQueryFilter(tableName, keyCondition, filterExpression, expressionAttribute) {
     const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     const params = {
-        TableName: TableName,
+        TableName: tableName,
         KeyConditionExpression: keyCondition,
         FilterExpression: filterExpression,
         ExpressionAttributeValues: expressionAttribute
@@ -153,10 +152,10 @@ async function getItemQueryFilter(TableName, keyCondition, filterExpression, exp
     }
 }
 /* retrieve item from table */
-async function getItemQuery(TableName, keyCondition, expressionAttribute) {
+async function getItemQuery(tableName, keyCondition, expressionAttribute) {
     const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
     const params = {
-        TableName: TableName,
+        TableName: tableName,
         KeyConditionExpression: keyCondition,
         ExpressionAttributeValues: expressionAttribute
     };
@@ -186,7 +185,7 @@ async function updateItems(tableName, hashKey, updateExpression, attributesValue
 }
 
 /* get apikey from apigateway and delete it */
-async function deleteApiKey(apiKeyName) {
+async function apiKeyDelete(apiKeyName) {
     let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
     let apiKeyResult
     const params = {
@@ -214,7 +213,7 @@ async function deleteApiKey(apiKeyName) {
 }
 
 /* get apikey from apigateway and diassociate from usageplan */
-async function getapikey(apiKeyName, usageId) {
+async function fetchApiKeyAndDisassociateUsagePlan(apiKeyName, usageId) {
     let apigateway = new AWS.APIGateway({ region: process.env.DEFAULT_AWS });
     let apiKeyResult
     const params = {
@@ -281,9 +280,9 @@ module.exports = {
     apiKeyCreate,
     getItem,
     updateItems,
-    getapikey,
+    fetchApiKeyAndDisassociateUsagePlan,
     getItemQuery,
     getItemQueryFilter,
     checkApiKeyUsagePlan,
-    deleteApiKey
+    apiKeyDelete
 };

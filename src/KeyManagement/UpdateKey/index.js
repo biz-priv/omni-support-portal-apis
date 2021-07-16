@@ -17,7 +17,7 @@ module.exports.handler = async (event) => {
             let getItemResult = await Dynamo.getItemQueryFilter(TOKENVALIDATORTABLE, 'CustomerID = :hkey', 'CustomerStatus = :statuskey', { ':hkey': get(event, 'body.CustomerId'), ':statuskey': 'Active' });
 
             if ((getItemResult.Items).length) {
-                const [apiKeyResult, updateItemResult] = await Promise.all([Dynamo.deleteApiKey(get(event, 'body.CustomerId')), Dynamo.updateItems(TOKENVALIDATORTABLE, { 'CustomerID': get(event, 'body.CustomerId'), 'ApiKey': getItemResult.Items[0].ApiKey }, 'set CustomerStatus = :x', { ':x': 'Inactive' })])
+                const [apiKeyResult, updateItemResult] = await Promise.all([Dynamo.apiKeyDelete(get(event, 'body.CustomerId')), Dynamo.updateItems(TOKENVALIDATORTABLE, { 'CustomerID': get(event, 'body.CustomerId'), 'ApiKey': getItemResult.Items[0].ApiKey }, 'set CustomerStatus = :x', { ':x': 'Inactive' })])
 
                 let apiKeyValue = await Dynamo.apiKeyCreate({ "description": get(event, 'body.CustomerId'), "enabled": true, "name": get(event, 'body.CustomerId') }, USAGEPLAN);
                 await Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "CustomerName": getItemResult.Items[0].CustomerName, "CustomerStatus": "Active", "ApiKey": apiKeyValue.value });
