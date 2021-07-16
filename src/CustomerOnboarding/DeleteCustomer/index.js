@@ -16,7 +16,7 @@ module.exports.handler = async (event) => {
         try {
             let getItemResult = await Dynamo.getItemQuery(TOKENVALIDATORTABLE, 'CustomerID = :hkey', { ':hkey': get(event, 'body.CustomerId') });
             if ((getItemResult.Items).length) {
-                await Dynamo.getapikey(get(event, 'body.CustomerId'), USAGEPLAN);
+                await Dynamo.fetchApiKeyAndDisassociateUsagePlan(get(event, 'body.CustomerId'), USAGEPLAN);
                 await Promise.all([Dynamo.updateItems(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') }, 'set CustomerStatus = :x', { ':x': 'Inactive' }), Dynamo.updateItems(TOKENVALIDATORTABLE, { 'CustomerID': get(event, 'body.CustomerId'), 'ApiKey': getItemResult.Items[0].ApiKey }, 'set CustomerStatus = :x', { ':x': 'Inactive' })])
                 return await send_response(202);
             } else {
