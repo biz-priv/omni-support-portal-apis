@@ -23,11 +23,6 @@ const customerIdSchema = Joi.object({
     })
 }).unknown(true);
 
-const userActivityIdSchema = Joi.object({
-    pathParameters: Joi.object({
-        id: Joi.number().required()
-    })
-}).unknown(true);
 
 /*=========================customer id validate==============*/
 async function customerIdValidator(event){
@@ -38,16 +33,7 @@ async function customerIdValidator(event){
     }
 }
 
-/*=========================user activity id validate==============*/
-async function userActivityIdValidator(event){
-    try{
-        return await userActivityIdSchema.validateAsync(event);
-    } catch(e){
-        return handleError(1001, e, get(e, 'details[0].message', null));
-    }
-}
 
 module.exports = {
-    customerIdValidator,
-    userActivityIdValidator
+    customerIdValidator
 }
