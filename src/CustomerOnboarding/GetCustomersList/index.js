@@ -70,7 +70,7 @@ async function getResponse(results, count, startkey, status, page, size, event) 
     let prevLink = host + path + "&page=" + page + "&size=" +
         size + "&startkey=" + prevLinkStartKey;
 
-    var response = await pagination.createPagination(resp, host, path, page, size, elementCount, LastEvaluatedkeyCustomerID, count, prevLink);
+    var response = await pagination.createPagination(resp, host, path+ "&page=", page, size, elementCount, LastEvaluatedkeyCustomerID, count, prevLink);
 
     if (lastCustomerId !== 0) {
         response.Page["StartKey"] = lastCustomerId;

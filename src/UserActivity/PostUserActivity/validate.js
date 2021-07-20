@@ -25,7 +25,7 @@ const schema = Joi.object({
     body: custom.object({
         Activity: Joi.string().required(),
         Description: Joi.string().required(),
-        Timestamp: Joi.string().default(moment().format())
+        Timestamp: Joi.string().default(moment().format('MMMM Do YYYY, h:mm:ss a'))
     })
 }).unknown(true)
 

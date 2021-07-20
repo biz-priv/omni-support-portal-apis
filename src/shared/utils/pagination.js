@@ -22,7 +22,7 @@ async function createPagination(response, host, path, page, size, elementCount, 
 
   if (LastEvaluatedkey) {
     page += 1;
-    links["self"]["nextHref"] = host + path + "&page=" + page + "&size=" + size + LastEvaluatedkey;
+    links["self"]["nextHref"] = host + path + page + "&size=" + size + LastEvaluatedkey;
     response["_links"] = links;
   }
   response["_links"] = links;
