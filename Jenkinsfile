@@ -33,7 +33,7 @@ pipeline {
                     npm i
                     cd lib/nodejs
                     npm i
-                    cd ..
+                    cd ../..
                     serverless --version
                     sls deploy -s ${env.ENVIRONMENT}
                     """
