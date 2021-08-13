@@ -1,42 +1,66 @@
-const { success, failure } = require('../../shared/utils/responses');
-const { userActivityIdValidator } = require('../../shared/utils/validator');
-//static response
-let response = [{
-    "CustomerId": 1,
-    "Type": "type test1",
-    "Timestamp": "2021-06-15 10:10:10+05:30",
-    "Description": "desc1"
-},
-{
-    "CustomerId": 2,
-    "Type": "test2",
-    "Timestamp": "2021-06-15 10:10:10+05:30",
-    "Description": "desc2"
-},
-{
-    "CustomerId": 3,
-    "Type": "type test3",
-    "Timestamp": "2021-06-15 10:10:10+05:30",
-    "Description": "desc3"
-},
-{
-    "CustomerId": 4,
-    "Type": "test4",
-    "Timestamp": "2021-06-15 10:10:10+05:30",
-    "Description": "desc4"
-}]
+const { send_response } = require('../../shared/utils/responses');
+const validate = require('./validate');
+const Dynamo = require('../../shared/dynamo/db');
+const { get } = require('lodash');
+const USERACTIVITY = process.env.USER_ACTIVITY;
+const pagination = require('../../shared/utils/pagination');
 
-//get user activity list 
+
+//post user activity
 module.exports.handler = async (event) => {
-    console.info("Event\n" + JSON.stringify(event, null, 2));
-    //validate pathParameters
-    const { error, value } = await userActivityIdValidator.validate(event.pathParameters);
-    if (error) {
-        console.error("Error\n" + JSON.stringify(error, null, 2));
-        return failure(400, "missing required parameters", error);
+    console.info("Event: ", JSON.stringify(event));
+    event = await validate(event);
+    if (!event.code) {
+        let startKey = { UserId: get(event, 'queryStringParameters.startkey'), Timestamp: get(event, 'queryStringParameters.endkey') };
+        let getItemResult, totalCount
+        try {
+            startKey = (startKey.UserId == null || startKey.UserId == 0) ? null : startKey;
+            [getItemResult, totalCount] = await Promise.all([Dynamo.getItemQueryWithLimit(USERACTIVITY, get(event, 'queryStringParameters.size'), 'UserId = :uid', { ':uid': get(event, 'pathParameters.id') }, startKey), Dynamo.getScanCount(USERACTIVITY, 'UserId = :uid', { ':uid': get(event, 'pathParameters.id') })]);
+            return await getResponse(getItemResult, totalCount.Count, startKey, get(event, 'queryStringParameters.page'), get(event, 'queryStringParameters.size'), event);
+        } catch (e) {
+            console.error("Error: ", JSON.stringify(e));
+            return await send_response(e.httpStatus, e);
+        }
     } else {
-        console.info("Response\n" + JSON.stringify(response, null, 2));
-        return success(200, response);
+        console.error("Error: ", JSON.stringify(event));
+        return await send_response(event.httpStatus, event);
     }
 
+}
+
+async function getResponse(results, count, startkey, page, size, event) {
+    let resp = {}
+    resp["Activity"] = get(results, 'Items', []);
+
+    let elementCount = resp['Activity'].length;
+    let deployStage = get(event, 'requestContext.stage', 'devint');
+    let lastUserId = 0;
+    let lastKey = 0;
+
+    if (get(results, 'LastEvaluatedKey', null)) {
+        lastUserId = get(results, 'LastEvaluatedKey.UserId');
+        lastKey = get(results, 'LastEvaluatedKey.Timestamp')
+        var LastEvaluatedkey = "&startkey=" + lastUserId + "&endkey=" + lastKey;
+    }
+
+    let prevLinkStartKey = 0;
+    let prevLinkEndKey = 0;
+    if (startkey !== null) {
+        prevLinkStartKey = startkey.UserId;
+        prevLinkEndKey = startkey.Timestamp;
+    }
+
+    let host = get(event, 'headers.Host', null) + "/" + deployStage;
+    let path = get(event, 'path', null);
+    let prevLink = host + path + "?page=" + page + "&size=" +
+        size + "&startkey=" + prevLinkStartKey + "&endkey=" + prevLinkEndKey;
+
+    var response = await pagination.createPagination(resp, host, path + "?page=", page, size, elementCount, LastEvaluatedkey, count, prevLink);
+
+    if (lastUserId !== 0) {
+        response.Page["StartKey"] = lastUserId;
+        response.Page["EndKey"] = lastKey;
+    }
+    console.info("Response: ", JSON.stringify(response));
+    return await send_response(200, response);
 }
