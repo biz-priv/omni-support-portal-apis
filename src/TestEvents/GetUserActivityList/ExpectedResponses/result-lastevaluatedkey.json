@@ -2,13 +2,13 @@
     "Activity": [
         {
             "UserId": "4213",
-            "Timestamp": "2021-08-13T20:13:35+05:30",
+            "Timestamp": "July 20th 2021, 5:20:24 pm",
             "Activity": "test",
             "Description": "testing"
         },
         {
             "UserId": "4213",
-            "Timestamp": "2021-08-13T20:13:35+05:30",
+            "Timestamp": "July 20th 2021, 5:20:24 pm",
             "Activity": "test",
             "Description": "testing"
         }
@@ -19,12 +19,12 @@
         "TotalPages": 1,
         "Number": 1,
         "StartKey": "4213",
-        "EndKey": "2021-08-13T20:13:35+05:30"
+        "EndKey": "July 20th 2021, 5:20:24 pm"
     },
     "_links": {
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity/1234?page=1&size=2&startkey=4213&endkey=2021-08-13T20:13:35+05:30",
-            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity/1234?page=2&size=2&startkey=4213&endkey=2021-08-13T20:13:35+05:30"
+            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity/1234?page=1&size=2&startkey=4213&endkey=July 20th 2021, 5:20:24 pm",
+            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity/1234?page=2&size=2&startkey=4213&endkey=July 20th 2021, 5:20:24 pm"
         }
     }
 }
