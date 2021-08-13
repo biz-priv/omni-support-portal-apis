@@ -2,13 +2,13 @@
     "Items": [
         {
             "UserId": "4213",
-            "Timestamp": "July 20th 2021, 5:20:24 pm",
+            "Timestamp": "2021-08-13T20:13:35+05:30",
             "Activity": "test",
             "Description": "testing"
         },
         {
             "UserId": "4213",
-            "Timestamp": "July 20th 2021, 5:20:28 pm",
+            "Timestamp": "2021-08-13T20:13:35+05:30",
             "Activity": "test",
             "Description": "testing"
         }
@@ -17,6 +17,6 @@
     "ScannedCount": 2,
     "LastEvaluatedKey": {
         "UserId": "4213",
-        "Timestamp": "July 20th 2021, 5:20:28 pm"
+        "Timestamp": "2021-08-13T20:13:35+05:30"
     }
 }
