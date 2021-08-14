@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const get = require('lodash.get');
 const { handleError } = require('../../shared/utils/responses');
-const moment = require("moment");
+
 
 const custom = Joi.extend((joi) => {
     return {
@@ -24,8 +24,7 @@ const schema = Joi.object({
     }),
     body: custom.object({
         Activity: Joi.string().required(),
-        Description: Joi.string().required(),
-        Timestamp: Joi.string().default(moment().format('MMMM Do YYYY, h:mm:ss a'))
+        Description: Joi.string().required()
     })
 }).unknown(true)
 
