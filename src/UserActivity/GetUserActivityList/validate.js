@@ -2,30 +2,16 @@ const Joi = require('joi');
 const get = require('lodash.get');
 const { handleError } = require('../../shared/utils/responses');
 
-
-const custom = Joi.extend((joi) => {
-    return {
-        type: 'object',
-        base: joi.object(),
-        coerce(value, schema) {
-            try {
-                return { value: JSON.parse(value) };
-            }
-            catch (err) {
-                return err;
-            }
-        }
-    };
-});
-
 const schema = Joi.object({
     pathParameters: Joi.object({
         id: Joi.string().required()
     }),
-    body: custom.object({
-        Activity: Joi.string().required(),
-        Description: Joi.string().required()
-    })
+    queryStringParameters: Joi.object({
+        page: Joi.number().default(1),
+        size: Joi.number().default(10),
+        startkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')}),
+        endkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')})
+    }).empty(null).default({page: 1, size: 10, startkey: 0, endkey: 0})
 }).unknown(true)
 
 async function validate(event) {

@@ -316,6 +316,44 @@ async function checkApiKeyUsagePlan(keyName, usageId) {
   }
 }
 
+
+/* retrieve item from table */
+async function getItemQueryWithLimit(tableName, limit, keyCondition, expressionAttribute, startKey) {
+    const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
+        TableName: tableName,
+        Limit: limit,   
+        KeyConditionExpression: keyCondition,
+        ExpressionAttributeValues: expressionAttribute
+    };
+    if (startKey) {
+        params['ExclusiveStartKey'] = startKey
+    }
+    try {
+        return await documentClient.query(params).promise();
+    } catch (e) {
+        console.error("getItem Error: ", e);
+        throw handleError(1003, e, get(e, 'details[0].message', null));
+    }
+}
+
+/* get all record count */
+async function getScanCount(tableName, filterExpression, expressionAttributeValues) {
+    const documentClient = new AWS.DynamoDB.DocumentClient({ region: process.env.DEFAULT_AWS });
+    const params = {
+        TableName: tableName,
+        FilterExpression: filterExpression,
+        ExpressionAttributeValues: expressionAttributeValues,
+        Select: 'COUNT'
+    }
+    try {
+        return await documentClient.scan(params).promise();
+    } catch (e) {
+        console.error("getScanCount Error: ", e);
+        reject(handleError(1004, e, get(e, 'details[0].message', null)));
+    }
+}
+
 module.exports = {
   fetchAllItems,
   fetchByIndex,
@@ -330,5 +368,8 @@ module.exports = {
   getItemQueryFilter,
   checkApiKeyUsagePlan,
   apiKeyDelete,
-  getAllItemsQueryFilter,
+  getItemQueryWithLimit,
+  getScanCount,
+  getAllItemsQueryFilter
 };
+
