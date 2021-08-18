@@ -41,7 +41,6 @@ async function getAllItemsQueryFilter(
   try {
     return await documentClient.scan(params).promise();
   } catch (e) {
-    console.error("getAllItemsQueryFilter Error: ", e);
     throw handleError(1003, e, get(e, "details[0].message", null));
   }
 }

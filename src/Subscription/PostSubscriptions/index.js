@@ -3,39 +3,20 @@ const Joi = require("joi");
 const AWS = require("aws-sdk");
 const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
 const Dynamo = require("../../shared/dynamo/db");
+const { createSubscriptionValidator } = require("../../shared/utils/validator");
 
 const TOKEN_VALIDATOR = process.env.TOKEN_VALIDATOR;
 const CUSTOMER_PREFERENCE_TABLE = process.env.CUSTOMER_PREFERENCE_TABLE;
 const EVENTING_TOPICS_TABLE = process.env.EVENTING_TOPICS_TABLE;
 
-/*=================create subscriptions parameters validate==============*/
-var createSubscriptionValidator = Joi.object().keys({
-  EventType: Joi.string().required(),
-  Preference: Joi.string().required(),
-  Endpoint: Joi.string().pattern(
-    new RegExp(
-      "^(https?:\\/\\/)?" +
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
-        "((\\d{1,3}\\.){3}\\d{1,3}))" +
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-        "(\\?[;&a-z\\d%_.~+=-]*)?" +
-        "(\\#[-a-z\\d_]*)?$",
-      "i"
-    )
-  ),
-  SharedSecret: Joi.string().required(),
-});
-
 /*=================post subscription==============*/
 module.exports.handler = async (event) => {
   const eventBody = !event.body ? null : event.body;
-  //validate subscription parameters
-  const { error, value } = createSubscriptionValidator.validate(eventBody);
+  const value = await createSubscriptionValidator(eventBody);
   try {
-    if (error) {
-      return handleError(1015); // "missing required parameters"
+    if (value.code) {
+      return value; // "missing required parameters"
     } else {
-      // const ApiKey = "9jM8ATQQYB2XmJsETRAq77EuqcY522Xu3pszdmcY";
       const ApiKey = event.headers["x-api-key"];
       const customerId = await getCustomerId(ApiKey);
       const customerSub = await getCustomerPreference(
@@ -52,29 +33,20 @@ module.exports.handler = async (event) => {
           value.EventType
           // preference
         );
-        //insert
         let subscriptionArn = snsTopicDetails.Event_Payload_Topic_Arn;
         if (value.Preference == "fullPayload") {
           subscriptionArn = snsTopicDetails.Full_Payload_Topic_Arn;
         }
 
-        const createCustomerSub = await createCustomerPreference(
-          customerId,
-          value,
-          subscriptionArn
-        );
+        await createCustomerPreference(customerId, value, subscriptionArn);
 
         //Create an SNS subscription with filter policy as CustomerID.
-        const topicSubcription = await subscribeToTopic(
-          subscriptionArn,
-          value.Endpoint,
-          customerId
-        );
+        await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
       }
       return send_response(200, { message: "Subscription successfully added" });
     }
   } catch (error) {
-    return handleError(1005);
+    return handleError(1005, null, error);
   }
 };
 
@@ -98,12 +70,10 @@ function getCustomerId(ApiKey) {
         response.Items[0].CustomerID
       ) {
         resolve(response.Items[0].CustomerID);
-      } else {
-        resolve(null);
       }
+      reject("getCustomerIdError: Customer is not exists");
     } catch (error) {
-      // console.error(error);
-      reject(error);
+      reject("getCustomerIdError: Something went wrong");
     }
   });
 }
@@ -143,12 +113,10 @@ function getCustomerPreference(
         response.Items[0].Subscription_Preference
       ) {
         resolve(true);
-      } else {
-        resolve(false);
       }
+      resolve(false);
     } catch (error) {
-      // console.error(error);
-      reject(error);
+      reject("getCustomerPreferenceError: Something went wrong");
     }
   });
 }
@@ -170,8 +138,7 @@ function getSnsTopicDetails(eventType, preference = null) {
         Full_Payload_Topic_Arn: response.Item.Full_Payload_Topic_Arn,
       });
     } catch (error) {
-      // console.error(error);
-      reject(error);
+      reject("getSnsTopicDetailsError: Something went wrong");
     }
   });
 }
@@ -194,14 +161,9 @@ function createCustomerPreference(custId, eventBody, subscriptionArn) {
         Shared_Secret: eventBody.SharedSecret,
         Subscription_arn: subscriptionArn,
       });
-      if (response.Item && response.Item) {
-        resolve(true);
-      } else {
-        resolve(false);
-      }
+      resolve(true);
     } catch (error) {
-      // console.error(error);
-      reject(error);
+      reject("createCustomerPreferenceError: Unable to create customer");
     }
   });
 }
@@ -225,10 +187,13 @@ function subscribeToTopic(topic_arn, endpoint, customer_id) {
         },
         ReturnSubscriptionArn: true,
       };
-      // await sns.subscribe(params).promise();
-      resolve(await sns.subscribe(params).promise());
+      const data = await sns.subscribe(params).promise();
+      if (data.ResponseMetadata) {
+        resolve(true);
+      }
+      reject("subscribeToTopicError: Unable to subscribe");
     } catch (error) {
-      reject(error);
+      reject("subscribeToTopicError: sns subscribe error");
     }
   });
 }

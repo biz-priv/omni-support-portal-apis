@@ -41,9 +41,9 @@ function getError(code) {
 }
 
 function handleError(code, exception = null, msg = null) {
-  if (exception) {
-    console.error("Exception: ", exception);
-  }
+  // if (exception) {
+  //   console.error("Exception: ", exception);
+  // }
 
   const error = getError(code);
 
@@ -51,16 +51,11 @@ function handleError(code, exception = null, msg = null) {
 
   const errorResp = errorResponse(error.httpStatus, error.code, msg);
 
-  console.error("Error Response: ", errorResp);
+  // console.error("Error Response: ", errorResp);
   return errorResp;
 }
 
 function errorResponse(httpStatus, errCode, message) {
-  console.log("response", {
-    httpStatus: httpStatus,
-    code: errCode,
-    message: message,
-  });
   return {
     httpStatus: httpStatus,
     code: errCode,

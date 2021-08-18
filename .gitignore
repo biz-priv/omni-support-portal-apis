@@ -101,3 +101,4 @@ package-lock.json
 #zip files
 *.zip
 yarn.lock
+.DS_Store

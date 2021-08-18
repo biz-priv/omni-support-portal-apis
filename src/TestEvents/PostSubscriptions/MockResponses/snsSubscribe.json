@@ -1,0 +1,4 @@
+{
+  "ResponseMetadata": { "RequestId": "3530f348-d08b-514b-a0bb-aadd3150b641" },
+  "SubscriptionArn": "arn:aws:sns:us-east-1:083868342691:test_topic_fullPayload:94b5494f-758c-4364-84db-3abd20265ebd"
+}

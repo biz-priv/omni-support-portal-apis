@@ -21,5 +21,8 @@
     "serverless-offline": "^4.10.6",
     "serverless-prune-plugin": "^1.5.0",
     "uuidv4": "^6.2.10"
+  },
+  "dependencies": {
+    "sinon": "^11.1.2"
   }
 }
