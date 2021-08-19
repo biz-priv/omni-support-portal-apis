@@ -1,0 +1,27 @@
+{
+    "Items": [
+        {
+            "Event_Payload_Topic_Name": "test-topic-1",
+            "Event_Type": "event-type-1",
+            "Full_Payload_Topic_Name": "test_topic_fullPayload",
+            "Full_Payload_Topic_Arn": "arn:aws:sns:us-east-1:123:test_topic_fullPayload",
+            "Event_Payload_Topic_Arn": "arn:aws:sns:us-east-1:123:test_topic_change"
+        },
+        {
+            "Event_Payload_Topic_Name": "test-topic-2",
+            "Event_Type": "event-type-2",
+            "Full_Payload_Topic_Name": "Milestone_fullPayload",
+            "Full_Payload_Topic_Arn": "arn:aws:sns:us-east-1:123:Milestone_fullPayload",
+            "Event_Payload_Topic_Arn": "arn:aws:sns:us-east-1:123:Milestone_change"
+        },
+        {
+            "Event_Payload_Topic_Name": "test-topic-3",
+            "Event_Type": "event-type-3",
+            "Full_Payload_Topic_Name": "Milestone_fullPayload",
+            "Full_Payload_Topic_Arn": "arn:aws:sns:us-east-1:123:Milestone_fullPayload",
+            "Event_Payload_Topic_Arn": "arn:aws:sns:us-east-1:123:Milestone_change"
+        }
+    ],
+    "Count": 3,
+    "ScannedCount": 3
+}

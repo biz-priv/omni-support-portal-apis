@@ -33,6 +33,7 @@ const errors = [
     { code: 1011, httpStatus: 400, message: 'Error disassociating apikey.' },
     { code: 1012, httpStatus: 400, message: 'Error getting usageplan.' },
     { code: 1013, httpStatus: 400, message: 'ApiKey already exist.' },
+    { code: 1014, httpStatus: 400, message: 'Invalid apikey.' },
 
 ];
 
