@@ -26,13 +26,10 @@ module.exports.handler = async (event) => {
       );
 
       if (customerSub) {
-        return handleError(1014); //'Subscription already exists.'
+        return handleError(1016); //'Subscription already exists.'
       } else {
         // preference check
-        const snsTopicDetails = await getSnsTopicDetails(
-          value.EventType
-          // preference
-        );
+        const snsTopicDetails = await getSnsTopicDetails(value.EventType);
         let subscriptionArn = snsTopicDetails.Event_Payload_Topic_Arn;
         if (value.Preference == "fullPayload") {
           subscriptionArn = snsTopicDetails.Full_Payload_Topic_Arn;
@@ -80,7 +77,7 @@ async function getCustomerId(ApiKey) {
     ) {
       return response.Items[0].CustomerID;
     }
-    throw "Customer is not exists";
+    throw "Customer doesn't exist";
   } catch (error) {
     throw generateErrorMsg(error, "getCustomerIdError", "Something went wrong");
   }

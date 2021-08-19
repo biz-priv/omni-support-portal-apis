@@ -17,7 +17,6 @@ function send_response(http_code, resp = null) {
 }
 
 const errors = [
-  //createOrder - parking
   { code: 1000, httpStatus: 500, message: "Unable to process request." },
   { code: 1001, httpStatus: 400, message: "Schema validation error." },
   { code: 1002, httpStatus: 400, message: "Error fetching details." },
@@ -32,8 +31,9 @@ const errors = [
   { code: 1011, httpStatus: 400, message: "Error disassociating apikey." },
   { code: 1012, httpStatus: 400, message: "Error getting usageplan." },
   { code: 1013, httpStatus: 400, message: "ApiKey already exist." },
-  { code: 1014, httpStatus: 400, message: "Subscription already exists." },
+  { code: 1014, httpStatus: 400, message: "Invalid apikey." },
   { code: 1015, httpStatus: 400, message: "Missing required parameters." },
+  { code: 1016, httpStatus: 400, message: "Subscription already exists." },
 ];
 
 function getError(code) {

@@ -368,6 +368,46 @@ async function getScanCount(
   }
 }
 
+/* fetch items using index */
+async function queryByIndex(
+  tableName,
+  indexName,
+  keyCondition,
+  expressionAttribute
+) {
+  const documentClient = new AWS.DynamoDB.DocumentClient({
+    region: process.env.DEFAULT_AWS,
+  });
+  let params = {
+    TableName: tableName,
+    IndexName: indexName,
+    KeyConditionExpression: keyCondition,
+    ExpressionAttributeValues: expressionAttribute,
+  };
+  try {
+    return await documentClient.query(params).promise();
+  } catch (e) {
+    console.error("fetchByIndex Error: ", e);
+    throw handleError(1002, e, get(e, "details[0].message", null));
+  }
+}
+
+/* get all items from table */
+async function getAllItems(tableName) {
+  const documentClient = new AWS.DynamoDB.DocumentClient({
+    region: process.env.DEFAULT_AWS,
+  });
+  let params = {
+    TableName: tableName,
+  };
+  try {
+    return await documentClient.scan(params).promise();
+  } catch (e) {
+    console.error("fetchAllItems Error: ", e);
+    throw handleError(1004, e, get(e, "details[0].message", null));
+  }
+}
+
 module.exports = {
   fetchAllItems,
   fetchByIndex,
@@ -384,5 +424,7 @@ module.exports = {
   apiKeyDelete,
   getItemQueryWithLimit,
   getScanCount,
+  queryByIndex,
+  getAllItems,
   getAllItemsQueryFilter,
 };

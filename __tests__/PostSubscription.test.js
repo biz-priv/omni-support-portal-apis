@@ -91,6 +91,20 @@ describe("post user subscriptions module test", () => {
     expect(actual).toStrictEqual(error);
   });
 
+  it("Customer doesn't exist", async () => {
+    AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
+      callback(null, {});
+    });
+    const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
+    let actual = await wrapped.run(event);
+    const error = {
+      httpStatus: 400,
+      code: 1005,
+      message: "getCustomerIdError: Customer doesn't exist",
+    };
+    expect(actual).toStrictEqual(error);
+  });
+
   it("customer Subscription already exists", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
     const stub = sinon.stub();
@@ -103,7 +117,7 @@ describe("post user subscriptions module test", () => {
     let actual = await wrapped.run(event);
     const error = {
       httpStatus: 400,
-      code: 1014,
+      code: 1016,
       message: "Subscription already exists.",
     };
     expect(actual).toStrictEqual(error);
@@ -119,7 +133,7 @@ describe("post user subscriptions module test", () => {
     });
 
     AWSMock.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
-      callback("null", null);
+      callback("error", null);
     });
 
     let actual = await wrapped.run(event);
@@ -156,37 +170,6 @@ describe("post user subscriptions module test", () => {
     };
     expect(actual).toStrictEqual(error);
   });
-
-  // it("sns subscribe error", async () => {
-  //   const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
-  //   const stub = sinon.stub();
-
-  //   stub.onCall(0).returns(getCustomer);
-  //   stub.onCall(1).returns({});
-  //   AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
-  //     callback(null, stub());
-  //   });
-
-  //   AWSMock.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
-  //     callback(null, getSnsTopicDetails);
-  //   });
-
-  //   AWSMock.mock("DynamoDB.DocumentClient", "put", (params, callback) => {
-  //     callback(null, {});
-  //   });
-
-  //   AWSMock.mock("SNS", "subscribe", (params, callback) => {
-  //     callback(null, {});
-  //   });
-
-  //   let actual = await wrapped.run(event);
-  //   let error = {
-  //     httpStatus: 400,
-  //     code: 1005,
-  //     message: "subscribeToTopicError: sns subscribe error",
-  //   };
-  //   expect(actual).toStrictEqual(error);
-  // });
 
   it("customer created and subscription is successfull", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
