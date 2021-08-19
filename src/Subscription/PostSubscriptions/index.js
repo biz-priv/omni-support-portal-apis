@@ -50,32 +50,40 @@ module.exports.handler = async (event) => {
   }
 };
 
+function generateErrorMsg(params, errorType, defaultErrorMsg) {
+  return (
+    errorType +
+    ": " +
+    (typeof params === "string" || params instanceof String
+      ? params
+      : defaultErrorMsg)
+  );
+}
+
 /**
  * Get the CustomerID based on ApiKey from token validator table
  * @param {*} ApiKey
  * @returns
  */
-function getCustomerId(ApiKey) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await Dynamo.getAllItemsQueryFilter(
-        TOKEN_VALIDATOR,
-        "#ApiKey = :ApiKey",
-        { "#ApiKey": "ApiKey" },
-        { ":ApiKey": ApiKey }
-      );
-      if (
-        response.Items &&
-        response.Items.length > 0 &&
-        response.Items[0].CustomerID
-      ) {
-        resolve(response.Items[0].CustomerID);
-      }
-      reject("getCustomerIdError: Customer is not exists");
-    } catch (error) {
-      reject("getCustomerIdError: Something went wrong");
+async function getCustomerId(ApiKey) {
+  try {
+    const response = await Dynamo.getAllItemsQueryFilter(
+      TOKEN_VALIDATOR,
+      "#ApiKey = :ApiKey",
+      { "#ApiKey": "ApiKey" },
+      { ":ApiKey": ApiKey }
+    );
+    if (
+      response.Items &&
+      response.Items.length > 0 &&
+      response.Items[0].CustomerID
+    ) {
+      return response.Items[0].CustomerID;
     }
-  });
+    throw "Customer is not exists";
+  } catch (error) {
+    throw generateErrorMsg(error, "getCustomerIdError", "Something went wrong");
+  }
 }
 
 /**
@@ -86,39 +94,41 @@ function getCustomerId(ApiKey) {
  * @param {*} subscriptionPreference
  * @returns
  */
-function getCustomerPreference(
+async function getCustomerPreference(
   Customer_Id,
   Event_Type,
   Subscription_Preference
 ) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await Dynamo.getAllItemsQueryFilter(
-        CUSTOMER_PREFERENCE_TABLE,
-        "#Customer_Id = :Customer_Id and #Event_Type = :Event_Type and #Subscription_Preference = :Subscription_Preference",
-        {
-          "#Customer_Id": "Customer_Id",
-          "#Event_Type": "Event_Type",
-          "#Subscription_Preference": "Subscription_Preference",
-        },
-        {
-          ":Customer_Id": Customer_Id,
-          ":Event_Type": Event_Type,
-          ":Subscription_Preference": Subscription_Preference,
-        }
-      );
-      if (
-        response.Items &&
-        response.Items.length > 0 &&
-        response.Items[0].Subscription_Preference
-      ) {
-        resolve(true);
+  try {
+    const response = await Dynamo.getAllItemsQueryFilter(
+      CUSTOMER_PREFERENCE_TABLE,
+      "#Customer_Id = :Customer_Id and #Event_Type = :Event_Type and #Subscription_Preference = :Subscription_Preference",
+      {
+        "#Customer_Id": "Customer_Id",
+        "#Event_Type": "Event_Type",
+        "#Subscription_Preference": "Subscription_Preference",
+      },
+      {
+        ":Customer_Id": Customer_Id,
+        ":Event_Type": Event_Type,
+        ":Subscription_Preference": Subscription_Preference,
       }
-      resolve(false);
-    } catch (error) {
-      reject("getCustomerPreferenceError: Something went wrong");
+    );
+    if (
+      response.Items &&
+      response.Items.length > 0 &&
+      response.Items[0].Subscription_Preference
+    ) {
+      return true;
     }
-  });
+    return false;
+  } catch (error) {
+    throw generateErrorMsg(
+      error,
+      "getCustomerPreferenceError",
+      "Something went wrong"
+    );
+  }
 }
 
 /**
@@ -127,20 +137,22 @@ function getCustomerPreference(
  * @param {*} preference
  * @returns
  */
-function getSnsTopicDetails(eventType, preference = null) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await Dynamo.getItem(EVENTING_TOPICS_TABLE, {
-        Event_Type: eventType,
-      });
-      resolve({
-        Event_Payload_Topic_Arn: response.Item.Event_Payload_Topic_Arn,
-        Full_Payload_Topic_Arn: response.Item.Full_Payload_Topic_Arn,
-      });
-    } catch (error) {
-      reject("getSnsTopicDetailsError: Something went wrong");
-    }
-  });
+async function getSnsTopicDetails(eventType) {
+  try {
+    const response = await Dynamo.getItem(EVENTING_TOPICS_TABLE, {
+      Event_Type: eventType,
+    });
+    return {
+      Event_Payload_Topic_Arn: response.Item.Event_Payload_Topic_Arn,
+      Full_Payload_Topic_Arn: response.Item.Full_Payload_Topic_Arn,
+    };
+  } catch (error) {
+    throw generateErrorMsg(
+      error,
+      "getSnsTopicDetailsError",
+      "Something went wrong"
+    );
+  }
 }
 
 /**
@@ -150,22 +162,24 @@ function getSnsTopicDetails(eventType, preference = null) {
  * @param {*} arnResponse
  * @returns
  */
-function createCustomerPreference(custId, eventBody, subscriptionArn) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await Dynamo.itemInsert(CUSTOMER_PREFERENCE_TABLE, {
-        Event_Type: eventBody.EventType,
-        Subscription_Preference: eventBody.Preference,
-        Customer_Id: custId,
-        Endpoint: eventBody.Endpoint,
-        Shared_Secret: eventBody.SharedSecret,
-        Subscription_arn: subscriptionArn,
-      });
-      resolve(true);
-    } catch (error) {
-      reject("createCustomerPreferenceError: Unable to create customer");
-    }
-  });
+async function createCustomerPreference(custId, eventBody, subscriptionArn) {
+  try {
+    await Dynamo.itemInsert(CUSTOMER_PREFERENCE_TABLE, {
+      Event_Type: eventBody.EventType,
+      Subscription_Preference: eventBody.Preference,
+      Customer_Id: custId,
+      Endpoint: eventBody.Endpoint,
+      Shared_Secret: eventBody.SharedSecret,
+      Subscription_arn: subscriptionArn,
+    });
+    return true;
+  } catch (error) {
+    throw generateErrorMsg(
+      error,
+      "createCustomerPreferenceError",
+      "Unable to create customer"
+    );
+  }
 }
 
 /**
@@ -175,25 +189,27 @@ function createCustomerPreference(custId, eventBody, subscriptionArn) {
  * @param {*} customer_id
  * @returns
  */
-function subscribeToTopic(topic_arn, endpoint, customer_id) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const params = {
-        TopicArn: topic_arn,
-        Protocol: "https",
-        Endpoint: endpoint,
-        Attributes: {
-          FilterPolicy: JSON.stringify({ customer_id: [customer_id] }),
-        },
-        ReturnSubscriptionArn: true,
-      };
-      const data = await sns.subscribe(params).promise();
-      if (data.ResponseMetadata) {
-        resolve(true);
-      }
-      reject("subscribeToTopicError: Unable to subscribe");
-    } catch (error) {
-      reject("subscribeToTopicError: sns subscribe error");
+async function subscribeToTopic(topic_arn, endpoint, customer_id) {
+  try {
+    const params = {
+      TopicArn: topic_arn,
+      Protocol: "https",
+      Endpoint: endpoint,
+      Attributes: {
+        FilterPolicy: JSON.stringify({ customer_id: [customer_id] }),
+      },
+      ReturnSubscriptionArn: true,
+    };
+    const data = await sns.subscribe(params).promise();
+    if (data.ResponseMetadata) {
+      return true;
     }
-  });
+    throw "Unable to subscribe";
+  } catch (error) {
+    throw generateErrorMsg(
+      error,
+      "subscribeToTopicError",
+      "sns subscribe error"
+    );
+  }
 }
