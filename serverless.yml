@@ -61,6 +61,7 @@ functions:
     - ${file(config/Subscription/postSubscription.yml)}
     - ${file(config/Subscription/updateSubscription.yml)}
     - ${file(config/Subscription/getEventTypesList.yml)}
+    - ${file(config/Subscription/deleteWebhooks.yml)}    
 
     - ${file(config/UserActivity/getUserActivityList.yml)}    
     - ${file(config/UserActivity/postUserActivity.yml)}
