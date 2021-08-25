@@ -1,0 +1,10 @@
+{
+    "Item": {
+        "Customer_Id": "1234",
+        "Endpoint": "https://example.com",
+        "Event_Type": "eventTest",
+        "Subscription_arn": "arn:aws:sns:us-east-1:083868342691:test_topic_fullPayload:aad1d456-b553-458b-b321-e84ff0a181b3",
+        "Shared_Secret": "1234",
+        "Subscription_Preference": "fullPayload"
+    }
+}

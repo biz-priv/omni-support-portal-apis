@@ -34,6 +34,8 @@ const errors = [
     { code: 1012, httpStatus: 400, message: 'Error getting usageplan.' },
     { code: 1013, httpStatus: 400, message: 'ApiKey already exist.' },
     { code: 1014, httpStatus: 400, message: 'Invalid apikey.' },
+    { code: 1015, httpStatus: 400, message: 'Error from unsubscription.' },
+    { code: 1016, httpStatus: 400, message: 'Error deleting item.' },
 
 ];
 
