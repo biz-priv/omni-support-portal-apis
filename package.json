@@ -8,18 +8,15 @@
     "test": "jest"
   },
   "jest": {
-    "collectCoverage": false,
-    "coverageReporters": [
-      "text-summary"
-    ],
+    "bail": 1,
     "coverageThreshold": {
-      "global": {
-        "branches": 90,
-        "functions": 90,
+      "./src/**/*.js": {
         "lines": 90,
-        "statements": 90
+        "branches": 90,
+        "functions": 90
       }
-    }
+    },
+    "collectCoverage": true
   },
   "author": "",
   "license": "ISC",
@@ -30,7 +27,6 @@
     "joi": "^17.4.0",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
-    "jest": "^27.0.6",
     "moment": "^2.29.1",
     "serverless": "^1.83.3",
     "serverless-jest-plugin": "^0.3.0",
