@@ -4,7 +4,19 @@
   "description": "This is serverless app using aws and lambda",
   "main": "",
   "scripts": {
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "test": "jest"
+  },
+  "jest": {
+    "bail": 1,
+    "collectCoverage": true,
+    "coverageThreshold": {
+      "./src/**/*.js": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90
+      }
+    }
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +27,6 @@
     "joi": "^17.4.0",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
-    "jest": "^27.0.6",
     "moment": "^2.29.1",
     "serverless": "^1.83.3",
     "serverless-jest-plugin": "^0.3.0",

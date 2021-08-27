@@ -22,7 +22,7 @@ pipeline {
         stage('Test'){
             steps {
                 sh """
-                npm i -g serverless
+                npm i
                 npm install -g serverless-jest-plugin
                 sls invoke test
                 """
