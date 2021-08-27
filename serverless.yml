@@ -30,9 +30,20 @@ custom:
   prune:
     automatic: true
     number: 3
-  jest: 
+  jest:
+    bail: true 
     collectCoverage: true
-  
+    # coverageReporters: ["text-summary"]
+  #   collectCoverageFrom: ["src/**/*.js"]
+    coverageThreshold: {
+      global : {
+        branches : 100,
+        functions : 100,
+        lines : 100,
+        statements : 100
+      }
+  }
+
 package:
   individually: true
   excludeDevDependencies: false

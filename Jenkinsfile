@@ -22,9 +22,9 @@ pipeline {
         stage('Test'){
             steps {
                 sh """
-                npm i
-                npm install -g jest
-                jest -b
+                npm i -g serverless
+                npm install -g serverless-jest-plugin
+                sls invoke test
                 """
             }
         }
@@ -56,9 +56,9 @@ pipeline {
         stage('Omni Deploy'){
             when {
                 anyOf {
-                    branch 'develop';
                     branch 'master';
                     branch 'hotfix/*';
+                    branch 'develop';
                 }
                 expression {
                     return true;
