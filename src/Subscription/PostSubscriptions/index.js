@@ -26,7 +26,7 @@ module.exports.handler = async (event) => {
       );
 
       if (customerSub) {
-        return handleError(1016); //'Subscription already exists.'
+        return handleError(1017); //'Subscription already exists.'
       } else {
         // preference check
         const snsTopicDetails = await getSnsTopicDetails(value.EventType);

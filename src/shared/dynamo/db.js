@@ -408,6 +408,23 @@ async function getAllItems(tableName) {
   }
 }
 
+/* delete item from table */
+async function deleteItem(tableName, key_param) {
+  const documentClient = new AWS.DynamoDB.DocumentClient({
+    region: process.env.DEFAULT_AWS,
+  });
+  let params = {
+    TableName: tableName,
+    Key: key_param,
+  };
+  try {
+    return await documentClient.delete(params).promise();
+  } catch (e) {
+    console.error("deleteItem Error: ", e);
+    throw handleError(1016, e, get(e, "details[0].message", null));
+  }
+}
+
 module.exports = {
   fetchAllItems,
   fetchByIndex,
@@ -426,5 +443,6 @@ module.exports = {
   getScanCount,
   queryByIndex,
   getAllItems,
+  deleteItem,
   getAllItemsQueryFilter,
 };

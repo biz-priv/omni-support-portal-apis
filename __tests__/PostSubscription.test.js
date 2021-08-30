@@ -117,7 +117,7 @@ describe("post user subscriptions module test", () => {
     let actual = await wrapped.run(event);
     const error = {
       httpStatus: 400,
-      code: 1016,
+      code: 1017,
       message: "Subscription already exists.",
     };
     expect(actual).toStrictEqual(error);
