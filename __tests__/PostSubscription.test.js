@@ -16,6 +16,12 @@ const getCustomerPreference = require("../src/TestEvents/PostSubscriptions/MockR
 const getSnsTopicDetails = require("../src/TestEvents/PostSubscriptions/MockResponses/getSnsTopicDetails.json");
 const snsSubscribe = require("../src/TestEvents/PostSubscriptions/MockResponses/snsSubscribe.json");
 const eventSuccess = require("../src/TestEvents/PostSubscriptions/MockResponses/eventSuccess.json");
+const headers = {
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE",
+  "Access-Control-Allow-Origin": "*",
+  "Content-Type": "application/json",
+};
 
 describe("post user subscriptions module test", () => {
   afterEach(() => {
@@ -26,9 +32,9 @@ describe("post user subscriptions module test", () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-body-null.json");
     let actual = await wrapped.run(event);
     const error = {
-      code: 1001,
-      httpStatus: 400,
-      message: "value must be of type object",
+      statusCode: 400,
+      headers,
+      body: "value must be of type object",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -37,9 +43,9 @@ describe("post user subscriptions module test", () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-missing-body-parameter-EventType.json");
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1001,
-      message: "EventType is required",
+      statusCode: 400,
+      headers,
+      body: "EventType is required",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -48,9 +54,9 @@ describe("post user subscriptions module test", () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-missing-body-parameter-Endpoint.json");
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1001,
-      message: "Endpoint is required",
+      statusCode: 400,
+      headers,
+      body: "Endpoint is required",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -59,9 +65,9 @@ describe("post user subscriptions module test", () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-missing-body-parameter-SharedSecret.json");
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1001,
-      message: "SharedSecret is required",
+      statusCode: 400,
+      headers,
+      body: "SharedSecret is required",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -70,9 +76,9 @@ describe("post user subscriptions module test", () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-missing-body-parameter-Preference.json");
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1001,
-      message: "Preference is required",
+      statusCode: 400,
+      headers,
+      body: "Preference is required",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -84,9 +90,9 @@ describe("post user subscriptions module test", () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1005,
-      message: "getCustomerIdError: Something went wrong",
+      statusCode: 400,
+      headers,
+      body: "getCustomerIdError: Something went wrong",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -98,9 +104,9 @@ describe("post user subscriptions module test", () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1005,
-      message: "getCustomerIdError: Customer doesn't exist",
+      statusCode: 400,
+      headers,
+      body: "getCustomerIdError: Customer doesn't exist",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -116,9 +122,9 @@ describe("post user subscriptions module test", () => {
 
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1017,
-      message: "Subscription already exists.",
+      statusCode: 400,
+      headers,
+      body: "Subscription already exists.",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -138,9 +144,9 @@ describe("post user subscriptions module test", () => {
 
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1005,
-      message: "getSnsTopicDetailsError: Something went wrong",
+      statusCode: 400,
+      headers,
+      body: "getSnsTopicDetailsError: Something went wrong",
     };
     expect(actual).toStrictEqual(error);
   });
@@ -164,9 +170,9 @@ describe("post user subscriptions module test", () => {
 
     let actual = await wrapped.run(event);
     const error = {
-      httpStatus: 400,
-      code: 1005,
-      message: "createCustomerPreferenceError: Unable to create customer",
+      statusCode: 400,
+      headers,
+      body: "createCustomerPreferenceError: Unable to create customer",
     };
     expect(actual).toStrictEqual(error);
   });

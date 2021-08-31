@@ -11,10 +11,10 @@ const EVENTING_TOPICS_TABLE = process.env.EVENTING_TOPICS_TABLE;
 
 /*=================post subscription==============*/
 module.exports.handler = async (event) => {
-  const eventBody = !event.body ? null : event.body;
+  const eventBody = !event.body ? null : JSON.parse(event.body);
   const value = await createSubscriptionValidator(eventBody);
   try {
-    if (value.code) {
+    if (value.statusCode) {
       return value; // "missing required parameters"
     } else {
       const ApiKey = event.headers["x-api-key"];

@@ -6,9 +6,5 @@
     "cache-control": "no-cache",
     "x-api-key": "9jM8ATQQYB2XmJsETRAq77EuqcY522Xu3pszdmcY"
   },
-  "body": {
-    "EventType": "ShipmentDueDate",
-    "SharedSecret": "1234",
-    "Preference": "fullPayload"
-  }
+  "body": "{\n    \"EventType\": \"ShipmentDueDate\",\n    \"SharedSecret\": \"1234\",\n    \"Preference\": \"fullPayload\"\n}"
 }

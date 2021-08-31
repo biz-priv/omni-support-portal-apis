@@ -59,11 +59,24 @@ function handleError(code, exception = null, msg = null) {
 
 function errorResponse(httpStatus, errCode, message) {
   return {
-    httpStatus: httpStatus,
-    code: errCode,
-    message: message,
+    statusCode: httpStatus,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE",
+      "Content-Type": "application/json",
+    },
+    body: message,
   };
 }
+
+// function errorResponse(httpStatus, errCode, message) {
+//   return {
+//     httpStatus: httpStatus,
+//     code: errCode,
+//     message: message,
+//   };
+// }
 
 /*============================================================= */
 module.exports = {
