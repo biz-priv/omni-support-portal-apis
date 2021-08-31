@@ -86,8 +86,10 @@ describe('module test', () => {
     const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
     const result = await wrapped.run(event);
     let expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-true-startkey-multiplerecord.json');
-    let age = JSON.parse(result.body).Customers[0].Age;
-    expectedResponse.Customers[0].Age = age;
+    let age1 = JSON.parse(result.body).Customers[0].Age;
+    expectedResponse.Customers[0].Age = age1;
+    let age2 = JSON.parse(result.body).Customers[1].Age;
+    expectedResponse.Customers[1].Age = age2;
     expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
 
   });
@@ -106,6 +108,8 @@ describe('module test', () => {
     const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
     const result = await wrapped.run(event);  
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-startkey-true.json');
+    let age = JSON.parse(result.body).Customers[0].Age;
+    expectedResponse.Customers[0].Age = age;
     expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
   });
 
