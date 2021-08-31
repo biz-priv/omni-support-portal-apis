@@ -1,0 +1,9 @@
+{
+  "Item": {
+    "Event_Payload_Topic_Name": "test_topic_change",
+    "Event_Type": "ShipmentDueDate",
+    "Full_Payload_Topic_Name": "test_topic_fullPayload",
+    "Full_Payload_Topic_Arn": "arn:aws:sns:us-east-1:083868342691:test_topic_fullPayload",
+    "Event_Payload_Topic_Arn": "arn:aws:sns:us-east-1:083868342691:test_topic_change"
+  }
+}
