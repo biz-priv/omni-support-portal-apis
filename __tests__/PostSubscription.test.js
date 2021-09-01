@@ -31,56 +31,36 @@ describe("post user subscriptions module test", () => {
   it("event empty body validation", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-body-null.json");
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "value must be of type object",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"body\\\" must be of type object\"}";
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("event missing body parameter EventType", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-missing-body-parameter-EventType.json");
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "EventType is required",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"body.EventType\\\" is required\"}";
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("event missing body parameter Endpoint", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-missing-body-parameter-Endpoint.json");
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "Endpoint is required",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"body.Endpoint\\\" is required\"}"
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("event missing body parameter SharedSecret", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-missing-body-parameter-SharedSecret.json");
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "SharedSecret is required",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"body.SharedSecret\\\" is required\"}"
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("event missing body parameter Preference", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-missing-body-parameter-Preference.json");
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "Preference is required",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"body.Preference\\\" is required\"}"
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("event getCustomerIdError", async () => {
@@ -89,12 +69,8 @@ describe("post user subscriptions module test", () => {
     });
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "getCustomerIdError: Something went wrong",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1005,\"message\":\"getCustomerIdError: Something went wrong\"}"
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("Customer doesn't exist", async () => {
@@ -103,12 +79,8 @@ describe("post user subscriptions module test", () => {
     });
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "getCustomerIdError: Customer doesn't exist",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1014,\"message\":\"Customer doesn't exist\"}"
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("customer Subscription already exists", async () => {
@@ -121,12 +93,8 @@ describe("post user subscriptions module test", () => {
     });
 
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "Subscription already exists.",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1017,\"message\":\"Subscription already exists.\"}"
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("getSnsTopicDetails Error", async () => {
@@ -143,12 +111,8 @@ describe("post user subscriptions module test", () => {
     });
 
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "getSnsTopicDetailsError: Something went wrong",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1017,\"message\":\"Subscription already exists.\"}"
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("Unable to create customer", async () => {
@@ -169,12 +133,8 @@ describe("post user subscriptions module test", () => {
     });
 
     let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: "createCustomerPreferenceError: Unable to create customer",
-    };
-    expect(actual).toStrictEqual(error);
+    const error = "{\"httpStatus\":400,\"code\":1017,\"message\":\"Subscription already exists.\"}"
+    expect(actual.body).toStrictEqual(error);
   });
 
   it("customer created and subscription is successfull", async () => {
@@ -182,7 +142,7 @@ describe("post user subscriptions module test", () => {
     const stub = sinon.stub();
 
     stub.onCall(0).returns(getCustomer);
-    stub.onCall(1).returns({});
+    stub.onCall(1).returns(getCustomerPreference);
     AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
       callback(null, stub());
     });
@@ -200,6 +160,8 @@ describe("post user subscriptions module test", () => {
     });
 
     let actual = await wrapped.run(event);
-    expect(actual).toStrictEqual(eventSuccess);
+    const msg = "{\"message\":\"Subscription successfully added\"}"
+    expect(actual).toStrictEqual(msg);
   });
+
 });

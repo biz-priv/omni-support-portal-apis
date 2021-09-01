@@ -3,7 +3,8 @@ const Joi = require("joi");
 const AWS = require("aws-sdk");
 const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
 const Dynamo = require("../../shared/dynamo/db");
-const { createSubscriptionValidator } = require("../../shared/utils/validator");
+const validate = require("./validate");
+const get = require("lodash.get");
 
 const TOKEN_VALIDATOR = process.env.TOKEN_VALIDATOR;
 const CUSTOMER_PREFERENCE_TABLE = process.env.CUSTOMER_PREFERENCE_TABLE;
@@ -11,40 +12,49 @@ const EVENTING_TOPICS_TABLE = process.env.EVENTING_TOPICS_TABLE;
 
 /*=================post subscription==============*/
 module.exports.handler = async (event) => {
-  const eventBody = !event.body ? null : JSON.parse(event.body);
-  const value = await createSubscriptionValidator(eventBody);
+  event = await validate(event);
   try {
-    if (value.statusCode) {
-      return value; // "missing required parameters"
+    if (event.code) {
+      console.error("Error: ", JSON.stringify(event));
+      return await send_response(event.httpStatus, event);
     } else {
-      const ApiKey = event.headers["x-api-key"];
+      const ApiKey = get(event, "headers.x-api-key");
       const customerId = await getCustomerId(ApiKey);
+      if(customerId == false){
+        const error = handleError(1014, null ,"Customer doesn't exist");
+        console.error("Error: ", JSON.stringify(error));
+        return await send_response(error.httpStatus, error)
+      }else{
       const customerSub = await getCustomerPreference(
         customerId,
-        value.EventType,
-        value.Preference
+        get(event, "body.EventType"),
+        get(event, "body.Preference")
       );
-
-      if (customerSub) {
-        return handleError(1017); //'Subscription already exists.'
+      if (customerSub == false) {
+        const error = handleError(1017);
+        console.error("Error: ", JSON.stringify(error));
+        return await send_response(error.httpStatus, error)
       } else {
         // preference check
-        const snsTopicDetails = await getSnsTopicDetails(value.EventType);
+        const snsTopicDetails = await getSnsTopicDetails(get(event, "body.EventType"));
         let subscriptionArn = snsTopicDetails.Event_Payload_Topic_Arn;
-        if (value.Preference == "fullPayload") {
+        if (get(event, "body.Preference") == "fullPayload") {
           subscriptionArn = snsTopicDetails.Full_Payload_Topic_Arn;
         }
 
-        await createCustomerPreference(customerId, value, subscriptionArn);
+        await createCustomerPreference(customerId, event, subscriptionArn);
 
         //Create an SNS subscription with filter policy as CustomerID.
-        await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
+        await subscribeToTopic(subscriptionArn, get(event, "body.Endpoint"), customerId);
       }
       return send_response(200, { message: "Subscription successfully added" });
     }
+    }
   } catch (error) {
-    return handleError(1005, null, error);
-  }
+    const err = handleError(1005, null, error);
+    console.error("Error: ", JSON.stringify(err));
+    return await send_response(error.httpStatus, err)
+  } 
 };
 
 function generateErrorMsg(params, errorType, defaultErrorMsg) {
@@ -76,8 +86,9 @@ async function getCustomerId(ApiKey) {
       response.Items[0].CustomerID
     ) {
       return response.Items[0].CustomerID;
+    }else {
+      return false
     }
-    throw "Customer doesn't exist";
   } catch (error) {
     throw generateErrorMsg(error, "getCustomerIdError", "Something went wrong");
   }
@@ -162,11 +173,11 @@ async function getSnsTopicDetails(eventType) {
 async function createCustomerPreference(custId, eventBody, subscriptionArn) {
   try {
     await Dynamo.itemInsert(CUSTOMER_PREFERENCE_TABLE, {
-      Event_Type: eventBody.EventType,
-      Subscription_Preference: eventBody.Preference,
+      Event_Type: get(eventBody, "body.EventType"),
+      Subscription_Preference: get(eventBody, "body.Preference"),
       Customer_Id: custId,
-      Endpoint: eventBody.Endpoint,
-      Shared_Secret: eventBody.SharedSecret,
+      Endpoint: get(eventBody, "body.Endpoint"),
+      Shared_Secret: get(eventBody, "body.SharedSecret"),
       Subscription_arn: subscriptionArn,
     });
     return true;
