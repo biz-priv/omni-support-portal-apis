@@ -34,7 +34,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "value must be of type object",
+      body: '{"errorDescription":"value must be of type object"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -45,7 +45,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "EventType is required",
+      body: '{"errorDescription":"EventType is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -56,7 +56,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "Endpoint is required",
+      body: '{"errorDescription":"Endpoint is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -67,7 +67,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "SharedSecret is required",
+      body: '{"errorDescription":"SharedSecret is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -78,7 +78,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "Preference is required",
+      body: '{"errorDescription":"Preference is required"}',
     };
     expect(actual).toStrictEqual(error);
   });

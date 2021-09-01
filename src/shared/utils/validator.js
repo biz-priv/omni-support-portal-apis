@@ -58,7 +58,10 @@ async function createSubscriptionValidator(event) {
     return handleError(
       1001,
       e,
-      msg == null ? null : msg.replace(new RegExp('"', "g"), "")
+      JSON.stringify({
+        errorDescription:
+          msg == null ? null : msg.replace(new RegExp('"', "g"), ""),
+      })
     );
   }
 }
