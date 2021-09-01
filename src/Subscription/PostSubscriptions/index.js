@@ -47,14 +47,13 @@ module.exports.handler = async (event) => {
   }
 };
 
-function generateErrorMsg(params, errorType, defaultErrorMsg) {
-  return (
-    errorType +
-    ": " +
-    (typeof params === "string" || params instanceof String
-      ? params
-      : defaultErrorMsg)
-  );
+function generateErrorMsg(params, defaultErrorMsg = "Something went wrong") {
+  return JSON.stringify({
+    errorDescription:
+      typeof params === "string" || params instanceof String
+        ? params
+        : defaultErrorMsg,
+  });
 }
 
 /**
@@ -79,7 +78,7 @@ async function getCustomerId(ApiKey) {
     }
     throw "Customer doesn't exist";
   } catch (error) {
-    throw generateErrorMsg(error, "getCustomerIdError", "Something went wrong");
+    throw generateErrorMsg(error);
   }
 }
 
@@ -120,11 +119,7 @@ async function getCustomerPreference(
     }
     return false;
   } catch (error) {
-    throw generateErrorMsg(
-      error,
-      "getCustomerPreferenceError",
-      "Something went wrong"
-    );
+    throw generateErrorMsg(error);
   }
 }
 
@@ -144,11 +139,7 @@ async function getSnsTopicDetails(eventType) {
       Full_Payload_Topic_Arn: response.Item.Full_Payload_Topic_Arn,
     };
   } catch (error) {
-    throw generateErrorMsg(
-      error,
-      "getSnsTopicDetailsError",
-      "Something went wrong"
-    );
+    throw generateErrorMsg(error);
   }
 }
 
@@ -171,11 +162,7 @@ async function createCustomerPreference(custId, eventBody, subscriptionArn) {
     });
     return true;
   } catch (error) {
-    throw generateErrorMsg(
-      error,
-      "createCustomerPreferenceError",
-      "Unable to create customer"
-    );
+    throw generateErrorMsg(error, "Unable to create customer");
   }
 }
 
@@ -203,10 +190,6 @@ async function subscribeToTopic(topic_arn, endpoint, customer_id) {
     }
     throw "Unable to subscribe";
   } catch (error) {
-    throw generateErrorMsg(
-      error,
-      "subscribeToTopicError",
-      "sns subscribe error"
-    );
+    throw generateErrorMsg(error, "sns subscribe error");
   }
 }
