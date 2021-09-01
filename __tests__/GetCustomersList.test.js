@@ -13,6 +13,7 @@ const scanResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockRe
 const queryResponse = require('../src/TestEvents/GetCustomersList/MockResponses/query-response.json');
 const queryResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockResponses/query-response-no-lastkey.json');
 const apiKeysResponse = require('../src/TestEvents/GetCustomersList/MockResponses/api-gw-apikeys.json');
+const apiKeysTwoResponse = require('../src/TestEvents/GetCustomersList/MockResponses/api-gw-apikeys-startkey.json');
 
 describe('module test', () => {
 
@@ -70,6 +71,46 @@ describe('module test', () => {
     expectedResponse.Customers[0].Age = age;
     expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
 
+  });
+
+  it('get active customers record with api keys (match key in apigateway)', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      callback(null, queryResponse);
+    })
+
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, apiKeysTwoResponse);
+    });
+
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
+    const result = await wrapped.run(event);
+    let expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-true-startkey-multiplerecord.json');
+    let age1 = JSON.parse(result.body).Customers[0].Age;
+    expectedResponse.Customers[0].Age = age1;
+    let age2 = JSON.parse(result.body).Customers[1].Age;
+    expectedResponse.Customers[1].Age = age2;
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
+
+  });
+
+
+  it('get all customers record with startkey is true', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      callback(null, queryResponse);
+    })
+    
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, apiKeysResponse);
+    });
+    
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
+    const result = await wrapped.run(event);  
+    const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-startkey-true.json');
+    let age = JSON.parse(result.body).Customers[0].Age;
+    expectedResponse.Customers[0].Age = age;
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
   });
 
   it('get active customers record (no api key in api gateway)', async () => {
