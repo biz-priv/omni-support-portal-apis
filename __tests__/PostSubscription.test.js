@@ -34,7 +34,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "value must be of type object",
+      body: '{"errorDescription":"value must be of type object"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -45,7 +45,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "EventType is required",
+      body: '{"errorDescription":"EventType is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -56,7 +56,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "Endpoint is required",
+      body: '{"errorDescription":"Endpoint is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -67,7 +67,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "SharedSecret is required",
+      body: '{"errorDescription":"SharedSecret is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -78,7 +78,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "Preference is required",
+      body: '{"errorDescription":"Preference is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -92,7 +92,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "getCustomerIdError: Something went wrong",
+      body: '{"errorDescription":"Something went wrong"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -106,7 +106,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "getCustomerIdError: Customer doesn't exist",
+      body: '{"errorDescription":"Customer doesn\'t exist"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -146,7 +146,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "getSnsTopicDetailsError: Something went wrong",
+      body: '{"errorDescription":"Something went wrong"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -172,7 +172,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "createCustomerPreferenceError: Unable to create customer",
+      body: '{"errorDescription":"Unable to create customer"}',
     };
     expect(actual).toStrictEqual(error);
   });
