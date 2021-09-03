@@ -18,22 +18,20 @@ module.exports.handler = async (event) => {
                 const eventTypeResult = await Dynamo.getAllItems(EVENT_TOPIC);
                 if ((eventTypeResult.Items).length) {
                     console.info("Response: ", JSON.stringify(eventTypeResult.Items));
-                    return await send_response(200, eventTypeResult.Items);
+                    return send_response(200, eventTypeResult.Items);
                 } else {
-                    console.error("Error: ", JSON.stringify(handleError(1009)));
-                    return await send_response(400, handleError(1009))
+                    return send_response(400, handleError(1009))
                 }
             } else {
-                console.error("Error: ", JSON.stringify(handleError(1014)));
-                return await send_response(400, handleError(1014))
+                return send_response(400, handleError(1014))
             }
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
-            return await send_response(e.httpStatus, e)
+            return send_response(e.httpStatus, e)
         }
     } else {
         console.error("Error: ", JSON.stringify(event));
-        return await send_response(event.httpStatus, event);
+        return send_response(event.httpStatus, event);
     }
 
 }

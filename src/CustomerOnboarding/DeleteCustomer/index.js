@@ -18,19 +18,17 @@ module.exports.handler = async (event) => {
             if ((getItemResult.Items).length) {
                 await Dynamo.fetchApiKeyAndDisassociateUsagePlan(get(event, 'body.CustomerId'), USAGEPLAN);
                 await Promise.all([Dynamo.updateItems(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') }, 'set CustomerStatus = :x', { ':x': 'Inactive' }), Dynamo.updateItems(TOKENVALIDATORTABLE, { 'CustomerID': get(event, 'body.CustomerId'), 'ApiKey': getItemResult.Items[0].ApiKey }, 'set CustomerStatus = :x', { ':x': 'Inactive' })])
-                return await send_response(202);
+                return send_response(202);
             } else {
-                const error = handleError(1009);
-                console.error("Error: ", JSON.stringify(error));
-                return await send_response(error.httpStatus, error)
+                return send_response(400, handleError(1009))
             }
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
-            return await send_response(e.httpStatus, e)
+            return send_response(e.httpStatus, e)
         }
     } else {
         console.error("Error: ", JSON.stringify(event));
-        return await send_response(event.httpStatus, event)
+        return send_response(event.httpStatus, event)
     }
 
 }
