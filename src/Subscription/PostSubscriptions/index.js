@@ -1,9 +1,13 @@
-const { send_response, handleError } = require("../../shared/utils/responses");
+const { send_response } = require("../../shared/utils/responses");
 const Joi = require("joi");
 const AWS = require("aws-sdk");
-const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
-const Dynamo = require("../../shared/dynamo/db");
-const { createSubscriptionValidator } = require("../../shared/utils/validator");
+// const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
+const {
+  getAllItemsQueryFilter,
+  getItem,
+  itemInsert,
+} = require("../../shared/dynamo/db");
+const { apiKeyValidation, subscriptionValidator } = require("./validate");
 
 const TOKEN_VALIDATOR = process.env.TOKEN_VALIDATOR;
 const CUSTOMER_PREFERENCE_TABLE = process.env.CUSTOMER_PREFERENCE_TABLE;
@@ -11,49 +15,55 @@ const EVENTING_TOPICS_TABLE = process.env.EVENTING_TOPICS_TABLE;
 
 /*=================post subscription==============*/
 module.exports.handler = async (event) => {
-  const eventBody = !event.body ? null : JSON.parse(event.body);
-  const value = await createSubscriptionValidator(eventBody);
   try {
-    if (value.statusCode) {
-      return value; // "missing required parameters"
+    const apiValidation = await apiKeyValidation(event.headers);
+    if (apiValidation.httpStatus) {
+      return send_response(
+        apiValidation.httpStatus,
+        generateErrorMsg(apiValidation.message)
+      );
+    }
+    let subscriptionArn = null;
+    const ApiKey = event.headers["x-api-key"];
+    const eventBody = !event.body ? null : JSON.parse(event.body);
+    const value = await subscriptionValidator(eventBody);
+    if (value.httpStatus) {
+      return send_response(value.httpStatus, generateErrorMsg(value.message));
     } else {
-      const ApiKey = event.headers["x-api-key"];
       const customerId = await getCustomerId(ApiKey);
-      const customerSub = await getCustomerPreference(
+      await getCustomerPreference(
         customerId,
         value.EventType,
         value.Preference
       );
 
-      if (customerSub) {
-        return handleError(1017); //'Subscription already exists.'
+      const snsTopicDetails = await getSnsTopicDetails(value.EventType);
+      if (value.Preference == "fullPayload") {
+        subscriptionArn = snsTopicDetails.Full_Payload_Topic_Arn;
       } else {
-        // preference check
-        const snsTopicDetails = await getSnsTopicDetails(value.EventType);
-        let subscriptionArn = snsTopicDetails.Event_Payload_Topic_Arn;
-        if (value.Preference == "fullPayload") {
-          subscriptionArn = snsTopicDetails.Full_Payload_Topic_Arn;
-        }
-
-        await createCustomerPreference(customerId, value, subscriptionArn);
-
-        //Create an SNS subscription with filter policy as CustomerID.
-        await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
+        subscriptionArn = snsTopicDetails.Event_Payload_Topic_Arn;
       }
+
+      await createCustomerPreference(customerId, value, subscriptionArn);
+
+      //Create an SNS subscription with filter policy as CustomerID.
+      await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
       return send_response(200, { message: "Subscription successfully added" });
     }
   } catch (error) {
-    return handleError(1005, null, error);
+    return error.errorDescription
+      ? send_response(400, error)
+      : send_response(400, generateErrorMsg(error));
   }
 };
 
 function generateErrorMsg(params, defaultErrorMsg = "Something went wrong") {
-  return JSON.stringify({
+  return {
     errorDescription:
       typeof params === "string" || params instanceof String
         ? params
         : defaultErrorMsg,
-  });
+  };
 }
 
 /**
@@ -63,7 +73,7 @@ function generateErrorMsg(params, defaultErrorMsg = "Something went wrong") {
  */
 async function getCustomerId(ApiKey) {
   try {
-    const response = await Dynamo.getAllItemsQueryFilter(
+    const response = await getAllItemsQueryFilter(
       TOKEN_VALIDATOR,
       "#ApiKey = :ApiKey",
       { "#ApiKey": "ApiKey" },
@@ -76,7 +86,7 @@ async function getCustomerId(ApiKey) {
     ) {
       return response.Items[0].CustomerID;
     }
-    throw "Customer doesn't exist";
+    throw "Invalid API Key";
   } catch (error) {
     throw generateErrorMsg(error);
   }
@@ -96,7 +106,7 @@ async function getCustomerPreference(
   Subscription_Preference
 ) {
   try {
-    const response = await Dynamo.getAllItemsQueryFilter(
+    const response = await getAllItemsQueryFilter(
       CUSTOMER_PREFERENCE_TABLE,
       "#Customer_Id = :Customer_Id and #Event_Type = :Event_Type and #Subscription_Preference = :Subscription_Preference",
       {
@@ -115,7 +125,7 @@ async function getCustomerPreference(
       response.Items.length > 0 &&
       response.Items[0].Subscription_Preference
     ) {
-      return true;
+      throw "Subscription already exists";
     }
     return false;
   } catch (error) {
@@ -131,15 +141,24 @@ async function getCustomerPreference(
  */
 async function getSnsTopicDetails(eventType) {
   try {
-    const response = await Dynamo.getItem(EVENTING_TOPICS_TABLE, {
+    const response = await getItem(EVENTING_TOPICS_TABLE, {
       Event_Type: eventType,
     });
-    return {
-      Event_Payload_Topic_Arn: response.Item.Event_Payload_Topic_Arn,
-      Full_Payload_Topic_Arn: response.Item.Full_Payload_Topic_Arn,
-    };
+    if (
+      response.hasOwnProperty("Item") &&
+      response.Item.hasOwnProperty("Event_Payload_Topic_Arn") &&
+      response.Item.hasOwnProperty("Full_Payload_Topic_Arn")
+    ) {
+      return {
+        Event_Payload_Topic_Arn: response.Item.Event_Payload_Topic_Arn,
+        Full_Payload_Topic_Arn: response.Item.Full_Payload_Topic_Arn,
+      };
+    }
+    throw "sns topic details not found";
   } catch (error) {
-    throw generateErrorMsg(error);
+    throw error.hasOwnProperty("message")
+      ? generateErrorMsg(error.message)
+      : generateErrorMsg(error);
   }
 }
 
@@ -152,7 +171,7 @@ async function getSnsTopicDetails(eventType) {
  */
 async function createCustomerPreference(custId, eventBody, subscriptionArn) {
   try {
-    await Dynamo.itemInsert(CUSTOMER_PREFERENCE_TABLE, {
+    await itemInsert(CUSTOMER_PREFERENCE_TABLE, {
       Event_Type: eventBody.EventType,
       Subscription_Preference: eventBody.Preference,
       Customer_Id: custId,
@@ -184,6 +203,8 @@ async function subscribeToTopic(topic_arn, endpoint, customer_id) {
       },
       ReturnSubscriptionArn: true,
     };
+
+    const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
     const data = await sns.subscribe(params).promise();
     if (data.ResponseMetadata) {
       return true;
