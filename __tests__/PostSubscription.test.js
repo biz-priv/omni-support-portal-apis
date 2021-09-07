@@ -97,7 +97,7 @@ describe("post user subscriptions module test", () => {
     expect(actual).toStrictEqual(error);
   });
 
-  it("Customer doesn't exist", async () => {
+  it("Invalid API Key", async () => {
     AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
       callback(null, {});
     });
@@ -106,7 +106,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: '{"errorDescription":"Customer doesn\'t exist"}',
+      body: '{"errorDescription":"Invalid API Key"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -124,7 +124,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "Subscription already exists.",
+      body: '{"errorDescription":"Subscription already exists"}',
     };
     expect(actual).toStrictEqual(error);
   });
