@@ -21,13 +21,25 @@ pipeline {
         }
         stage('Test'){
             steps {
-                withAWS(credentials: 'bizdev-aws-creds'){
-                    sh """
-                    npm i -g serverless@1.83.3
-                    npm i
-                    sls invoke test
-                    """
-                }    
+                script{
+                    if ("${GIT_BRANCH}".contains("feature") || "${GIT_BRANCH}".contains("bugfix") || "${GIT_BRANCH}".contains("devint")) {
+                        withAWS(credentials: 'bizdev-aws-creds'){
+                            sh """
+                            npm i -g serverless@1.83.3
+                            npm i
+                            sls invoke test
+                            """
+                    }
+                }   else if ("${GIT_BRANCH}".contains("master") || "${GIT_BRANCH}".contains("develop") || "${GIT_BRANCH}".contains("hotfix")){
+                        withAWS(credentials: 'omni-aws-creds'){
+                            sh """
+                            npm i -g serverless@1.83.3
+                            npm i
+                            sls invoke test
+                            """
+                        }
+                    }
+                }
             }
         }
         stage('BizDev Deploy'){
