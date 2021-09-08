@@ -1,0 +1,28 @@
+{
+    "items": [
+        {
+            "id": "sdfkj1",
+            "value": "1234",
+            "name": "1234",
+            "customerId": "1234",
+            "description": "test",
+            "enabled": "true",
+            "createdDate": "2021-06-18T06:54:54.000Z",
+            "lastUpdatedDate": "2021-06-26T06:54:54.000Z",
+            "stageKeys": "test",
+            "tags": "tag"
+        },
+        {
+            "id": "sdf123",
+            "value": "12345",
+            "name": "12345",
+            "customerId": "12345",
+            "description": "test",
+            "enabled": "true",
+            "createdDate": "2021-08-27T06:54:54.000Z",
+            "lastUpdatedDate": "2021-08-27T06:54:54.000Z",
+            "stageKeys": "test",
+            "tags": "tag"
+        }
+    ]
+}

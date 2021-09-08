@@ -9,6 +9,7 @@ const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 const AWSMock = require('aws-sdk-mock');
 
 const getItemResponse = require('../src/TestEvents/UpdateCustomer/MockResponses/getItem.json');
+const getItemResp = require('../src/TestEvents/UpdateCustomer/MockResponses/getItemResp.json')
 
 describe('update module test', () => {
 
@@ -31,6 +32,36 @@ describe('update module test', () => {
         expect(actual.statusCode).toStrictEqual(202);
     })
 
+    it('check first request parameters', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+            callback(null, getItemResp);
+        })
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
+        const event = require('../src/TestEvents/UpdateCustomer/Events/event-update-first-parameter.json');
+        let actual = await wrapped.run(event);
+        expect(actual.statusCode).toStrictEqual(202);
+    })
+
+    it('check second request parameters', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+            callback(null, getItemResp);
+        })
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
+        const event = require('../src/TestEvents/UpdateCustomer/Events/event-update-second-parameter.json');
+        let actual = await wrapped.run(event);
+        expect(actual.statusCode).toStrictEqual(202);
+    })
+
     it('error if record not exist in db', async () => {
 
         AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
@@ -39,7 +70,6 @@ describe('update module test', () => {
 
         const event = require('../src/TestEvents/UpdateCustomer/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
-        console.log(actual)
         const error = '{\"httpStatus\":400,\"code\":1009,\"message\":\"Item not found.\"}'
         expect(actual.body).toStrictEqual(error);
     })

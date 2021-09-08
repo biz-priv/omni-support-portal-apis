@@ -23,20 +23,19 @@ module.exports.handler = async (event) => {
                 await Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "CustomerName": getItemResult.Items[0].CustomerName, "CustomerStatus": "Active", "ApiKey": apiKeyValue.value });
 
                 console.info("Info: ", JSON.stringify({ "ApiKey": apiKeyValue.value }));
-                return await send_response(200, { "ApiKey": apiKeyValue.value });
+                return send_response(200, { "ApiKey": apiKeyValue.value });
 
             } else {
-                console.error("Error: ", JSON.stringify(handleError(1009)));
-                return await send_response(400, handleError(1009))
+                return send_response(400, handleError(1009))
             }
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
-            return await send_response(e.httpStatus, e)
+            return send_response(e.httpStatus, e)
         }
 
     } else {
         console.error("Error: ", JSON.stringify(event));
-        return await send_response(event.httpStatus, event)
+        return send_response(event.httpStatus, event)
     }
 
 }

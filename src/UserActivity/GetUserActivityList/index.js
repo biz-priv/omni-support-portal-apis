@@ -16,14 +16,14 @@ module.exports.handler = async (event) => {
         try {
             startKey = (startKey.UserId == null || startKey.UserId == 0) ? null : startKey;
             [getItemResult, totalCount] = await Promise.all([Dynamo.getItemQueryWithLimit(USERACTIVITY, get(event, 'queryStringParameters.size'), 'UserId = :uid', { ':uid': get(event, 'pathParameters.id') }, startKey), Dynamo.getScanCount(USERACTIVITY, 'UserId = :uid', { ':uid': get(event, 'pathParameters.id') })]);
-            return await getResponse(getItemResult, totalCount.Count, startKey, get(event, 'queryStringParameters.page'), get(event, 'queryStringParameters.size'), event);
+            return getResponse(getItemResult, totalCount.Count, startKey, get(event, 'queryStringParameters.page'), get(event, 'queryStringParameters.size'), event);
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
-            return await send_response(e.httpStatus, e);
+            return send_response(e.httpStatus, e);
         }
     } else {
         console.error("Error: ", JSON.stringify(event));
-        return await send_response(event.httpStatus, event);
+        return send_response(event.httpStatus, event);
     }
 
 }
@@ -62,5 +62,5 @@ async function getResponse(results, count, startkey, page, size, event) {
         response.Page["EndKey"] = lastKey;
     }
     console.info("Response: ", JSON.stringify(response));
-    return await send_response(200, response);
+    return send_response(200, response);
 }
