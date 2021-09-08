@@ -18,22 +18,21 @@ module.exports.handler = async (event) => {
             if ((getItemResult.Items).length) {
                 const checkUsagePlan = await Dynamo.checkApiKeyUsagePlan(get(event, 'body.CustomerId'), USAGEPLAN);
                 if (checkUsagePlan != undefined) {
-                    console.error("Error: ", JSON.stringify(handleError(1013)));
-                    return await send_response(400, handleError(1013))
+                    return send_response(400, handleError(1013))
                 }
             }
             let apiKeyResult = await Dynamo.apiKeyCreate({ name: get(event, 'body.CustomerId'), enabled: true, description: get(event, 'body.CustomerId') }, USAGEPLAN);
             await Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "ApiKey": apiKeyResult.value, "CustomerStatus": 'Active', "CustomerName": 'NA' })
             console.info("Info: ", JSON.stringify({ "ApiKey": apiKeyResult.value }));
-            return await send_response(200, { "ApiKey": apiKeyResult.value })
+            return send_response(200, { "ApiKey": apiKeyResult.value })
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
-            return await send_response(e.httpStatus, e)
+            return send_response(e.httpStatus, e)
         }
 
     } else {
         console.error("Error: ", JSON.stringify(event));
-        return await send_response(event.httpStatus, event)
+        return send_response(event.httpStatus, event)
     }
 
 }

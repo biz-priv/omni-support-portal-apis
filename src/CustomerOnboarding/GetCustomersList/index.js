@@ -43,7 +43,7 @@ module.exports.handler = async (event, context) => {
         }
     } else {
         console.error("Error: ", JSON.stringify(event));
-        return await send_response(event.httpStatus, event)
+        return send_response(event.httpStatus, event)
     }
 }
 

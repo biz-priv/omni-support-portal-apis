@@ -28,20 +28,20 @@ module.exports.handler = async (event) => {
             const result = await Dynamo.getItem(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') });
             if (result.Item) {
                 await Dynamo.updateItems(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') }, updateExpression, attributesValues);
-                return await send_response(202);
+                return send_response(202);
             } else {
                 const error = handleError(1009);
                 console.error("Error: ", JSON.stringify(error));
-                return await send_response(error.httpStatus, error)
+                return send_response(error.httpStatus, error)
             }
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
-            return await send_response(e.httpStatus, e)
+            return send_response(e.httpStatus, e)
         }
 
     } else {
         console.error("Error: ", JSON.stringify(event));
-        return await send_response(event.httpStatus, event)
+        return send_response(event.httpStatus, event)
     }
 
 }

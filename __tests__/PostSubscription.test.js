@@ -28,13 +28,24 @@ describe("post user subscriptions module test", () => {
     AWSMock.restore();
   });
 
+  it("event empty x-api-key validation", async () => {
+    const event = require("../src/TestEvents/PostSubscriptions/Events/event-empty-xapi-key.json");
+    let actual = await wrapped.run(event);
+    const error = {
+      statusCode: 400,
+      headers,
+      body: '{"errorDescription":"x-api-key must be a string"}',
+    };
+    expect(actual).toStrictEqual(error);
+  });
+
   it("event empty body validation", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-body-null.json");
     let actual = await wrapped.run(event);
     const error = {
       statusCode: 400,
       headers,
-      body: "value must be of type object",
+      body: '{"errorDescription":"value must be of type object"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -45,7 +56,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "EventType is required",
+      body: '{"errorDescription":"EventType is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -56,7 +67,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "Endpoint is required",
+      body: '{"errorDescription":"Endpoint is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -67,7 +78,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "SharedSecret is required",
+      body: '{"errorDescription":"SharedSecret is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -78,7 +89,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "Preference is required",
+      body: '{"errorDescription":"Preference is required"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -92,12 +103,12 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "getCustomerIdError: Something went wrong",
+      body: '{"errorDescription":"Something went wrong"}',
     };
     expect(actual).toStrictEqual(error);
   });
 
-  it("Customer doesn't exist", async () => {
+  it("Invalid API Key", async () => {
     AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
       callback(null, {});
     });
@@ -106,7 +117,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "getCustomerIdError: Customer doesn't exist",
+      body: '{"errorDescription":"Invalid API Key"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -124,12 +135,12 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "Subscription already exists.",
+      body: '{"errorDescription":"Subscription already exists"}',
     };
     expect(actual).toStrictEqual(error);
   });
 
-  it("getSnsTopicDetails Error", async () => {
+  it("getSnsTopicDetails: Error getting items", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
     const stub = sinon.stub();
     stub.onCall(0).returns(getCustomer);
@@ -146,7 +157,29 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "getSnsTopicDetailsError: Something went wrong",
+      body: '{"errorDescription":"Error getting items."}',
+    };
+    expect(actual).toStrictEqual(error);
+  });
+
+  it("sns topic details not found", async () => {
+    const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
+    const stub = sinon.stub();
+    stub.onCall(0).returns(getCustomer);
+    stub.onCall(1).returns({});
+    AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
+      callback(null, stub());
+    });
+
+    AWSMock.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
+      callback(null, {});
+    });
+
+    let actual = await wrapped.run(event);
+    const error = {
+      statusCode: 400,
+      headers,
+      body: '{"errorDescription":"sns topic details not found"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -172,7 +205,7 @@ describe("post user subscriptions module test", () => {
     const error = {
       statusCode: 400,
       headers,
-      body: "createCustomerPreferenceError: Unable to create customer",
+      body: '{"errorDescription":"Unable to create customer"}',
     };
     expect(actual).toStrictEqual(error);
   });
@@ -201,5 +234,36 @@ describe("post user subscriptions module test", () => {
 
     let actual = await wrapped.run(event);
     expect(actual).toStrictEqual(eventSuccess);
+  });
+
+  it("Unable to subscribe", async () => {
+    const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
+    const stub = sinon.stub();
+
+    stub.onCall(0).returns(getCustomer);
+    stub.onCall(1).returns({});
+    AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
+      callback(null, stub());
+    });
+
+    AWSMock.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
+      callback(null, getSnsTopicDetails);
+    });
+
+    AWSMock.mock("DynamoDB.DocumentClient", "put", (params, callback) => {
+      callback(null, {});
+    });
+
+    AWSMock.mock("SNS", "subscribe", (params, callback) => {
+      callback(null, {});
+    });
+
+    let actual = await wrapped.run(event);
+    const error = {
+      statusCode: 400,
+      headers,
+      body: '{"errorDescription":"Unable to subscribe"}',
+    };
+    expect(actual).toStrictEqual(error);
   });
 });

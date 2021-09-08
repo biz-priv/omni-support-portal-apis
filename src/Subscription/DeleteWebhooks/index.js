@@ -20,22 +20,20 @@ module.exports.handler = async (event) => {
                 if (eventPreferenceResult.Item) {
                     await SNS_SERVICE.topicUnSubscription(eventPreferenceResult.Item.Subscription_arn);
                     const [deletePreference, deleteTokenApiKey] = await Promise.all([Dynamo.deleteItem(EVENT_PREFERENCE, { 'Customer_Id': tokenTableResult.Items[0].CustomerID, 'Event_Type': get(event, 'body.EventType') }), Dynamo.deleteItem(TOKEN_VALIDATOR, { 'CustomerID': tokenTableResult.Items[0].CustomerID, 'ApiKey': get(event, 'headers.x-api-key') })]);
-                    return await send_response(200);
+                    return send_response(200);
                 } else {
-                    console.error("Error: ", JSON.stringify(handleError(1009)));
-                    return await send_response(400, handleError(1009))
+                    return send_response(400, handleError(1009))
                 }
             } else {
-                console.error("Error: ", JSON.stringify(handleError(1014)));
-                return await send_response(400, handleError(1014))
+                return send_response(400, handleError(1014))
             }
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
-            return await send_response(e.httpStatus, e)
+            return send_response(e.httpStatus, e)
         }
     } else {
         console.error("Error: ", JSON.stringify(event));
-        return await send_response(event.httpStatus, event);
+        return send_response(event.httpStatus, event);
     }
 
 }
