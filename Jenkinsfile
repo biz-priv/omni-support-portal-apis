@@ -20,8 +20,37 @@ pipeline {
             }
         }
         stage('Test'){
+            when {
+                anyOf {
+                    branch 'devint';
+                    branch 'feature/*';
+                    branch 'bugfix/*';
+                }
+                expression {
+                    return true;
+                }
+            }
             steps {
                 withAWS(credentials: 'bizdev-aws-creds'){
+                    sh """
+                    npm i -g serverless@1.83.3
+                    npm i
+                    sls invoke test
+                    """
+                }    
+            }
+            when {
+                anyOf {
+                    branch 'master';
+                    branch 'hotfix/*';
+                    branch 'develop';
+                }
+                expression {
+                    return true;
+                }
+            }
+            steps {
+                withAWS(credentials: 'omni-aws-creds'){
                     sh """
                     npm i -g serverless@1.83.3
                     npm i
