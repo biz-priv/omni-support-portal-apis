@@ -8,6 +8,22 @@ const { handleError } = require('../../shared/utils/responses');
 const get = require('lodash.get');
 
 const ACCOUNT_INFO_TABLE = process.env.ACCOUNT_INFO;
+const TOKEN_VALIDATOR_TABLE = process.env.TOKEN_VALIDATOR;
+
+function filterRecords(tokenTableRecords, accountInfoResult) {
+    (tokenTableRecords.Items).map((element) => {
+        (accountInfoResult.Items).map((elem) => {
+            if (element.CustomerID == elem.CustomerID) {
+                if (element.CustomerName) {
+                    elem["CustomerName"] = element.CustomerName
+                } else {
+                    elem["CustomerName"] = "NA"
+                }
+            }
+        })
+    })
+    return accountInfoResult
+}
 
 module.exports.handler = async (event, context) => {
     console.info("Event: ", JSON.stringify(event));
@@ -16,7 +32,7 @@ module.exports.handler = async (event, context) => {
         const status = get(event, 'queryStringParameters.status') === true ? "Active" : "Inactive";
         let startKey = { CustomerID: get(event, 'queryStringParameters.startkey') };
         let results, accountInfo, count;
-
+        let tokenTableRecords = await Dynamo.getAllItems(TOKEN_VALIDATOR_TABLE);
         if (status === 'Active') {
             startKey["CustomerStatus"] = status;
             startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
@@ -25,14 +41,16 @@ module.exports.handler = async (event, context) => {
                 Dynamo.getAllItemsQueryCount(ACCOUNT_INFO_TABLE, status)
                 ]
             );
-            results = await fetchApiKey(accountInfo);
+            const newaccountInfoRecords = await filterRecords(tokenTableRecords, accountInfo);
+            results = await fetchApiKey(newaccountInfoRecords);
         } else {
             startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
-            [results, count] = await Promise.all(
+            [accountInfoResult, count] = await Promise.all(
                 [Dynamo.fetchAllItems(ACCOUNT_INFO_TABLE, get(event, 'queryStringParameters.size'), startKey),
                 Dynamo.getAllItemsScanCount(ACCOUNT_INFO_TABLE)
                 ]
             );
+            results = await filterRecords(tokenTableRecords, accountInfoResult);
         }
         try {
             return await getResponse(results, count, startKey, get(event, 'queryStringParameters.status'), get(event, 'queryStringParameters.page'), get(event, 'queryStringParameters.size'), event);
@@ -70,7 +88,7 @@ async function getResponse(results, count, startkey, status, page, size, event) 
     let prevLink = host + path + "&page=" + page + "&size=" +
         size + "&startkey=" + prevLinkStartKey;
 
-    var response = await pagination.createPagination(resp, host, path+ "&page=", page, size, elementCount, LastEvaluatedkeyCustomerID, count, prevLink);
+    var response = await pagination.createPagination(resp, host, path + "&page=", page, size, elementCount, LastEvaluatedkeyCustomerID, count, prevLink);
 
     if (lastCustomerId !== 0) {
         response.Page["StartKey"] = lastCustomerId;

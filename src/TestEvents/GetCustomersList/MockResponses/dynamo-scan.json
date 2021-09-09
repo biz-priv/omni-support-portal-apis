@@ -7,6 +7,7 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
+            "CustomerName": "NA",
             "CustomerStatus": "Active"
         },
         {
@@ -16,6 +17,7 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
+            "CustomerName": "12345",
             "CustomerStatus": "Active"
         },
         {
@@ -25,6 +27,7 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
+            "CustomerName": "1234",
             "CustomerStatus": "Inactive"
         },
         {

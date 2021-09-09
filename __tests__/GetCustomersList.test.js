@@ -56,6 +56,10 @@ describe('module test', () => {
 
   it('get active customers record with api keys (match key in apigateway) with startkey', async () => {
 
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanResponse);
+    })
+
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponse);
     })
@@ -74,6 +78,10 @@ describe('module test', () => {
   });
 
   it('get active customers record with api keys (match key in apigateway)', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanResponse);
+    })
 
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponse);
@@ -97,6 +105,10 @@ describe('module test', () => {
 
   it('get all customers record with startkey is true', async () => {
 
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanResponse);
+    })
+
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponse);
     })
@@ -115,6 +127,10 @@ describe('module test', () => {
 
   it('get active customers record (no api key in api gateway)', async () => {
 
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanResponse);
+    })
+
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponseNoLastKey);
     })
@@ -131,6 +147,10 @@ describe('module test', () => {
   });
 
   it('error from api gateway', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanResponse);
+    })
 
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponse);

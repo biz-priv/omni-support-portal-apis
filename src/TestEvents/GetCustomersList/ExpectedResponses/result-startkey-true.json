@@ -2,6 +2,7 @@
     "Customers": [
         {
             "CustomerID": "1234",
+            "CustomerName": "NA",
             "BillToAcct": "15733",
             "CustomerNo": "WX",
             "DeclaredType": "LL",
