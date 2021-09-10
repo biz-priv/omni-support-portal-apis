@@ -1,46 +1,24 @@
 {
     "Items": [
         {
-            "CustomerID": "1234",
-            "BillToAcct": "15733",
-            "CustomerNo": "WX",
-            "DeclaredType": "LL",
-            "SourceSystem": "TR",
-            "Station": "TT",
-            "CustomerName": "NA",
-            "CustomerStatus": "Active"
+            "ApiKey": "mkRoQVEK896FWgslauOs97ymfkZDLUfRaPiDRgKW",
+            "CustomerStatus": "Inactive",
+            "CustomerID": "1234"
         },
         {
+            "ApiKey": "Q0cCE5hLXI2zh2Et4VIfJpFR92HMY5d3dr6Wfc4d",
+            "CustomerStatus": "Inactive",
             "CustomerID": "12345",
-            "BillToAcct": "15733",
-            "CustomerNo": "WX",
-            "DeclaredType": "LL",
-            "SourceSystem": "TR",
-            "Station": "TT",
-            "CustomerName": "12345",
-            "CustomerStatus": "Active"
+            "CustomerName": "SK Test"
         },
         {
+            "ApiKey": "d2cYuDqiH82zcDxJgacT4a2s3KDJyGBF8rmc3Uur",
+            "CustomerStatus": "Active",
             "CustomerID": "123456",
-            "BillToAcct": "15733",
-            "CustomerNo": "WX",
-            "DeclaredType": "LL",
-            "SourceSystem": "TR",
-            "Station": "TT",
-            "CustomerName": "1234",
-            "CustomerStatus": "Inactive"
-        },
-        {
-            "CustomerID": "1234567",
-            "BillToAcct": "15733",
-            "CustomerNo": "WX",
-            "DeclaredType": "LL",
-            "SourceSystem": "TR",
-            "Station": "TT",
-            "CustomerStatus": "Inactive"
+            "CustomerName": "SK Test"
         }
     ],
     "LastEvaluatedKey": {
-        "CustomerID": "123456"
+        "CustomerID": "123456", "ApiKey": "d2cYuDqiH82zcDxJgacT4a2s3KDJyGBF8rmc3Uur"
     }
 }

@@ -425,6 +425,27 @@ async function deleteItem(tableName, key_param) {
   }
 }
 
+/* fetch items using getbatchitem two table */
+async function fetchBatchItems(records1, tableName1) {
+  // const dynamoSvc = new AWS.DynamoDB({ region: process.env.DEFAULT_AWS });
+  const documentClient = new AWS.DynamoDB.DocumentClient({
+    region: process.env.DEFAULT_AWS,
+  });
+  let requestItem = {}
+  requestItem[tableName1] = {
+    Keys: records1
+  }
+  let params = {
+    RequestItems: requestItem
+  };
+  try {
+    return await documentClient.batchGet(params).promise();
+  } catch (e) {
+    console.error("fetchAllItems Error: ", e);
+    throw handleError(1004, e, get(e, "details[0].message", null));
+  }
+}
+
 module.exports = {
   fetchAllItems,
   fetchByIndex,
@@ -445,4 +466,5 @@ module.exports = {
   getAllItems,
   deleteItem,
   getAllItemsQueryFilter,
+  fetchBatchItems,
 };

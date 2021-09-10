@@ -3,12 +3,7 @@
         {
             "CustomerID": "1234",
             "CustomerName": "NA",
-            "BillToAcct": "15733",
-            "CustomerNo": "WX",
-            "DeclaredType": "LL",
-            "SourceSystem": "TR",
-            "Station": "TT",
-            "CustomerStatus": "Active",
+            "CustomerStatus": "Inactive",
             "Created": "2021-06-18T06:54:54.000Z",
             "Updated": "2021-06-26T06:54:54.000Z",
             "Age": 70
@@ -19,13 +14,13 @@
         "TotalElement": 10,
         "TotalPages": 3,
         "Number": 1,
-        "CustomerStatus": true,
-        "StartKey": "123456"
+        "StartKey": "123456",
+        "EndKey": "2233"
     },
     "_links": {
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=1&size=3&startkey=123456",
-            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=2&size=3&startkey=123456"
+            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=1&size=3&startkey=123456&endkey=321",
+            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=2&size=3&startkey=123456&endkey=2233"
         }
     }
 }

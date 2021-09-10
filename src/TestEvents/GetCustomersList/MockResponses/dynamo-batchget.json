@@ -1,0 +1,33 @@
+{
+    "Responses": {
+        "account-info-dev": [
+            {
+                "CustomerID": "1234",
+                "CustomerStatus": "Inactive"
+            },
+            {
+                "BillToAcct": "5555",
+                "SourceSystem": "KK",
+                "CustomerStatus": "Active",
+                "Station": "KK",
+                "CustomerNo": "6666",
+                "DeclaredType": "NA",
+                "CustomerID": "12345"
+            },
+            {
+                "BillToAcct": "5555",
+                "SourceSystem": "KK",
+                "CustomerStatus": "Active",
+                "Station": "KK",
+                "CustomerNo": "NA",
+                "DeclaredType": "NA",
+                "CustomerID": "123456"
+            },
+            {
+                "CustomerID": "1234567",
+                "CustomerStatus": "Inactive"
+            }
+        ]
+    },
+    "UnprocessedKeys": {}
+}

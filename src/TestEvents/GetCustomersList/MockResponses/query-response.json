@@ -29,7 +29,8 @@
         }
     ],
     "LastEvaluatedKey": {
-        "CustomerID": "123456"
+        "CustomerID": "123456",
+        "ApiKey": "2233"
     },
     "Count": 10
 }

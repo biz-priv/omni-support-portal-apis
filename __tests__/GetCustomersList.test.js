@@ -14,6 +14,7 @@ const queryResponse = require('../src/TestEvents/GetCustomersList/MockResponses/
 const queryResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockResponses/query-response-no-lastkey.json');
 const apiKeysResponse = require('../src/TestEvents/GetCustomersList/MockResponses/api-gw-apikeys.json');
 const apiKeysTwoResponse = require('../src/TestEvents/GetCustomersList/MockResponses/api-gw-apikeys-startkey.json');
+const batchGetResponse = require('../src/TestEvents/GetCustomersList/MockResponses/dynamo-batchget.json');
 
 describe('module test', () => {
 
@@ -25,6 +26,10 @@ describe('module test', () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
       callback(null, scanResponseNoLastKey);
+    });
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
     });
 
     AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
@@ -44,12 +49,16 @@ describe('module test', () => {
       callback(null, scanResponse);
     })
 
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
+
     AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
       callback(null, { Table: { ItemCount: '4' } });
     })
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-with-startkey.json');
-    const result = await wrapped.run(event);  
+    const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-startkey.json');
     expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
   });
@@ -59,6 +68,10 @@ describe('module test', () => {
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
       callback(null, scanResponse);
     })
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
 
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponse);
@@ -82,6 +95,10 @@ describe('module test', () => {
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
       callback(null, scanResponse);
     })
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
 
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponse);
@@ -109,16 +126,20 @@ describe('module test', () => {
       callback(null, scanResponse);
     })
 
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
+
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponse);
     })
-    
+
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback(null, apiKeysResponse);
     });
-    
+
     const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
-    const result = await wrapped.run(event);  
+    const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-startkey-true.json');
     let age = JSON.parse(result.body).Customers[0].Age;
     expectedResponse.Customers[0].Age = age;
@@ -130,6 +151,10 @@ describe('module test', () => {
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
       callback(null, scanResponse);
     })
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
 
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponseNoLastKey);
@@ -152,6 +177,10 @@ describe('module test', () => {
       callback(null, scanResponse);
     })
 
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
+
     AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
       callback(null, queryResponse);
     })
@@ -165,23 +194,6 @@ describe('module test', () => {
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/api-gw-error.json');
     expect(JSON.parse(result.body)).toStrictEqual(expectedResponse)
 
-  });
-
-  it('no records found', async () => {
-
-    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-      callback(null, { Items: [] });
-    })
-
-    AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
-      callback(null, { Table: { ItemCount: '0' } });
-    })
-
-    const event = require('../src/TestEvents/GetCustomersList/Events/event-false.json');
-    const result = await wrapped.run(event);
-    const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/no-records.json');
-    console.log("RESULT: ", JSON.stringify(result));
-    expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
   });
 
   it('bad request error from scan operation', async () => {
