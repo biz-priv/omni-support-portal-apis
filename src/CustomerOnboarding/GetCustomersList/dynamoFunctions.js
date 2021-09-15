@@ -6,6 +6,7 @@ function noDataHandler(dbItems) {
         custItem['Created'] = "NA"
         custItem['Updated'] = "NA"
         custItem['Age'] = "NA"
+        custItem['ApiKey'] = "NA",
         CustomerTempData.push(custItem);
     });
     return CustomerTempData;
@@ -19,7 +20,8 @@ async function fetchApiKey(accountInfo) {
     return new Promise((resolve, reject) => {
         var CustomerData = [];
         var params = {
-            includeValues: true
+            includeValues: true,
+            limit: 500
         };
         apigateway.getApiKeys(params, function (err, data) {
             if (err) {
@@ -33,6 +35,7 @@ async function fetchApiKey(accountInfo) {
                             if (apiKeyObject['name'] == custItem['CustomerID']) {
                                 custItem['Created'] = apiKeyObject['createdDate']
                                 custItem['Updated'] = apiKeyObject['lastUpdatedDate']
+                                custItem['ApiKey'] = apiKeyObject['value']
                                 duration = moment.duration(moment().diff(apiKeyObject['createdDate']))
                                 custItem['Age'] = parseInt(duration.asDays())
                                 if (!CustomerData.some(el => el.CustomerID === custItem['CustomerID'])) {
@@ -43,11 +46,12 @@ async function fetchApiKey(accountInfo) {
                                 custItem['Created'] = "NA"
                                 custItem['Updated'] = "NA"
                                 custItem['Age'] = "NA"
+                                custItem['ApiKey'] = "NA"
                                 CustomerData.push(custItem);
                             }
-
                         });
                     });
+
                 } else {
                     CustomerData = noDataHandler(custResults);
                 }

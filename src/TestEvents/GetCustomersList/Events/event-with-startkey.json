@@ -106,8 +106,7 @@
         "page": "1",
         "size": "3",
         "startkey": "123456",
-        "status": "false",
-        "endkey": "321"
+        "status": "false"
     },
     "multiValueQueryStringParameters": {
         "page": [
@@ -121,9 +120,6 @@
         ],
         "status": [
             "false"
-        ],
-        "endkey": [
-            "321"
         ]
     },
     "pathParameters": null,

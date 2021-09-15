@@ -2,8 +2,13 @@
     "Customers": [
         {
             "CustomerID": "1234",
-            "CustomerName": "NA",
-            "CustomerStatus": "Inactive",
+            "CustomerName": "SK Test",
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
+            "CustomerStatus": "Active",
             "Created": "NA",
             "Updated": "NA",
             "Age": "NA"
@@ -11,11 +16,11 @@
         {
             "CustomerID": "12345",
             "CustomerName": "NA",
-            "BillToAcct": "5555",
-            "CustomerNo": "6666",
-            "DeclaredType": "NA",
-            "SourceSystem": "KK",
-            "Station": "KK",
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
             "CustomerStatus": "Active",
             "Created": "NA",
             "Updated": "NA",
@@ -23,38 +28,30 @@
         },
         {
             "CustomerID": "123456",
-            "CustomerName": "NA",
-            "BillToAcct": "5555",
-            "CustomerNo": "NA",
-            "DeclaredType": "NA",
-            "SourceSystem": "KK",
-            "Station": "KK",
+            "CustomerName": "SK Test",
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
             "CustomerStatus": "Active",
             "Created": "NA",
             "Updated": "NA",
             "Age": "NA"
-        },
-        {
-            "Age": "NA",
-            "Created": "NA",
-            "CustomerID": "1234567",
-            "CustomerStatus": "Inactive",
-            "CustomerName": "NA",
-            "Updated": "NA"
         }
     ],
     "Page": {
-        "Size": 4,
+        "Size": 3,
         "TotalElement": 10,
         "TotalPages": 3,
         "Number": 1,
-        "StartKey": "123456",
-        "EndKey": "2233"
+        "CustomerStatus": true,
+        "StartKey": "123456"
     },
     "_links": {
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=1&size=3&startkey=123456&endkey=321",
-            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=2&size=3&startkey=123456&endkey=2233"
+            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=1&size=3&startkey=123456",
+            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=2&size=3&startkey=123456"
         }
     }
 }

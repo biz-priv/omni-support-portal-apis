@@ -1,31 +1,29 @@
 {
     "Responses": {
-        "account-info-dev": [
+        "omni-dw-token-validator-devint": [
             {
+                "ApiKey": "d2cYuDqiH82zcDxJgacT4a2s3KDJyGBF8rmc3Uur",
+                "CustomerStatus": "Active",
                 "CustomerID": "1234",
-                "CustomerStatus": "Inactive"
+                "CustomerName": "SK Test"
             },
             {
-                "BillToAcct": "5555",
-                "SourceSystem": "KK",
+                "ApiKey": "zwRpdERf042rvQ8c1xZ5y7V2sK7e7LIIEyjQlUJf",
                 "CustomerStatus": "Active",
-                "Station": "KK",
-                "CustomerNo": "6666",
-                "DeclaredType": "NA",
-                "CustomerID": "12345"
+                "CustomerID": "12345",
+                "CustomerName": "NA"
             },
             {
-                "BillToAcct": "5555",
-                "SourceSystem": "KK",
+                "ApiKey": "UeHJ7zN0HV8l153yhznc34J3Uqo2eCfH8lahv6P7",
                 "CustomerStatus": "Active",
-                "Station": "KK",
-                "CustomerNo": "NA",
-                "DeclaredType": "NA",
-                "CustomerID": "123456"
+                "CustomerID": "123456",
+                "CustomerName": "SK Test"
             },
             {
+                "ApiKey": "TK9kQQkzn93FtdEMyZpsu255yvNIxGju3ZCJwMjm",
+                "CustomerStatus": "Active",
                 "CustomerID": "1234567",
-                "CustomerStatus": "Inactive"
+                "CustomerName": "NA"
             }
         ]
     },

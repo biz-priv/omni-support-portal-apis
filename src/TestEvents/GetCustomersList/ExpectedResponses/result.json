@@ -2,32 +2,42 @@
     "Customers": [
         {
             "CustomerID": "1234",
-            "CustomerName": "NA",
-            "CustomerStatus": "Inactive"
+            "CustomerName": "SK Test",
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
+            "CustomerStatus": "Active"
         },
         {
             "CustomerID": "12345",
-            "CustomerName": "SK Test",
-            "BillToAcct": "5555",
-            "CustomerNo": "6666",
-            "DeclaredType": "NA",
-            "SourceSystem": "KK",
-            "Station": "KK",
+            "CustomerName": "NA",
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
             "CustomerStatus": "Active"
         },
         {
             "CustomerID": "123456",
             "CustomerName": "SK Test",
-            "BillToAcct": "5555",
-            "CustomerNo": "NA",
-            "DeclaredType": "NA",
-            "SourceSystem": "KK",
-            "Station": "KK",
-            "CustomerStatus": "Active"
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
+            "CustomerStatus": "Inactive"
         },
         {
             "CustomerID": "1234567",
             "CustomerName": "NA",
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
             "CustomerStatus": "Inactive"
         }
     ],
@@ -38,7 +48,7 @@
     },
     "_links": {
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=10&startkey=0&endkey=0"
+            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=10&startkey=0"
         }
     }
 }

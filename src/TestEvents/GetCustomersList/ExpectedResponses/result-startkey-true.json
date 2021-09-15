@@ -2,25 +2,56 @@
     "Customers": [
         {
             "CustomerID": "1234",
-            "CustomerName": "NA",
-            "CustomerStatus": "Inactive",
+            "CustomerName": "SK Test",
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
+            "CustomerStatus": "Active",
             "Created": "2021-06-18T06:54:54.000Z",
             "Updated": "2021-06-26T06:54:54.000Z",
             "Age": 70
+        },
+        {
+            "Age": 15,
+            "BillToAcct": "15733",
+            "Created": "2021-08-27T06:54:54.000Z",
+            "CustomerID": "12345",
+            "CustomerName": "NA",
+            "CustomerNo": "WX",
+            "CustomerStatus": "Active",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
+            "Updated": "2021-08-27T06:54:54.000Z"
+        },
+        {
+            "Age": "NA",
+            "BillToAcct": "15733",
+            "Created": "NA",
+            "CustomerID": "123456",
+            "CustomerName": "SK Test",
+            "CustomerNo": "WX",
+            "CustomerStatus": "Active",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
+            "Updated": "NA"
         }
     ],
     "Page": {
-        "Size": 1,
+        "Size": 3,
         "TotalElement": 10,
         "TotalPages": 3,
         "Number": 1,
-        "StartKey": "123456",
-        "EndKey": "2233"
+        "CustomerStatus": true,
+        "StartKey": "123456"
     },
     "_links": {
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=1&size=3&startkey=123456&endkey=321",
-            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=2&size=3&startkey=123456&endkey=2233"
+            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=1&size=3&startkey=123456",
+            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=true&page=2&size=3&startkey=123456"
         }
     }
 }

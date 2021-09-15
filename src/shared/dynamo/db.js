@@ -426,14 +426,13 @@ async function deleteItem(tableName, key_param) {
 }
 
 /* fetch items using getbatchitem two table */
-async function fetchBatchItems(records1, tableName1) {
-  // const dynamoSvc = new AWS.DynamoDB({ region: process.env.DEFAULT_AWS });
+async function fetchBatchItems(keyValueArray, tableName) {
   const documentClient = new AWS.DynamoDB.DocumentClient({
     region: process.env.DEFAULT_AWS,
   });
   let requestItem = {}
-  requestItem[tableName1] = {
-    Keys: records1
+  requestItem[tableName] = {
+    Keys: keyValueArray
   }
   let params = {
     RequestItems: requestItem
