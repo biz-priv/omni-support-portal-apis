@@ -1,0 +1,26 @@
+{
+    "Items": [ 
+        {
+            "Customer_Id": "123",
+            "Endpoint": "https://example.com",
+            "Event_Type": "ShipmentDueDate",
+            "Subscription_arn": "arn:aws:sns:us-test-1:123:test_topic_fullPayload",
+            "Shared_Secret": "2233",
+            "Subscription_Preference": "fullPayload"
+        },
+        {
+            "Customer_Id": "1234",
+            "Endpoint": "https://example.com",
+            "Event_Type": "ShipmentDueDate",
+            "Subscription_arn": "arn:aws:sns:us-test-1:123:Mile_Change",
+            "Shared_Secret": "2233",
+            "Subscription_Preference": "Change"
+        }
+    ],
+    "Count": 8,
+    "ScannedCount": 2,
+    "LastEvaluatedKey": {
+        "Customer_Id": "1234",
+        "Event_Type": "ShipmentDueDate"
+    } 
+}

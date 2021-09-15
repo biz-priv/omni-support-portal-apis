@@ -3,9 +3,7 @@ const validate = require('./validate');
 const Dynamo = require('../../shared/dynamo/db');
 const { get } = require('lodash');
 const EVENT_PREFERENCE = process.env.EVENT_PREFERENCES_TABLE;
-const TOKEN_VALIDATOR = process.env.TOKEN_VALIDATOR_TABLE;
 const pagination = require('../../shared/utils/pagination');
-const { handleError } = require('../../shared/utils/responses');
 
 //get webhooks subscriptions list
 module.exports.handler = async (event) => {
@@ -15,14 +13,9 @@ module.exports.handler = async (event) => {
         let startKey = { Customer_Id: get(event, 'queryStringParameters.startkey'), Event_Type: get(event, 'queryStringParameters.endkey') };
         let getItemResult, totalCount
         try {
-            const tokenTableResult = await Dynamo.queryByIndex(TOKEN_VALIDATOR, "ApiKeyindex", 'ApiKey = :apikey', { ':apikey': get(event, 'headers.x-api-key') });
-            if ((tokenTableResult.Items).length) {
             startKey = (startKey.Customer_Id == null || startKey.Customer_Id == 0) ? null : startKey;
             [getItemResult, totalCount] = await Promise.all([Dynamo.fetchAllItems(EVENT_PREFERENCE, get(event, 'queryStringParameters.size'), startKey), Dynamo.getAllItems(EVENT_PREFERENCE)]);
             return await getResponse(getItemResult, totalCount.Count, startKey, get(event, 'queryStringParameters.page'), get(event, 'queryStringParameters.size'), event);
-        } else {
-            return send_response(400, handleError(1014))
-        }
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
             return send_response(e.httpStatus, e);

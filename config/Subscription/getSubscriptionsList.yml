@@ -4,7 +4,6 @@ GetSubscriptionsList:
     - { Ref: CommonLibsLambdaLayer }
   environment:
     EVENT_PREFERENCES_TABLE: ${ssm:/omni/devint/eventing/preferences/table/name}
-    TOKEN_VALIDATOR_TABLE: ${ssm:/omni/devint/token/validator/table/name}
     DEFAULT_AWS: ${self:provider.region}     
   package:
     individually: true
