@@ -14,9 +14,9 @@
             "Age": 70
         },
         {
-            "Age": 15,
+            "Age": "NA",
             "BillToAcct": "15733",
-            "Created": "2021-08-27T06:54:54.000Z",
+            "Created": "NA",
             "CustomerID": "12345",
             "CustomerName": "NA",
             "CustomerNo": "WX",
@@ -24,7 +24,7 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
-            "Updated": "2021-08-27T06:54:54.000Z"
+            "Updated": "NA"
         },
         {
             "Age": "NA",

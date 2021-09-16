@@ -10,7 +10,7 @@ const ACCOUNT_INFO_TABLE = process.env.ACCOUNT_INFO;
 const TOKEN_VALIDATOR_TABLE = process.env.TOKEN_VALIDATOR;
 
 function filterRecords(accountInfo, accountInfoResult) {
-    _.filter(accountInfo , (element) => {
+    _.filter(accountInfo, (element) => {
         _.filter(accountInfoResult.Items, (elem) => {
             if (element.CustomerID == elem.CustomerID) {
                 if (element.CustomerName) {
@@ -18,8 +18,8 @@ function filterRecords(accountInfo, accountInfoResult) {
                 } else {
                     elem["CustomerName"] = "NA"
                 }
-                delete elem["ApiKey"];
             }
+            delete elem["ApiKey"];
         })
     })
     return accountInfoResult
@@ -46,7 +46,7 @@ function filterAllCustomerRecords(accountInfo, accountInfoResult) {
 
 function filterParameters(accountInfo) {
     let batchItems = [];
-    _.filter(accountInfo.Items, (elem) => {
+    _.filter(accountInfo, (elem) => {
         if (!batchItems.some(data => data.CustomerID === elem.CustomerID)) {
             if (elem.ApiKey != "NA") {
                 batchItems.push({ "CustomerID": elem.CustomerID, "ApiKey": elem.ApiKey })
@@ -64,31 +64,31 @@ module.exports.handler = async (event, context) => {
         let startKey = { CustomerID: _.get(event, 'queryStringParameters.startkey') };
         let results, count, accountInfo, apiGatewayRecords;
         let batchItemParameters;
-        if (status === 'Active') {
-            startKey["CustomerStatus"] = status;
-            startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
-            [accountInfo, count] = await Promise.all(
-                [Dynamo.fetchByIndex(ACCOUNT_INFO_TABLE, status, _.get(event, 'queryStringParameters.size'), startKey),
-                Dynamo.getAllItemsQueryCount(ACCOUNT_INFO_TABLE, status)
-                ]
-            );
-            apiGatewayRecords = await fetchApiKey(accountInfo);
-            batchItemParameters = await filterParameters(apiGatewayRecords);
-            const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
-            results = await filterRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], accountInfo);
-        } else {
-            startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
-            [accountInfo, count] = await Promise.all(
-                [Dynamo.fetchAllItems(ACCOUNT_INFO_TABLE, _.get(event, 'queryStringParameters.size'), startKey),
-                Dynamo.getAllItemsScanCount(ACCOUNT_INFO_TABLE)
-                ]
-            );
-            apiGatewayRecords = await fetchApiKey(accountInfo);
-            batchItemParameters = await filterParameters(apiGatewayRecords);
-            const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
-            results = await filterAllCustomerRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], accountInfo);
-        }
         try {
+            if (status === 'Active') {
+                startKey["CustomerStatus"] = status;
+                startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
+                [accountInfo, count] = await Promise.all(
+                    [Dynamo.fetchByIndex(ACCOUNT_INFO_TABLE, status, _.get(event, 'queryStringParameters.size'), startKey),
+                    Dynamo.getAllItemsQueryCount(ACCOUNT_INFO_TABLE, status)
+                    ]
+                );
+                apiGatewayRecords = await fetchApiKey(accountInfo);
+                batchItemParameters = await filterParameters(apiGatewayRecords);
+                const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
+                results = await filterRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], accountInfo);
+            } else {
+                startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
+                [accountInfo, count] = await Promise.all(
+                    [Dynamo.fetchAllItems(ACCOUNT_INFO_TABLE, _.get(event, 'queryStringParameters.size'), startKey),
+                    Dynamo.getAllItemsScanCount(ACCOUNT_INFO_TABLE)
+                    ]
+                );
+                apiGatewayRecords = await fetchApiKey(accountInfo);
+                batchItemParameters = await filterParameters(apiGatewayRecords);
+                const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
+                results = await filterAllCustomerRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], accountInfo);
+            }
             return await getResponse(results, count, startKey, _.get(event, 'queryStringParameters.status'), _.get(event, 'queryStringParameters.page'), _.get(event, 'queryStringParameters.size'), event);
         } catch (e) {
             console.error("Unknown error", e);

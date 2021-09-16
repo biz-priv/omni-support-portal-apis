@@ -209,14 +209,9 @@ describe('module test', () => {
     })
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-false-only.json');
-    let thrownError;
-    try {
-      await wrapped.run(event);
-    } catch (e) {
-      thrownError = e;
-    }
-    const error = {"code": 1004, "httpStatus": 400, "message": "Error fetching items."};
-    expect(thrownError).toEqual(error);
+    const result = await wrapped.run(event);
+    const error = '{\"httpStatus\":400,\"code\":1005,\"message\":\"Unknown error occured.\"}';
+    expect(result.body).toEqual(error);
 
   });
 

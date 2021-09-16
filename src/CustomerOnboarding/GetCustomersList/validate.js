@@ -4,8 +4,8 @@ const { handleError } = require('../../shared/utils/responses');
 
 const schema = Joi.object({
     queryStringParameters: Joi.object({
-        page: Joi.number().default(1),
-        size: Joi.number().default(10),
+        page: Joi.number().integer().default(1),
+        size: Joi.number().integer().min(1).max(10).default(10),
         status: Joi.boolean().default(false),
         startkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')}),
         endkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')})
