@@ -4,38 +4,92 @@ const Dynamo = require('../../shared/dynamo/db');
 const { fetchApiKey } = require('./dynamoFunctions');
 const pagination = require('../../shared/utils/pagination');
 const { handleError } = require('../../shared/utils/responses');
-
-const get = require('lodash.get');
+const _ = require('lodash');
 
 const ACCOUNT_INFO_TABLE = process.env.ACCOUNT_INFO;
+const TOKEN_VALIDATOR_TABLE = process.env.TOKEN_VALIDATOR;
+
+function filterRecords(accountInfo, accountInfoResult) {
+    _.filter(accountInfo, (element) => {
+        _.filter(accountInfoResult.Items, (elem) => {
+            if (element.CustomerID == elem.CustomerID) {
+                if (element.CustomerName) {
+                    elem["CustomerName"] = element.CustomerName
+                } else {
+                    elem["CustomerName"] = "NA"
+                }
+            }
+            delete elem["ApiKey"];
+        })
+    })
+    return accountInfoResult
+}
+
+function filterAllCustomerRecords(accountInfo, accountInfoResult) {
+    _.filter(accountInfo, (element) => {
+        _.filter(accountInfoResult.Items, (elem) => {
+            if (element.CustomerID == elem.CustomerID) {
+                if (element.CustomerName) {
+                    elem["CustomerName"] = element.CustomerName
+                } else {
+                    elem["CustomerName"] = "NA"
+                }
+                delete elem["ApiKey"];
+                delete elem["Created"];
+                delete elem["Updated"];
+                delete elem["Age"];
+            }
+        })
+    })
+    return accountInfoResult
+}
+
+function filterParameters(accountInfo) {
+    let batchItems = [];
+    _.filter(accountInfo, (elem) => {
+        if (!batchItems.some(data => data.CustomerID === elem.CustomerID)) {
+            if (elem.ApiKey != "NA") {
+                batchItems.push({ "CustomerID": elem.CustomerID, "ApiKey": elem.ApiKey })
+            }
+        }
+    })
+    return batchItems
+}
 
 module.exports.handler = async (event, context) => {
     console.info("Event: ", JSON.stringify(event));
     event = await validate(event);
     if (!event.code) {
-        const status = get(event, 'queryStringParameters.status') === true ? "Active" : "Inactive";
-        let startKey = { CustomerID: get(event, 'queryStringParameters.startkey') };
-        let results, accountInfo, count;
-
-        if (status === 'Active') {
-            startKey["CustomerStatus"] = status;
-            startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
-            [accountInfo, count] = await Promise.all(
-                [Dynamo.fetchByIndex(ACCOUNT_INFO_TABLE, status, get(event, 'queryStringParameters.size'), startKey),
-                Dynamo.getAllItemsQueryCount(ACCOUNT_INFO_TABLE, status)
-                ]
-            );
-            results = await fetchApiKey(accountInfo);
-        } else {
-            startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
-            [results, count] = await Promise.all(
-                [Dynamo.fetchAllItems(ACCOUNT_INFO_TABLE, get(event, 'queryStringParameters.size'), startKey),
-                Dynamo.getAllItemsScanCount(ACCOUNT_INFO_TABLE)
-                ]
-            );
-        }
+        const status = _.get(event, 'queryStringParameters.status') === true ? "Active" : "Inactive";
+        let startKey = { CustomerID: _.get(event, 'queryStringParameters.startkey') };
+        let results, count, accountInfo, apiGatewayRecords;
+        let batchItemParameters;
         try {
-            return await getResponse(results, count, startKey, get(event, 'queryStringParameters.status'), get(event, 'queryStringParameters.page'), get(event, 'queryStringParameters.size'), event);
+            if (status === 'Active') {
+                startKey["CustomerStatus"] = status;
+                startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
+                [accountInfo, count] = await Promise.all(
+                    [Dynamo.fetchByIndex(ACCOUNT_INFO_TABLE, status, _.get(event, 'queryStringParameters.size'), startKey),
+                    Dynamo.getAllItemsQueryCount(ACCOUNT_INFO_TABLE, status)
+                    ]
+                );
+                apiGatewayRecords = await fetchApiKey(accountInfo);
+                batchItemParameters = await filterParameters(apiGatewayRecords);
+                const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
+                results = await filterRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], accountInfo);
+            } else {
+                startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
+                [accountInfo, count] = await Promise.all(
+                    [Dynamo.fetchAllItems(ACCOUNT_INFO_TABLE, _.get(event, 'queryStringParameters.size'), startKey),
+                    Dynamo.getAllItemsScanCount(ACCOUNT_INFO_TABLE)
+                    ]
+                );
+                apiGatewayRecords = await fetchApiKey(accountInfo);
+                batchItemParameters = await filterParameters(apiGatewayRecords);
+                const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
+                results = await filterAllCustomerRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], accountInfo);
+            }
+            return await getResponse(results, count, startKey, _.get(event, 'queryStringParameters.status'), _.get(event, 'queryStringParameters.page'), _.get(event, 'queryStringParameters.size'), event);
         } catch (e) {
             console.error("Unknown error", e);
             const result = handleError(1005);
@@ -49,14 +103,14 @@ module.exports.handler = async (event, context) => {
 
 async function getResponse(results, count, startkey, status, page, size, event) {
     let resp = {}
-    resp["Customers"] = get(results, 'Items', []);
+    resp["Customers"] = _.get(results, 'Items', []);
 
     let elementCount = resp['Customers'].length;
-    let deployStage = get(event, 'requestContext.stage', 'devint');
+    let deployStage = _.get(event, 'requestContext.stage', 'devint');
     let lastCustomerId = 0;
 
-    if (get(results, 'LastEvaluatedKey', null)) {
-        lastCustomerId = get(results, 'LastEvaluatedKey.CustomerID');
+    if (_.get(results, 'LastEvaluatedKey', null)) {
+        lastCustomerId = _.get(results, 'LastEvaluatedKey.CustomerID');
         var LastEvaluatedkeyCustomerID = "&startkey=" + lastCustomerId;
     }
 
@@ -65,12 +119,12 @@ async function getResponse(results, count, startkey, status, page, size, event) 
         prevLinkStartKey = startkey.CustomerID;
     }
 
-    let host = get(event, 'headers.Host', null) + "/" + deployStage;
-    let path = get(event, 'path', null) + "?status=" + status;
+    let host = _.get(event, 'headers.Host', null) + "/" + deployStage;
+    let path = _.get(event, 'path', null) + "?status=" + status;
     let prevLink = host + path + "&page=" + page + "&size=" +
         size + "&startkey=" + prevLinkStartKey;
 
-    var response = await pagination.createPagination(resp, host, path+ "&page=", page, size, elementCount, LastEvaluatedkeyCustomerID, count, prevLink);
+    var response = await pagination.createPagination(resp, host, path + "&page=", page, size, elementCount, LastEvaluatedkeyCustomerID, count, prevLink);
 
     if (lastCustomerId !== 0) {
         response.Page["StartKey"] = lastCustomerId;

@@ -2,6 +2,7 @@
     "Customers": [
         {
             "CustomerID": "1234",
+            "CustomerName": "SK Test",
             "BillToAcct": "15733",
             "CustomerNo": "WX",
             "DeclaredType": "LL",
@@ -11,6 +12,7 @@
         },
         {
             "CustomerID": "12345",
+            "CustomerName": "NA",
             "BillToAcct": "15733",
             "CustomerNo": "WX",
             "DeclaredType": "LL",
@@ -20,6 +22,7 @@
         },
         {
             "CustomerID": "123456",
+            "CustomerName": "SK Test",
             "BillToAcct": "15733",
             "CustomerNo": "WX",
             "DeclaredType": "LL",
@@ -29,6 +32,7 @@
         },
         {
             "CustomerID": "1234567",
+            "CustomerName": "NA",
             "BillToAcct": "15733",
             "CustomerNo": "WX",
             "DeclaredType": "LL",

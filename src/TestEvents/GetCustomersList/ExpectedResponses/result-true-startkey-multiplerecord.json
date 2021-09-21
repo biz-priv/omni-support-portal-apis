@@ -2,18 +2,20 @@
     "Customers": [
         {
             "CustomerID": "1234",
+            "CustomerName": "SK Test",
             "BillToAcct": "15733",
             "CustomerNo": "WX",
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
             "CustomerStatus": "Active",
-            "Created": "2021-06-18T06:54:54.000Z",
-            "Updated": "2021-06-26T06:54:54.000Z",
+            "Created": "NA",
+            "Updated": "NA",
             "Age": 14
         },
         {
             "CustomerID": "12345",
+            "CustomerName": "NA",
             "BillToAcct": "15733",
             "CustomerNo": "WX",
             "DeclaredType": "LL",
@@ -23,10 +25,23 @@
             "Created": "2021-08-27T06:54:54.000Z",
             "Updated": "2021-08-27T06:54:54.000Z",
             "Age": 0
+        },
+        {
+            "Age": "NA",
+            "BillToAcct": "15733",
+            "Created": "NA",
+            "CustomerID": "123456",
+            "CustomerName": "SK Test",
+            "CustomerNo": "WX",
+            "CustomerStatus": "Active",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
+            "Updated": "NA"
         }
     ],
     "Page": {
-        "Size": 2,
+        "Size": 3,
         "TotalElement": 10,
         "TotalPages": 3,
         "Number": 1,
