@@ -14,14 +14,14 @@ async function createPagination(response, responseArrayName, startkey, endkey, h
   const lastPageArray = result[(result.length) - 2]
  
   if (!(currentPageResult.length < size) && result[page] != undefined) {
-    nextPageLink = hostPath + "?page=" + (page + 1) + "&size=" +
+    nextPageLink = hostPath + "page=" + (page + 1) + "&size=" +
       size + "&startkey=" + currentPageResult[currentPageResult.length - 1][startkey]
     if (endkey) {
       nextPageLink += "&endkey=" + currentPageResult[currentPageResult.length - 1][endkey];
     }
   }
   if(lastPageArray){
-    lastPageLink = hostPath + "?page=" + result.length + "&size=" +
+    lastPageLink = hostPath + "page=" + result.length + "&size=" +
     size + "&startkey=" + lastPageArray[(lastPageArray.length) - 1][startkey]
   if (endkey) {
     lastPageLink += "&endkey=" + lastPageArray[(lastPageArray.length) - 1][endkey];
@@ -30,7 +30,7 @@ async function createPagination(response, responseArrayName, startkey, endkey, h
 
 
   if (previousPageArray) {
-    previousPageLink = hostPath + "?page=" + (page - 1) + "&size=" +
+    previousPageLink = hostPath + "page=" + (page - 1) + "&size=" +
       size + "&startkey=" + previousPageArray[0][startkey]
     if (endkey) {
       previousPageLink += "&endkey=" + previousPageArray[0][endkey];
@@ -53,13 +53,16 @@ async function createPagination(response, responseArrayName, startkey, endkey, h
     pageObject['Number'] = page;
   }
   resp["Page"] = pageObject;
-
+  let firstLink = hostPath + "page=1" + "&size=" + size + "&startkey=0"
+  if(endkey){
+    firstLink +=  "&endkey=0"
+  }
   resp["_links"] = {
     "self": {
       "href": hostPath + selfPageLink
     },
     "first": {
-      "href": hostPath + "?page=1" + "&size=" + size + "&startkey=0" + "&endkey=0"
+      "href": firstLink
     },
     "last": {
       "href": lastPageLink

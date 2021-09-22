@@ -5,7 +5,7 @@ const USERACTIVITY = process.env.USER_ACTIVITY;
 const pagination = require('../../shared/utils/pagination');
 const _ = require('lodash');
 
-//post user activity
+//Get user activity
 module.exports.handler = async (event) => {
     console.info("Event: ", JSON.stringify(event));
     event = await validate(event);
@@ -48,8 +48,8 @@ module.exports.handler = async (event) => {
 async function getResponse(results, count, page, size, event) {
     let selfPageLink = "N/A";
     let host = "https://" + _.get(event, 'headers.Host', null) + "/" + _.get(event, 'requestContext.stage', 'devint');
-    let path = _.get(event, 'path', null);
-    selfPageLink = "?page=" + page + "&size=" +
+    let path = _.get(event, 'path', null) + "?";
+    selfPageLink = "page=" + page + "&size=" +
         size + "&startkey=" + _.get(event, 'queryStringParameters.startkey') + "&endkey=" + _.get(event, 'queryStringParameters.endkey');
     let startkey = "UserId"
     let endkey = "Timestamp"

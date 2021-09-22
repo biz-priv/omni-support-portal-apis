@@ -42,8 +42,8 @@ module.exports.handler = async (event) => {
 async function getResponse(results, count, page, size, event) {
     let selfPageLink = "N/A";
     let host = "https://" + get(event, 'headers.Host', null) + "/" + get(event, 'requestContext.stage', 'devint');
-    let path = get(event, 'path', null);
-    selfPageLink = "?page=" + page + "&size=" +
+    let path = get(event, 'path', null) + "?";
+    selfPageLink = "page=" + page + "&size=" +
         size + "&startkey=" + get(event, 'queryStringParameters.startkey') + "&endkey=" + get(event, 'queryStringParameters.endkey');
     let startkey = "UserId"
     let endkey = "Timestamp"
