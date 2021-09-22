@@ -6,8 +6,8 @@ const schema = Joi.object({
     queryStringParameters: Joi.object({
         page: Joi.number().default(1),
         size: Joi.number().default(10),
-        startkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')}),
-        endkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')})
+        startkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')}).default(0),
+        endkey: Joi.string().when('page', { is: Joi.number().greater(1), then: Joi.string().not('0')}).default(0)
     }).empty(null).default({page: 1, size: 10, startkey: 0, endkey: 0})
 }).unknown(true)
 

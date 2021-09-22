@@ -36,6 +36,7 @@ const errors = [
   { code: 1015, httpStatus: 400, message: "Error from unsubscription." },
   { code: 1016, httpStatus: 400, message: "Error deleting item." },
   { code: 1017, httpStatus: 400, message: "Subscription already exists." },
+  { code: 1018, httpStatus: 400, message: "Page not found." },
 ];
 
 function getError(code) {

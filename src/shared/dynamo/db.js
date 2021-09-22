@@ -22,6 +22,28 @@ async function fetchAllItems(tableName, limit, startKey) {
   }
 }
 
+async function dbRead(params) {
+  const documentClient = new AWS.DynamoDB.DocumentClient({
+    region: process.env.DEFAULT_AWS,
+  });
+  let result = await documentClient.scan(params).promise();
+  let data = result.Items;
+  if (result.LastEvaluatedKey) {
+    params.ExclusiveStartKey = result.LastEvaluatedKey;
+    data = data.concat(await dbRead(params));
+  }
+  return data;
+}
+
+/* retrieve all items from table */
+async function scanTableData(TableName) {
+  var params = {
+    TableName: TableName
+  };
+  let data = await dbRead(params);
+  return data;
+}
+
 /* fetch all items from table with filter*/
 async function getAllItemsQueryFilter(
   tableName,
@@ -466,4 +488,5 @@ module.exports = {
   deleteItem,
   getAllItemsQueryFilter,
   fetchBatchItems,
+  scanTableData,
 };
