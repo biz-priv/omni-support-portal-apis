@@ -36,8 +36,5 @@
             "Station": "TT",
             "CustomerStatus": "Inactive"
         }
-    ],
-    "LastEvaluatedKey": {
-        "CustomerID": "123456"
-    }
+    ]
 }

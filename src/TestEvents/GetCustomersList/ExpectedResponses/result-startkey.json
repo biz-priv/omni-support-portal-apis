@@ -19,39 +19,29 @@
             "SourceSystem": "TR",
             "Station": "TT",
             "CustomerStatus": "Active"
-        },
-        {
-            "CustomerID": "123456",
-            "CustomerName": "SK Test",
-            "BillToAcct": "15733",
-            "CustomerNo": "WX",
-            "DeclaredType": "LL",
-            "SourceSystem": "TR",
-            "Station": "TT",
-            "CustomerStatus": "Inactive"
-        },
-        {
-            "CustomerID": "1234567",
-            "CustomerName": "NA",
-            "BillToAcct": "15733",
-            "CustomerNo": "WX",
-            "DeclaredType": "LL",
-            "SourceSystem": "TR",
-            "Station": "TT",
-            "CustomerStatus": "Inactive"
         }
     ],
     "Page": {
-        "Size": 4,
+        "Size": 2,
         "TotalElement": 4,
-        "TotalPages": 1,
-        "Number": 1,
-        "StartKey": "123456"
+        "TotalPages": 2,
+        "Number": 1
     },
     "_links": {
+        "first": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=2&startkey=0"
+        },
+        "last": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=2&size=2&startkey=12345"
+        },
+        "next": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=2&size=2&startkey=12345"
+        },
+        "previous": {
+            "href": "N/A"
+        },
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=3&startkey=123456",
-            "nextHref": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=2&size=3&startkey=123456"
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=2&startkey=0"
         }
     }
 }

@@ -177,4 +177,33 @@ describe('module test', () => {
         expect(result.body).toStrictEqual(error);
     });
 
+    it('error from dynamodb delete operations', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+            callback(null, indexQueryResponse);
+        });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+            callback(null, getResponse);
+        });
+
+        AWSMock.mock('SNS', 'unsubscribe', (params, callback) => {
+            callback(null, "successfully unsubscribe");
+        });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
+            callback({"error": "error found"}, null);
+        });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
+            callback(null, {});
+        });
+
+        const event = require('../src/TestEvents/DeleteWebhooks/Events/event.json');
+        const result = await wrapped.run(event);
+        const error = { code: 1016, httpStatus: 400, message: "Error deleting item." }
+        expect(JSON.parse(result.body)).toStrictEqual(error);
+
+    });
+
 });

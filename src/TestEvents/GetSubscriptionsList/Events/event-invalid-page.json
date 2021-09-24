@@ -1,6 +1,6 @@
 {
-    "resource": "/customers",
-    "path": "/customers",
+    "resource": "/webhooks/subscription",
+    "path": "/webhooks/subscription",
     "httpMethod": "GET",
     "headers": {
         "Accept": "*/*",
@@ -26,7 +26,8 @@
         "X-Amzn-Trace-Id": "Root=1-60db39ff-493e804134b7f53a5dd0ac5c",
         "X-Forwarded-For": "49.36.45.32, 130.176.76.172",
         "X-Forwarded-Port": "443",
-        "X-Forwarded-Proto": "https"
+        "X-Forwarded-Proto": "https",
+        "x-api-key": "abcdxyz123"
     },
     "multiValueHeaders": {
         "Accept": [
@@ -103,33 +104,26 @@
         ]
     },
     "queryStringParameters": {
-        "page": "1",
-        "size": "3",
-        "status": "false"
+        "page": "10",
+        "size": "2"
     },
     "multiValueQueryStringParameters": {
         "page": [
-            "1"
-        ],
-        "size": [
             "10"
         ],
-        "startkey": [
-            "0"
-        ],
-        "status": [
-            "false"
+        "size": [
+            "2"
         ]
     },
     "pathParameters": null,
     "stageVariables": null,
     "requestContext": {
         "resourceId": "pqyy9c",
-        "resourcePath": "/customers",
+        "resourcePath": "/webhooks/subscription",
         "httpMethod": "GET",
         "extendedRequestId": "BsX_-FiXIAMFdfQ=",
         "requestTime": "29/Jun/2021:15:19:27 +0000",
-        "path": "/devint/customers",
+        "path": "/devint/webhooks/subscription",
         "accountId": "083868342691",
         "protocol": "HTTP/1.1",
         "stage": "devint",

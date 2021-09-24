@@ -33,7 +33,7 @@
             "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity?page=1&size=2&startkey=4213&endkey=July 20th 2021, 5:20:24 pm"
         },
         "self": {
-            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity?page=2&size=2&startkey=123&endkey=July 20th 2021, 5:20:28 pm"
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity?page=2&size=2&startkey=0&endkey=0"
         }
     }
 }

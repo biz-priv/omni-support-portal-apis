@@ -2,26 +2,6 @@ const AWS = require("aws-sdk");
 const get = require("lodash.get");
 const { handleError } = require("../utils/responses");
 
-/* fetch all items from table */
-async function fetchAllItems(tableName, limit, startKey) {
-  const documentClient = new AWS.DynamoDB.DocumentClient({
-    region: process.env.DEFAULT_AWS,
-  });
-  let params = {
-    TableName: tableName,
-    Limit: limit,
-  };
-  if (startKey) {
-    params["ExclusiveStartKey"] = startKey;
-  }
-  try {
-    return await documentClient.scan(params).promise();
-  } catch (e) {
-    console.error("fetchAllItems Error: ", e);
-    throw handleError(1004, e, get(e, "details[0].message", null));
-  }
-}
-
 async function dbRead(params) {
   const documentClient = new AWS.DynamoDB.DocumentClient({
     region: process.env.DEFAULT_AWS,
@@ -66,50 +46,6 @@ async function getAllItemsQueryFilter(
     console.error("getAllItemsQueryFilter Error: ", e);
     throw handleError(1003, e, get(e, "details[0].message", null));
   }
-}
-
-/* fetch record using index */
-async function fetchByIndex(tableName, status, limit, startKey) {
-  const documentClient = new AWS.DynamoDB.DocumentClient({
-    region: process.env.DEFAULT_AWS,
-  });
-  let params = {
-    TableName: tableName,
-    Limit: limit,
-    IndexName: "CustomerStatusIndex",
-    KeyConditionExpression: "CustomerStatus = :hkey",
-    ExpressionAttributeValues: {
-      ":hkey": status,
-    },
-  };
-
-  if (startKey) {
-    params["ExclusiveStartKey"] = startKey;
-  }
-  try {
-    return await documentClient.query(params).promise();
-  } catch (e) {
-    console.error("fetchByIndex Error: ", e);
-    throw handleError(1002, e, get(e, "details[0].message", null));
-  }
-}
-
-/* retrieve all items count from table */
-async function getAllItemsScanCount(tableName) {
-  const dynamoSvc = new AWS.DynamoDB({ region: process.env.DEFAULT_AWS });
-  const params = {
-    TableName: tableName,
-  };
-  return new Promise((resolve, reject) => {
-    dynamoSvc.describeTable(params, function (e, data) {
-      if (e) {
-        console.error("getAllItemsScanCount Error: ", e);
-        reject(handleError(1004, e, get(e, "details[0].message", null)));
-      } else {
-        resolve(parseInt(data["Table"]["ItemCount"]));
-      }
-    });
-  });
 }
 
 /* retrieve all items count from table */
@@ -339,57 +275,6 @@ async function checkApiKeyUsagePlan(keyName, usageId) {
   }
 }
 
-/* retrieve item from table */
-async function getItemQueryWithLimit(
-  tableName,
-  limit,
-  keyCondition,
-  expressionAttribute,
-  startKey
-) {
-  const documentClient = new AWS.DynamoDB.DocumentClient({
-    region: process.env.DEFAULT_AWS,
-  });
-  const params = {
-    TableName: tableName,
-    Limit: limit,
-    KeyConditionExpression: keyCondition,
-    ExpressionAttributeValues: expressionAttribute,
-  };
-  if (startKey) {
-    params["ExclusiveStartKey"] = startKey;
-  }
-  try {
-    return await documentClient.query(params).promise();
-  } catch (e) {
-    console.error("getItem Error: ", e);
-    throw handleError(1003, e, get(e, "details[0].message", null));
-  }
-}
-
-/* get all record count */
-async function getScanCount(
-  tableName,
-  filterExpression,
-  expressionAttributeValues
-) {
-  const documentClient = new AWS.DynamoDB.DocumentClient({
-    region: process.env.DEFAULT_AWS,
-  });
-  const params = {
-    TableName: tableName,
-    FilterExpression: filterExpression,
-    ExpressionAttributeValues: expressionAttributeValues,
-    Select: "COUNT",
-  };
-  try {
-    return await documentClient.scan(params).promise();
-  } catch (e) {
-    console.error("getScanCount Error: ", e);
-    reject(handleError(1004, e, get(e, "details[0].message", null)));
-  }
-}
-
 /* fetch items using index */
 async function queryByIndex(
   tableName,
@@ -468,9 +353,6 @@ async function fetchBatchItems(keyValueArray, tableName) {
 }
 
 module.exports = {
-  fetchAllItems,
-  fetchByIndex,
-  getAllItemsScanCount,
   getAllItemsQueryCount,
   itemInsert,
   apiKeyCreate,
@@ -481,8 +363,6 @@ module.exports = {
   getItemQueryFilter,
   checkApiKeyUsagePlan,
   apiKeyDelete,
-  getItemQueryWithLimit,
-  getScanCount,
   queryByIndex,
   getAllItems,
   deleteItem,

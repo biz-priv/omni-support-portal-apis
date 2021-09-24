@@ -1,17 +1,15 @@
 'use strict';
 
 const mod = require('./../src/CustomerOnboarding/GetCustomersList/index');
-
 const jestPlugin = require('serverless-jest-plugin');
 const lambdaWrapper = jestPlugin.lambdaWrapper;
 const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
-
 const AWSMock = require('aws-sdk-mock');
 
 const scanResponse = require('../src/TestEvents/GetCustomersList/MockResponses/dynamo-scan.json');
+const scanDataResponse = require('../src/TestEvents/GetCustomersList/MockResponses/scan-data.json');
+const scanNoActiveResponse = require('../src/TestEvents/GetCustomersList/MockResponses/scan-no-active-data.json');
 const scanResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockResponses/dynamo-scan-no-last-key.json');
-const queryResponse = require('../src/TestEvents/GetCustomersList/MockResponses/query-response.json');
-const queryResponseNoLastKey = require('../src/TestEvents/GetCustomersList/MockResponses/query-response-no-lastkey.json');
 const apiKeysResponse = require('../src/TestEvents/GetCustomersList/MockResponses/api-gw-apikeys.json');
 const apiKeysTwoResponse = require('../src/TestEvents/GetCustomersList/MockResponses/api-gw-apikeys-startkey.json');
 const batchGetResponse = require('../src/TestEvents/GetCustomersList/MockResponses/dynamo-batchget.json');
@@ -32,10 +30,6 @@ describe('module test', () => {
       callback(null, batchGetResponse);
     });
 
-    AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
-      callback(null, { Table: { ItemCount: '4' } });
-    });
-
     const event = require('../src/TestEvents/GetCustomersList/Events/event.json');
     const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result.json');
@@ -53,10 +47,6 @@ describe('module test', () => {
       callback(null, batchGetResponse);
     });
 
-    AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
-      callback(null, { Table: { ItemCount: '4' } });
-    })
-
     const event = require('../src/TestEvents/GetCustomersList/Events/event-with-startkey.json');
     const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/GetCustomersList/ExpectedResponses/result-startkey.json');
@@ -66,16 +56,12 @@ describe('module test', () => {
   it('get active customers record with api keys (match key in apigateway) with startkey', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-      callback(null, scanResponse);
+      callback(null, scanDataResponse);
     })
 
     AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
       callback(null, batchGetResponse);
     });
-
-    AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-      callback(null, queryResponse);
-    })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback(null, apiKeysResponse);
@@ -93,16 +79,12 @@ describe('module test', () => {
   it('get active customers record with api keys (match key in apigateway)', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-      callback(null, scanResponse);
+      callback(null, scanDataResponse);
     })
 
     AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
       callback(null, batchGetResponse);
     });
-
-    AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-      callback(null, queryResponse);
-    })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback(null, apiKeysTwoResponse);
@@ -119,20 +101,15 @@ describe('module test', () => {
 
   });
 
-
   it('get all customers record with startkey is true', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-      callback(null, scanResponse);
+      callback(null, scanDataResponse);
     })
 
     AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
       callback(null, batchGetResponse);
     });
-
-    AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-      callback(null, queryResponse);
-    })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback(null, apiKeysResponse);
@@ -151,16 +128,12 @@ describe('module test', () => {
   it('get active customers record (no api key in api gateway)', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-      callback(null, scanResponse);
+      callback(null, scanDataResponse);
     })
 
     AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
       callback(null, batchGetResponse);
     });
-
-    AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-      callback(null, queryResponseNoLastKey);
-    })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback(null, { items: [] });
@@ -176,16 +149,12 @@ describe('module test', () => {
   it('error from api gateway', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-      callback(null, scanResponse);
+      callback(null, scanDataResponse);
     })
 
     AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
       callback(null, batchGetResponse);
     });
-
-    AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-      callback(null, queryResponse);
-    })
 
     AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
       callback({ error: "apigateway error" }, null);
@@ -198,14 +167,31 @@ describe('module test', () => {
 
   });
 
+  it('no records', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, { Items: [] });
+    })
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
+
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, apiKeysResponse);
+    });
+
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = '{"httpStatus":400,"code":1009,"message":"Item not found."}';
+    expect(result.body).toStrictEqual(expectedResponse)
+
+  });
+
   it('bad request error from scan operation', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
       callback({ "error": "error found" }, null);
-    })
-
-    AWSMock.mock('DynamoDB', 'describeTable', (params, callback) => {
-      callback({ "error": "error found count"}, null)
     })
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-false-only.json');
@@ -219,9 +205,88 @@ describe('module test', () => {
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-invalid-status.json');
     let actual = await wrapped.run(event);
-    console.log(actual);
     const error = '{"httpStatus":400,"code":1001,"message":"\\"queryStringParameters.status\\" must be a boolean"}';
     expect(actual.body).toEqual(error);
+  });
+
+  it('In status true condition page invalid', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanDataResponse);
+    })
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
+
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, apiKeysResponse);
+    });
+
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-true-invalid-page.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = '{"httpStatus":400,"code":1018,"message":"Page not found."}';
+    expect(result.body).toStrictEqual(expectedResponse);
+
+  });
+
+  it('In status false condition page invalid', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanDataResponse);
+    })
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
+
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, apiKeysResponse);
+    });
+
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-false-invalid-page.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = '{"httpStatus":400,"code":1018,"message":"Page not found."}';
+    expect(result.body).toStrictEqual(expectedResponse);
+
+  });
+
+  it('active customer not found', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanNoActiveResponse);
+    })
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetResponse);
+    });
+
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, apiKeysResponse);
+    });
+
+    const event = require('../src/TestEvents/GetCustomersList/Events/event-true-startkey.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = '{\"httpStatus\":400,\"code\":1009,\"message\":\"Item not found.\"}';
+    expect(result.body).toStrictEqual(expectedResponse);
+
+  });
+
+  it('bad request error from batchGet operation', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanDataResponse);
+    });
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback({ "error": "error found" }, null);
+    });
+
+    const event = require('../src/TestEvents/GetCustomersList/Events/event.json');
+    const result = await wrapped.run(event);
+    const error = '{\"httpStatus\":400,\"code\":1005,\"message\":\"Unknown error occured.\"}';
+    expect(result.body).toEqual(error);
+
   });
 
 });

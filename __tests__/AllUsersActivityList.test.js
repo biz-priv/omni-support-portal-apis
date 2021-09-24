@@ -8,8 +8,8 @@ const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
 const AWSMock = require('aws-sdk-mock');
 
-const queryResponse = require('../src/TestEvents/AllUsersActivityList/MockResponses/dynamo-scan-with-lastevaluatedkey.json');
-const queryResponseNoLastKey = require('../src/TestEvents/AllUsersActivityList/MockResponses/dynamo-scan-no-last-key.json');
+const scanResponse = require('../src/TestEvents/AllUsersActivityList/MockResponses/dynamo-scan.json');
+const scanDataResponse = require('../src/TestEvents/AllUsersActivityList/MockResponses/dynamo-scan-data.json');
 
 describe('module test', () => {
 
@@ -20,41 +20,14 @@ describe('module test', () => {
     it('get all record with default page, limit, startkey and endkey', async () => {
 
         AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-            callback(null, queryResponseNoLastKey);
+            callback(null, scanResponse);
         });
 
         const event = require('../src/TestEvents/AllUsersActivityList/Events/event-qs-null.json');
         const result = await wrapped.run(event);
         const expectedResponse = require('../src/TestEvents/AllUsersActivityList/ExpectedResponses/result-no-lastevaluatedkey.json');
         expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
-
     });
-
-    it('get all record with page, limit, startkey and endkey', async () => {
-
-        AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-            callback(null, queryResponse);
-        });
-
-        const event = require('../src/TestEvents/AllUsersActivityList/Events/event-with-evaluatedkey.json');
-        const result = await wrapped.run(event);
-        const expectedResponse = require('../src/TestEvents/AllUsersActivityList/ExpectedResponses/result-lastevaluatedkey.json');
-        expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
-
-    });
-
-    it('get all record with lastevaluatedkey in result', async () => {
-
-        AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-            callback(null, queryResponse);
-        })
-
-        const event = require('../src/TestEvents/AllUsersActivityList/Events/event.json');
-        const result = await wrapped.run(event);
-        const expectedResponse = require('../src/TestEvents/AllUsersActivityList/ExpectedResponses/result-with-lastevaluatedkey.json');
-        expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
-    });
-
 
     it('no records found', async () => {
 
@@ -64,8 +37,8 @@ describe('module test', () => {
 
         const event = require('../src/TestEvents/AllUsersActivityList/Events/event-qs-null.json');
         const result = await wrapped.run(event);
-        const expectedResponse = require('../src/TestEvents/AllUsersActivityList/ExpectedResponses/no-records.json');
-        expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
+        const expectedResponse = '{"httpStatus":400,"code":1009,"message":"Item not found."}'
+        expect(result.body).toStrictEqual(expectedResponse);
     });
 
     it('bad request error from db operation', async () => {
@@ -76,7 +49,7 @@ describe('module test', () => {
 
         const event = require('../src/TestEvents/AllUsersActivityList/Events/event.json');
         let actual = await wrapped.run(event);
-        const error = '{\"httpStatus\":400,\"code\":1004,\"message\":\"Error fetching items.\"}';
+        const error =  '{\"error\":\"error found\"}';
         expect(actual.body).toEqual(error);
 
     });
@@ -84,7 +57,7 @@ describe('module test', () => {
     it('validation error when page 2, startkey should not be 0', async () => {
 
         AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-            callback(null, queryResponseNoLastKey);
+            callback(null, scanResponse);
         })
 
         const event = require('../src/TestEvents/AllUsersActivityList/Events/event-with-invalid-values.json');
@@ -101,5 +74,31 @@ describe('module test', () => {
         const error = '{"httpStatus":400,"code":1001,"message":"\\"queryStringParameters.start\\" is not allowed"}';
         expect(actual.body).toEqual(error);
     });
+
+    it('page invalid', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+          callback(null, scanDataResponse);
+        })
+    
+        const event = require('../src/TestEvents/AllUsersActivityList/Events/event-invalid-page.json');
+        const result = await wrapped.run(event);
+        const expectedResponse = '{"httpStatus":400,"code":1018,"message":"Page not found."}';
+        expect(result.body).toStrictEqual(expectedResponse);
+    
+      });
+
+      it('previous link in response', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+            callback(null, scanDataResponse);
+        });
+
+        const event = require('../src/TestEvents/AllUsersActivityList/Events/event-next-page.json');
+        const result = await wrapped.run(event);
+        const expectedResponse = require('../src/TestEvents/AllUsersActivityList/ExpectedResponses/result-with-previous-pagelink.json');
+        expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
+    });
+
 
 });

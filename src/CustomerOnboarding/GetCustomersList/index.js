@@ -27,7 +27,7 @@ function filterRecords(accountInfo, accountInfoResult) {
 
 function filterAllCustomerRecords(accountInfo, accountInfoResult) {
     _.filter(accountInfo, (element) => {
-        _.filter(accountInfoResult.Items, (elem) => {
+        _.filter(accountInfoResult, (elem) => {
             if (element.CustomerID == elem.CustomerID) {
                 if (element.CustomerName) {
                     elem["CustomerName"] = element.CustomerName
@@ -61,8 +61,6 @@ module.exports.handler = async (event, context) => {
     event = await validate(event);
     if (!event.code) {
         const status = _.get(event, 'queryStringParameters.status') === true ? "Active" : "Inactive";
-        let startKey = { CustomerID: _.get(event, 'queryStringParameters.startkey') };
-        let results, count, accountInfo, apiGatewayRecords;
         let batchItemParameters;
 
         let totalCount = 0;
@@ -105,8 +103,9 @@ module.exports.handler = async (event, context) => {
                         apiGatewayRecords = await fetchApiKey(JSON.parse(paginationResult.body).Customers);
                         batchItemParameters = await filterParameters(apiGatewayRecords);
                         const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
-                        results = await filterAllCustomerRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], JSON.parse(paginationResult.body).Customers);
-                        let finalResult = JSON.parse(paginationResult["body"])
+                        results = await filterAllCustomerRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], apiGatewayRecords);
+                        let finalResult = JSON.parse(paginationResult["body"]) 
+                        finalResult["Customers"] = results
                         return send_response(200, finalResult)
                     } else {
                         return send_response(400, handleError(1009))

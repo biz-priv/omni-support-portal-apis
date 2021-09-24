@@ -104,22 +104,14 @@
     },
     "queryStringParameters": {
         "page": "1",
-        "size": "3",
-        "startkey": "123456",
-        "status": "false"
+        "size": "2"
     },
     "multiValueQueryStringParameters": {
         "page": [
             "1"
         ],
         "size": [
-            "10"
-        ],
-        "startkey": [
-            "0"
-        ],
-        "status": [
-            "false"
+            "2"
         ]
     },
     "pathParameters": null,
