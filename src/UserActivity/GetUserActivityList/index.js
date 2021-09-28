@@ -25,7 +25,7 @@ module.exports.handler = async (event) => {
                 totalCount = filterRecords.length;
                 if (totalCount) {
                     if (page > Math.ceil(totalCount / size)) {
-                        return send_response(400, handleError(1018))
+                        return send_response(404, handleError(1018))
                     }
                     return await getResponse(filterRecords, totalCount, page, size, event);
                 } else {

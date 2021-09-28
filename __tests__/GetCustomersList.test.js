@@ -225,7 +225,7 @@ describe('module test', () => {
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-true-invalid-page.json');
     const result = await wrapped.run(event);
-    const expectedResponse = '{"httpStatus":400,"code":1018,"message":"Page not found."}';
+    const expectedResponse = '{"httpStatus":404,"code":1018,"message":"Page not found."}';
     expect(result.body).toStrictEqual(expectedResponse);
 
   });
@@ -246,7 +246,7 @@ describe('module test', () => {
 
     const event = require('../src/TestEvents/GetCustomersList/Events/event-false-invalid-page.json');
     const result = await wrapped.run(event);
-    const expectedResponse = '{"httpStatus":400,"code":1018,"message":"Page not found."}';
+    const expectedResponse = '{"httpStatus":404,"code":1018,"message":"Page not found."}';
     expect(result.body).toStrictEqual(expectedResponse);
 
   });

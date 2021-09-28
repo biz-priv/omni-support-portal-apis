@@ -81,7 +81,7 @@ module.exports.handler = async (event, context) => {
                     totalActiveCount = filterActiveRecords.length;
                     if (totalActiveCount) {
                         if (page > Math.ceil(totalActiveCount / size)) {
-                            return send_response(400, handleError(1018))
+                            return send_response(404, handleError(1018))
                         }
                         const paginationResult = await getResponse(filterActiveRecords, totalActiveCount, page, size, _.get(event, 'queryStringParameters.status'), event);
                         apiGatewayRecords = await fetchApiKey(JSON.parse(paginationResult.body).Customers);
@@ -97,7 +97,7 @@ module.exports.handler = async (event, context) => {
                 } else {
                     if (totalCount) {
                         if (page > Math.ceil(totalCount / size)) {
-                            return send_response(400, handleError(1018))
+                            return send_response(404, handleError(1018))
                         }
                         const paginationResult = await getResponse(fullRecords, totalCount, page, size, _.get(event, 'queryStringParameters.status'), event);
                         apiGatewayRecords = await fetchApiKey(JSON.parse(paginationResult.body).Customers);

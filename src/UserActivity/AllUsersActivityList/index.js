@@ -19,7 +19,7 @@ module.exports.handler = async (event) => {
             if (fullRecords.length) {
                 totalCount = fullRecords.length;
                 if(page > Math.ceil(totalCount / size)){
-                    return send_response(400, handleError(1018))
+                    return send_response(404, handleError(1018))
                 }
                 return await getResponse(fullRecords, totalCount, page, size, event);
             } else {
