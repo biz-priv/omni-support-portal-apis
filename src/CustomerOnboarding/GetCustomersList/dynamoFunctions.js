@@ -51,7 +51,7 @@ async function fetchNameWiseApiKey(customerObject){
 /* fetch api key for customer */
 async function fetchApiKey(accountInfo) {
     let promise = [];
-    (accountInfo.Items).forEach(element => {
+    (accountInfo).forEach(element => {
         promise.push(fetchNameWiseApiKey(element))
     });
 

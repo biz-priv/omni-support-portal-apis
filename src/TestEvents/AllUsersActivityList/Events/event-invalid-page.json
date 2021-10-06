@@ -1,6 +1,6 @@
 {
-    "resource": "/customers",
-    "path": "/customers",
+    "resource": "/activity",
+    "path": "/activity",
     "httpMethod": "GET",
     "headers": {
         "Accept": "*/*",
@@ -102,30 +102,27 @@
             "https"
         ]
     },
-    "queryStringParameters": null,
+    "queryStringParameters": {
+        "page": "10",
+        "size": "2"
+    },
     "multiValueQueryStringParameters": {
         "page": [
-            "1"
-        ],
-        "size": [
             "10"
         ],
-        "startkey": [
-            "0"
-        ],
-        "status": [
-            "false"
+        "size": [
+            "2"
         ]
     },
     "pathParameters": null,
     "stageVariables": null,
     "requestContext": {
         "resourceId": "pqyy9c",
-        "resourcePath": "/customers",
+        "resourcePath": "/activity",
         "httpMethod": "GET",
         "extendedRequestId": "BsX_-FiXIAMFdfQ=",
         "requestTime": "29/Jun/2021:15:19:27 +0000",
-        "path": "/devint/customers",
+        "path": "/devint/activity",
         "accountId": "083868342691",
         "protocol": "HTTP/1.1",
         "stage": "devint",

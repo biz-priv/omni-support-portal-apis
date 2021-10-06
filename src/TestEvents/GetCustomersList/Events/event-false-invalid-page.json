@@ -103,19 +103,19 @@
         ]
     },
     "queryStringParameters": {
-        "page": "1",
-        "size": "10",
-        "status": "true"
+        "page": "20",
+        "size": "2",
+        "status": "false"
     },
     "multiValueQueryStringParameters": {
         "page": [
-            "1"
+            "20"
         ],
         "size": [
-            "10"
+            "2"
         ],
         "status": [
-            "true"
+            "false"
         ]
     },
     "pathParameters": null,

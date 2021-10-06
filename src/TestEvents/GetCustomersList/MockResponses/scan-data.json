@@ -25,8 +25,16 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
-            "CustomerStatus": "Active"
+            "CustomerStatus": "Inactive"
+        },
+        {
+            "CustomerID": "1234567",
+            "BillToAcct": "15733",
+            "CustomerNo": "WX",
+            "DeclaredType": "LL",
+            "SourceSystem": "TR",
+            "Station": "TT",
+            "CustomerStatus": "Inactive"
         }
-    ],
-    "Count": 10
+    ]
 }

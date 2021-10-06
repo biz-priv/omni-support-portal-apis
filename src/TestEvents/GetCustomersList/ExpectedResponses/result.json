@@ -44,11 +44,24 @@
     "Page": {
         "Size": 4,
         "TotalElement": 4,
+        "TotalPages": 1,
         "Number": 1
     },
     "_links": {
+        "first": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=10&startkey=0"
+        },
+        "last": {
+            "href": "N/A"
+        },
+        "next": {
+            "href": "N/A"
+        },
+        "previous": {
+            "href": "N/A"
+        },
         "self": {
-            "href": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=10&startkey=0"
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/customers?status=false&page=1&size=10&startkey=0"
         }
     }
 }

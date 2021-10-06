@@ -1,4 +1,4 @@
-const { send_response } = require('../../shared/utils/responses');
+const { send_response, handleError } = require('../../shared/utils/responses');
 const validate = require('./validate');
 const Dynamo = require('../../shared/dynamo/db');
 const { get } = require('lodash');
@@ -11,12 +11,23 @@ module.exports.handler = async (event) => {
     console.info("Event: ", JSON.stringify(event));
     event = await validate(event);
     if (!event.code) {
-        let startKey = { UserId: get(event, 'queryStringParameters.startkey'), Timestamp: get(event, 'queryStringParameters.endkey') };
-        let getItemResult, totalCount
+        let totalCount = 0;
+        let page = get(event, 'queryStringParameters.page')
+        let size = get(event, 'queryStringParameters.size')
         try {
-            startKey = (startKey.UserId == null || startKey.UserId == 0) ? null : startKey;
-            [getItemResult, totalCount] = await Promise.all([Dynamo.fetchAllItems(USERACTIVITY, get(event, 'queryStringParameters.size'), startKey), Dynamo.getAllItems(USERACTIVITY)]);
-            return await getResponse(getItemResult, totalCount.Count, startKey, get(event, 'queryStringParameters.page'), get(event, 'queryStringParameters.size'), event);
+            const fullRecords = await Dynamo.scanTableData(USERACTIVITY);
+            if (fullRecords.length) {
+                totalCount = fullRecords.length;
+                if(page > Math.ceil(totalCount / size)){
+                    return send_response(404, handleError(1018))
+                }
+                return await getResponse(fullRecords, totalCount, page, size, event);
+            } else {
+                const error = handleError(1009);
+                console.error("Error: ", JSON.stringify(error));
+                return send_response(error.httpStatus, error)
+            }
+
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
             return send_response(e.httpStatus, e);
@@ -28,39 +39,16 @@ module.exports.handler = async (event) => {
 
 }
 
-async function getResponse(results, count, startkey, page, size, event) {
-    let resp = {}
-    resp["Activity"] = get(results, 'Items', []);
-
-    let elementCount = resp['Activity'].length;
-    let deployStage = get(event, 'requestContext.stage', 'devint');
-    let lastUserId = 0;
-    let lastKey = 0;
-
-    if (get(results, 'LastEvaluatedKey', null)) {
-        lastUserId = get(results, 'LastEvaluatedKey.UserId');
-        lastKey = get(results, 'LastEvaluatedKey.Timestamp')
-        var LastEvaluatedkey = "&startkey=" + lastUserId + "&endkey=" + lastKey;
-    }
-
-    let prevLinkStartKey = 0;
-    let prevLinkEndKey = 0;
-    if (startkey !== null) {
-        prevLinkStartKey = startkey.UserId;
-        prevLinkEndKey = startkey.Timestamp;
-    }
-
-    let host = get(event, 'headers.Host', null) + "/" + deployStage;
-    let path = get(event, 'path', null);
-    let prevLink = host + path + "?page=" + page + "&size=" +
-        size + "&startkey=" + prevLinkStartKey + "&endkey=" + prevLinkEndKey;
-
-    var response = await pagination.createPagination(resp, host, path + "?page=", page, size, elementCount, LastEvaluatedkey, count, prevLink);
-
-    if (lastUserId !== 0) {
-        response.Page["StartKey"] = lastUserId;
-        response.Page["EndKey"] = lastKey;
-    }
+async function getResponse(results, count, page, size, event) {
+    let selfPageLink = "N/A";
+    let host = "https://" + get(event, 'headers.Host', null) + "/" + get(event, 'requestContext.stage', 'devint');
+    let path = get(event, 'path', null) + "?";
+    selfPageLink = "page=" + page + "&size=" +
+        size + "&startkey=" + get(event, 'queryStringParameters.startkey') + "&endkey=" + get(event, 'queryStringParameters.endkey');
+    let startkey = "UserId"
+    let endkey = "Timestamp"
+    let responseArrayName = "Activity"
+    var response = await pagination.createPagination(results, responseArrayName, startkey, endkey, host, path, page, size, count, selfPageLink);
     console.info("Response: ", JSON.stringify(response));
     return send_response(200, response);
 }

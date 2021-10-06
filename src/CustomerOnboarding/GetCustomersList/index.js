@@ -11,7 +11,7 @@ const TOKEN_VALIDATOR_TABLE = process.env.TOKEN_VALIDATOR;
 
 function filterRecords(accountInfo, accountInfoResult) {
     _.filter(accountInfo, (element) => {
-        _.filter(accountInfoResult.Items, (elem) => {
+        _.filter(accountInfoResult, (elem) => {
             if (element.CustomerID == elem.CustomerID) {
                 if (element.CustomerName) {
                     elem["CustomerName"] = element.CustomerName
@@ -27,7 +27,7 @@ function filterRecords(accountInfo, accountInfoResult) {
 
 function filterAllCustomerRecords(accountInfo, accountInfoResult) {
     _.filter(accountInfo, (element) => {
-        _.filter(accountInfoResult.Items, (elem) => {
+        _.filter(accountInfoResult, (elem) => {
             if (element.CustomerID == elem.CustomerID) {
                 if (element.CustomerName) {
                     elem["CustomerName"] = element.CustomerName
@@ -61,35 +61,61 @@ module.exports.handler = async (event, context) => {
     event = await validate(event);
     if (!event.code) {
         const status = _.get(event, 'queryStringParameters.status') === true ? "Active" : "Inactive";
-        let startKey = { CustomerID: _.get(event, 'queryStringParameters.startkey') };
-        let results, count, accountInfo, apiGatewayRecords;
         let batchItemParameters;
+
+        let totalCount = 0;
+        let totalActiveCount = 0;
+        let page = _.get(event, 'queryStringParameters.page')
+        let size = _.get(event, 'queryStringParameters.size')
         try {
-            if (status === 'Active') {
-                startKey["CustomerStatus"] = status;
-                startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
-                [accountInfo, count] = await Promise.all(
-                    [Dynamo.fetchByIndex(ACCOUNT_INFO_TABLE, status, _.get(event, 'queryStringParameters.size'), startKey),
-                    Dynamo.getAllItemsQueryCount(ACCOUNT_INFO_TABLE, status)
-                    ]
-                );
-                apiGatewayRecords = await fetchApiKey(accountInfo);
-                batchItemParameters = await filterParameters(apiGatewayRecords);
-                const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
-                results = await filterRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], accountInfo);
+            const fullRecords = await Dynamo.scanTableData(ACCOUNT_INFO_TABLE);
+            if (fullRecords.length) {
+                const filterActiveRecords = []
+                totalCount = fullRecords.length;
+                if (status === 'Active') {
+                    _.filter(fullRecords, (element) => {
+                        if (element.CustomerStatus == "Active") {
+                            filterActiveRecords.push(element)
+                        }
+                    })
+                    totalActiveCount = filterActiveRecords.length;
+                    if (totalActiveCount) {
+                        if (page > Math.ceil(totalActiveCount / size)) {
+                            return send_response(404, handleError(1018))
+                        }
+                        const paginationResult = await getResponse(filterActiveRecords, totalActiveCount, page, size, _.get(event, 'queryStringParameters.status'), event);
+                        apiGatewayRecords = await fetchApiKey(JSON.parse(paginationResult.body).Customers);
+                        batchItemParameters = await filterParameters(apiGatewayRecords);
+                        const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
+                        results = await filterRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], apiGatewayRecords);
+                        let finalResult = JSON.parse(paginationResult["body"]) 
+                        finalResult["Customers"] = results 
+                        return send_response(200, finalResult)
+                    } else {
+                        return send_response(400, handleError(1009))
+                    }
+                } else {
+                    if (totalCount) {
+                        if (page > Math.ceil(totalCount / size)) {
+                            return send_response(404, handleError(1018))
+                        }
+                        const paginationResult = await getResponse(fullRecords, totalCount, page, size, _.get(event, 'queryStringParameters.status'), event);
+                        apiGatewayRecords = await fetchApiKey(JSON.parse(paginationResult.body).Customers);
+                        batchItemParameters = await filterParameters(apiGatewayRecords);
+                        const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
+                        results = await filterAllCustomerRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], apiGatewayRecords);
+                        let finalResult = JSON.parse(paginationResult["body"]) 
+                        finalResult["Customers"] = results
+                        return send_response(200, finalResult)
+                    } else {
+                        return send_response(400, handleError(1009))
+                    }
+                }
             } else {
-                startKey = (startKey.CustomerID == null || startKey.CustomerID == 0) ? null : startKey;
-                [accountInfo, count] = await Promise.all(
-                    [Dynamo.fetchAllItems(ACCOUNT_INFO_TABLE, _.get(event, 'queryStringParameters.size'), startKey),
-                    Dynamo.getAllItemsScanCount(ACCOUNT_INFO_TABLE)
-                    ]
-                );
-                apiGatewayRecords = await fetchApiKey(accountInfo);
-                batchItemParameters = await filterParameters(apiGatewayRecords);
-                const fetchData = await Dynamo.fetchBatchItems(batchItemParameters, TOKEN_VALIDATOR_TABLE);
-                results = await filterAllCustomerRecords(fetchData.Responses[TOKEN_VALIDATOR_TABLE], accountInfo);
+                const error = handleError(1009);
+                console.error("Error: ", JSON.stringify(error));
+                return send_response(error.httpStatus, error)
             }
-            return await getResponse(results, count, startKey, _.get(event, 'queryStringParameters.status'), _.get(event, 'queryStringParameters.page'), _.get(event, 'queryStringParameters.size'), event);
         } catch (e) {
             console.error("Unknown error", e);
             const result = handleError(1005);
@@ -101,37 +127,17 @@ module.exports.handler = async (event, context) => {
     }
 }
 
-async function getResponse(results, count, startkey, status, page, size, event) {
-    let resp = {}
-    resp["Customers"] = _.get(results, 'Items', []);
 
-    let elementCount = resp['Customers'].length;
-    let deployStage = _.get(event, 'requestContext.stage', 'devint');
-    let lastCustomerId = 0;
-
-    if (_.get(results, 'LastEvaluatedKey', null)) {
-        lastCustomerId = _.get(results, 'LastEvaluatedKey.CustomerID');
-        var LastEvaluatedkeyCustomerID = "&startkey=" + lastCustomerId;
-    }
-
-    let prevLinkStartKey = 0;
-    if (startkey !== null) {
-        prevLinkStartKey = startkey.CustomerID;
-    }
-
-    let host = _.get(event, 'headers.Host', null) + "/" + deployStage;
-    let path = _.get(event, 'path', null) + "?status=" + status;
-    let prevLink = host + path + "&page=" + page + "&size=" +
-        size + "&startkey=" + prevLinkStartKey;
-
-    var response = await pagination.createPagination(resp, host, path + "&page=", page, size, elementCount, LastEvaluatedkeyCustomerID, count, prevLink);
-
-    if (lastCustomerId !== 0) {
-        response.Page["StartKey"] = lastCustomerId;
-        if (status == true) {
-            response.Page["CustomerStatus"] = status;
-        }
-    }
+async function getResponse(results, count, page, size, status, event) {
+    let selfPageLink = "N/A";
+    let host = "https://" + _.get(event, 'headers.Host', null) + "/" + _.get(event, 'requestContext.stage', 'devint');
+    let path = _.get(event, 'path', null) + "?status=" + status + "&";
+    selfPageLink = "page=" + page + "&size=" +
+        size + "&startkey=" + _.get(event, 'queryStringParameters.startkey') 
+    let startkey = "CustomerID"
+    let endkey = null
+    let responseArrayName = "Customers"
+    var response = await pagination.createPagination(results, responseArrayName, startkey, endkey, host, path, page, size, count, selfPageLink);
     console.info("Response: ", JSON.stringify(response));
     return send_response(200, response);
 }

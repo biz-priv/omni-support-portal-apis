@@ -1,5 +1,5 @@
 {
-    "Activity": [
+    "Items": [
         {
             "UserId": "4213",
             "Timestamp": "July 20th 2021, 5:20:24 pm",
@@ -30,28 +30,5 @@
             "Activity": "test5",
             "Description": "testing5"
         }
-    ],
-    "Page": {
-        "Size": 5,
-        "TotalElement": 5,
-        "TotalPages": 1,
-        "Number": 1
-    }, 
-    "_links": {
-        "first": {
-            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity?page=1&size=10&startkey=0&endkey=0"
-        },
-        "last": {
-            "href": "N/A"
-        },
-        "next": {
-            "href": "N/A"
-        },
-        "previous": {
-            "href": "N/A"
-        },
-        "self": {
-            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity?page=1&size=10&startkey=0&endkey=0"
-        }
-    }
+    ]
 }
