@@ -1,0 +1,14 @@
+{
+    "Items": [
+      {
+        "Customer_Id": "abcd12345",
+        "Endpoint": "https://randomtest.com",
+        "Event_Type": "eventTypeTest",
+        "Subscription_arn": "arn:aws:sns:us-east-1:123:test_topic_fullPayload",
+        "Shared_Secret": "0026",
+        "Subscription_Preference": "fullPayload"
+      }
+    ],
+    "Count": 1,
+    "ScannedCount": 10
+  }
