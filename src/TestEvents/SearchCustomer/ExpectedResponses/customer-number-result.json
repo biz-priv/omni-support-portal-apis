@@ -1,0 +1,43 @@
+{
+    "Customers": [
+        {
+            "Age": "NA",
+            "BillToAcct": "12341568",
+            "Created": "NA",
+            "CustomerID": "123",
+            "CustomerName": "abcd",
+            "CustomerNo": "123",
+            "CustomerStatus": "Active",
+            "DeclaredType": "test",
+            "SourceSystem": "dgi",
+            "Station": "gvfg",
+            "Updated": "NA"
+        },
+        {
+            "Age": "NA",
+            "BillToAcct": "12341568",
+            "Created": "NA",
+            "CustomerID": "12365",
+            "CustomerName": "abcd",
+            "CustomerNo": "12345",
+            "CustomerStatus": "Active",
+            "DeclaredType": "test",
+            "SourceSystem": "dgi",
+            "Station": "gvfg",
+            "Updated": "NA"
+        },
+        {
+            "Age": 131,
+            "BillToAcct": "12341568",
+            "Created": "2021-06-18T06:54:54.000Z",
+            "CustomerID": "12356",
+            "CustomerName": "abcd",
+            "CustomerNo": "12347",
+            "CustomerStatus": "Active",
+            "DeclaredType": "test",
+            "SourceSystem": "dgi",
+            "Station": "gvfg",
+            "Updated": "2021-06-26T06:54:54.000Z"
+        }
+    ]
+}

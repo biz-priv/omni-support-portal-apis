@@ -1,0 +1,43 @@
+{
+    "Customers": [
+        {
+            "Age": "NA",
+            "BillToAcct": "009011",
+            "Created": "NA",
+            "CustomerID": "123",
+            "CustomerName": "abcd",
+            "CustomerNo": "321321WQ",
+            "CustomerStatus": "Active",
+            "DeclaredType": "FF",
+            "SourceSystem": "AAA",
+            "Station": "GGG",
+            "Updated": "NA"
+        },
+        {
+            "Age": "NA",
+            "BillToAcct": "00009",
+            "Created": "NA",
+            "CustomerID": "12365",
+            "CustomerName": "abcd",
+            "CustomerNo": "7856",
+            "CustomerStatus": "Active",
+            "DeclaredType": "ppo",
+            "SourceSystem": "kkl",
+            "Station": "kkl",
+            "Updated": "NA"
+        },
+        {
+            "Age": "NA",
+            "BillToAcct": "00009",
+            "Created": "NA",
+            "CustomerID": "12356",
+            "CustomerName": "abcd",
+            "CustomerNo": "5356",
+            "CustomerStatus": "Inactive",
+            "DeclaredType": "ppo",
+            "SourceSystem": "kkl",
+            "Station": "kkl",
+            "Updated": "NA"
+        }
+    ]
+}

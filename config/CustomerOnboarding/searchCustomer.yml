@@ -1,0 +1,19 @@
+SearchCustomer:
+  handler: src/CustomerOnboarding/SearchCustomer/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  environment:
+    ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/dev/name}
+    TOKEN_VALIDATOR: ${ssm:/omni-dw/devint/tokenValidator/table}
+    DEFAULT_AWS: ${self:provider.region} 
+  package:
+    individually: true
+    include:
+        - 'src/CustomerOnboarding/SearchCustomer/**'
+        - 'src/shared/**'
+  events:
+    - http:
+        path: /search/{id}
+        method: get
+        cors: true
+            
