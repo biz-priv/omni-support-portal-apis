@@ -37,6 +37,8 @@ const errors = [
   { code: 1016, httpStatus: 400, message: "Error deleting item." },
   { code: 1017, httpStatus: 400, message: "Subscription already exists." },
   { code: 1018, httpStatus: 404, message: "Page not found." },
+  { code: 1019, httpStatus: 400, message: "Invalid EventType." },
+  { code: 1020, httpStatus: 400, message: "Topic not subscribed." },
 ];
 
 function getError(code) {
