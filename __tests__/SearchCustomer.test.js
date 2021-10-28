@@ -11,7 +11,8 @@ const scanNameResponse = require('../src/TestEvents/SearchCustomer/MockResponses
 const apiKeysResponse = require('../src/TestEvents/SearchCustomer/MockResponses/api-gw-apikeys.json');
 const batchGetAccountResponse = require('../src/TestEvents/SearchCustomer/MockResponses/dynamo-accounttable-batchget.json');
 const batchGetTokenResponse = require('../src/TestEvents/SearchCustomer/MockResponses/dynamo-tokentable-batchget.json');
-
+const batchGetAccountInfoResponse = require('../src/TestEvents/SearchCustomer/MockResponses/dynamo-accountInfotable-batchget.json');
+const batchGetActiveResponse = require('../src/TestEvents/SearchCustomer/MockResponses/dynamo-accountInfoActivetable-batchget.json')
 describe('module test', () => {
 
   afterEach(() => {
@@ -79,8 +80,6 @@ describe('module test', () => {
     const event = require('../src/TestEvents/SearchCustomer/Events/event-request-customer-name.json');
     const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/SearchCustomer/ExpectedResponses/customer-name-result.json');
-    let age = JSON.parse(result.body).Customers[2].Age;
-    expectedResponse.Customers[2].Age = age;
     expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
 
   });
@@ -170,6 +169,48 @@ describe('module test', () => {
 
   });
 
+  it('Page not found error when search by customer number', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanNumberResponse);
+    });
+
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, apiKeysResponse);
+    });
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetTokenResponse);
+    });
+
+    const event = require('../src/TestEvents/SearchCustomer/Events/event-cust-no-invalid-page.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = '{\"httpStatus\":404,\"code\":1018,\"message\":\"Page not found.\"}'
+    expect(result.body).toStrictEqual(expectedResponse);
+
+  });
+
+  it('Page not found error when search by customer name', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanNameResponse);
+    });
+
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, apiKeysResponse);
+    });
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetAccountResponse);
+    });
+
+    const event = require('../src/TestEvents/SearchCustomer/Events/event-cust-name-invalid-page.json');
+    const result = await wrapped.run(event);
+    const expectedResponse = '{\"httpStatus\":404,\"code\":1018,\"message\":\"Page not found.\"}'
+    expect(result.body).toStrictEqual(expectedResponse);
+
+  });
+
   it('search customer by using customer name where apikey not found', async () => {
 
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
@@ -181,13 +222,35 @@ describe('module test', () => {
     });
 
     AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
-      callback(null, batchGetAccountResponse);
+      callback(null, batchGetAccountInfoResponse);
     });
 
     const event = require('../src/TestEvents/SearchCustomer/Events/event-request-customer-name.json');
     const result = await wrapped.run(event);
     const expectedResponse = require('../src/TestEvents/SearchCustomer/ExpectedResponses/result-without-apikey.json');
     expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
+
+  });
+
+  it('item not found in search customer name', async () => {
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+      callback(null, scanNameResponse);
+    });
+
+    AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+      callback(null, { items: []});
+    });
+
+    AWSMock.mock('DynamoDB.DocumentClient', 'batchGet', (params, callback) => {
+      callback(null, batchGetActiveResponse);
+    });
+
+    const event = require('../src/TestEvents/SearchCustomer/Events/event-request-customer-name.json');
+    const result = await wrapped.run(event);
+    console.log(result);
+    const expectedResponse = '{"httpStatus":400,"code":1009,"message":"Item not found."}';
+    expect(result.body).toStrictEqual(expectedResponse);
 
   });
 

@@ -1,6 +1,6 @@
 {
     "resource": "/search/{id}",
-    "path": "/search/{}",
+    "path": "/search/abcd",
     "httpMethod": "GET",
     "headers": {
         "Accept": "*/*",
@@ -103,36 +103,32 @@
         ]
     },
     "queryStringParameters": {
-        "page": "1",
-        "size": "10",
+        "page": "20",
         "status": "false",
-        "startkey": "0"
+        "size": "2"
     },
     "multiValueQueryStringParameters": {
         "page": [
-            "1"
-        ],
-        "size": [
-            "10"
+            "20"
         ],
         "status": [
             "false"
         ],
-        "startkey": [
-            "0"
+        "size": [
+            "2"
         ]
     },
     "pathParameters": {
-        "id":  {}
+        "id": "abcd"
     },
     "stageVariables": null,
     "requestContext": {
         "resourceId": "pqyy9c",
-        "resourcePath": "/search/123",
+        "resourcePath": "/search/abcd",
         "httpMethod": "GET",
         "extendedRequestId": "BsX_-FiXIAMFdfQ=",
         "requestTime": "29/Jun/2021:15:19:27 +0000",
-        "path": "/devint/search/123",
+        "path": "/devint/search/abcd",
         "accountId": "083868342691",
         "protocol": "HTTP/1.1",
         "stage": "devint",

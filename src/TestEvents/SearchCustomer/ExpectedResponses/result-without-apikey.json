@@ -7,37 +7,34 @@
             "CustomerID": "123",
             "CustomerName": "abcd",
             "CustomerNo": "321321WQ",
-            "CustomerStatus": "Active",
+            "CustomerStatus": "Inactive",
             "DeclaredType": "FF",
             "SourceSystem": "AAA",
             "Station": "GGG",
             "Updated": "NA"
-        },
-        {
-            "Age": "NA",
-            "BillToAcct": "00009",
-            "Created": "NA",
-            "CustomerID": "12365",
-            "CustomerName": "abcd",
-            "CustomerNo": "7856",
-            "CustomerStatus": "Active",
-            "DeclaredType": "ppo",
-            "SourceSystem": "kkl",
-            "Station": "kkl",
-            "Updated": "NA"
-        },
-        {
-            "Age": "NA",
-            "BillToAcct": "00009",
-            "Created": "NA",
-            "CustomerID": "12356",
-            "CustomerName": "abcd",
-            "CustomerNo": "5356",
-            "CustomerStatus": "Inactive",
-            "DeclaredType": "ppo",
-            "SourceSystem": "kkl",
-            "Station": "kkl",
-            "Updated": "NA"
         }
-    ]
+    ],
+    "Page": {
+        "Number": 1,
+        "Size": 1,
+        "TotalElement": 1,
+        "TotalPages": 1
+    },
+    "_links": {
+        "first": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/search/abcd?status=false&page=1&size=10&startkey=0"
+        },
+        "last": {
+            "href": "N/A"
+        },
+        "next": {
+            "href": "N/A"
+        },
+        "previous": {
+            "href": "N/A"
+        },
+        "self": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/search/abcd?status=false&page=1&size=10&startkey=0"
+        }
+    }
 }

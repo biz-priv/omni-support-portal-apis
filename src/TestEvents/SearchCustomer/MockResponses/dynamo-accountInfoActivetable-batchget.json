@@ -4,7 +4,7 @@
             {
                 "BillToAcct": "009011",
                 "SourceSystem": "AAA",
-                "CustomerStatus": "Inactive",
+                "CustomerStatus": "Active",
                 "Station": "GGG",
                 "CustomerNo": "321321WQ",
                 "DeclaredType": "FF",

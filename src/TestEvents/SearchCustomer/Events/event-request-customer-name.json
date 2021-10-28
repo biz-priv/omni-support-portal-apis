@@ -102,8 +102,26 @@
             "https"
         ]
     },
-    "queryStringParameters": null,
-    "multiValueQueryStringParameters": null,
+    "queryStringParameters": {
+        "page": "1",
+        "size": "10",
+        "status": "false",
+        "startkey": "0"
+    },
+    "multiValueQueryStringParameters": {
+        "page": [
+            "1"
+        ],
+        "size": [
+            "10"
+        ],
+        "status": [
+            "false"
+        ],
+        "startkey": [
+            "0"
+        ]
+    },
     "pathParameters": {
         "id": "abcd"
     },

@@ -7,7 +7,7 @@
             "CustomerID": "123",
             "CustomerName": "abcd",
             "CustomerNo": "321321WQ",
-            "CustomerStatus": "Inactive",
+            "CustomerStatus": "Active",
             "DeclaredType": "FF",
             "SourceSystem": "AAA",
             "Station": "GGG",
