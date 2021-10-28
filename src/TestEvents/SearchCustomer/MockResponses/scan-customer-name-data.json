@@ -1,0 +1,24 @@
+{ 
+    "Items": [
+      {
+        "ApiKey": "8xHglC4sBcax0wJ5wHAf86KPnITCYT6A93WvBZPm",
+        "CustomerStatus": "Inactive",
+        "CustomerID": "123",
+        "CustomerName": "abcd"
+      },
+      {
+        "ApiKey": "hhGurRfXTr5ZHAlNfabm490zEfTGl11T4Aqxn4gW",
+        "CustomerStatus": "Active",
+        "CustomerID": "12365",
+        "CustomerName": "abcd"
+      },
+      {
+        "ApiKey": "q80cYoLaUb4wTaedtOJng5OSbHp2ywfj7nV3Aokz",
+        "CustomerStatus": "Active",
+        "CustomerID": "12356",
+        "CustomerName": "abcd"
+      }
+    ],
+    "Count": 3,
+    "ScannedCount": 447
+  }
