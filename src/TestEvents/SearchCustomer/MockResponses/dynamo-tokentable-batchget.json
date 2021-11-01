@@ -1,0 +1,25 @@
+{ 
+    "Responses": {
+        "omni-dw-token-validator-devint": [
+            {
+                "ApiKey": "bTz0GBctYY1wBT6WNZ3vF5LzXuTjm6iV7HZSDuPh",
+                "CustomerStatus": "Active",
+                "CustomerID": "123",
+                "CustomerName": "abcd"
+            },
+            {
+                "ApiKey": "bTz0GBctYY1wBT6WNZ3vF5LzXuTjm6iV7dksdjuds",
+                "CustomerStatus": "Active",
+                "CustomerID": "12365",
+                "CustomerName": "abcd"
+            },
+            {
+                "ApiKey": "bTz0GBctYY1wBT6WNZ3vF5LzXuTjm6iV7dsfnljdd",
+                "CustomerStatus": "Active",
+                "CustomerID": "12356",
+                "CustomerName": "abcd"
+            }
+        ]
+    },
+    "UnprocessedKeys": {}
+}

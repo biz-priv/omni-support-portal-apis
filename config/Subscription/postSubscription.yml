@@ -1,0 +1,21 @@
+PostSubscription:
+  handler: src/Subscription/PostSubscriptions/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  environment:
+    ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/dev/name}
+    TOKEN_VALIDATOR: ${ssm:/omni-dw/devint/tokenValidator/table}
+    CUSTOMER_PREFERENCE_TABLE: ${ssm:/omni/devint/eventing/preferences/table/name}
+    EVENTING_TOPICS_TABLE: ${ssm:/omni/devint/eventing/topics/table/name}
+    USAGE_PLAN: ${ssm:/omni/devint/usage/plan/name}
+    DEFAULT_AWS: ${self:provider.region}
+  package:
+    individually: true
+    include:
+      - "src/Subscription/PostSubscriptions/**"
+      - "src/shared/**"
+  events:
+    - http:
+        path: subscriptions
+        method: post
+        cors: true

@@ -1,0 +1,36 @@
+{
+    "Items": [ 
+        {
+            "Customer_Id": "123",
+            "Endpoint": "https://example.com",
+            "Event_Type": "ShipmentDueDate",
+            "Subscription_arn": "arn:aws:sns:us-test-1:123:test_topic_fullPayload",
+            "Shared_Secret": "2233",
+            "Subscription_Preference": "fullPayload"
+        },
+        {
+            "Customer_Id": "1234",
+            "Endpoint": "https://example.com",
+            "Event_Type": "ShipmentDueDate",
+            "Subscription_arn": "arn:aws:sns:us-test-1:123:Mile_Change",
+            "Shared_Secret": "2233",
+            "Subscription_Preference": "Change"
+        },
+        {
+            "Customer_Id": "12345",
+            "Endpoint": "https://example.com",
+            "Event_Type": "MileStone",
+            "Subscription_arn": "arn:aws:sns:us-test-1:123:Mile_Change",
+            "Shared_Secret": "2233",
+            "Subscription_Preference": "Change"
+        },
+        {
+            "Customer_Id": "123456",
+            "Endpoint": "https://example.com",
+            "Event_Type": "testing",
+            "Subscription_arn": "arn:aws:sns:us-test-1:123:Mile_Change",
+            "Shared_Secret": "2233",
+            "Subscription_Preference": "Change"
+        }
+    ] 
+}

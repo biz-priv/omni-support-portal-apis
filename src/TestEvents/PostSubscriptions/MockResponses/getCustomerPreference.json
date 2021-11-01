@@ -1,0 +1,12 @@
+{
+  "Items": [
+    {
+      "Customer_Id": "10090520",
+      "Endpoint": "https://example.com",
+      "Event_Type": "ShipmentDueDate",
+      "Subscription_arn": "arn:aws:sns:us-east-1:083868342691:test_topic_fullPayload",
+      "Shared_Secret": "1234",
+      "Subscription_Preference": "fullPayload"
+    }
+  ]
+}

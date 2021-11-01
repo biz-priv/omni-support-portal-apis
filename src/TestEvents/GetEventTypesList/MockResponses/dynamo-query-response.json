@@ -1,0 +1,10 @@
+{
+    "Items": [
+        {
+            "CustomerID": "12345",
+            "ApiKey": "abcdxyz1234"
+        }
+    ],
+    "Count": 1,
+    "ScannedCount": 1
+}
