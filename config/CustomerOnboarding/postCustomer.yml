@@ -3,9 +3,9 @@ PostCustomer:
   layers:
     - { Ref: CommonLibsLambdaLayer }  
   environment:
-    ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/dev/name}
-    TOKEN_VALIDATOR: ${ssm:/omni-dw/devint/tokenValidator/table}
-    USAGE_PLAN: ${ssm:/omni/devint/usage/plan/name}
+    ACCOUNT_INFO: ${ssm:/omni/${self:provider.stage}/account/info/table/dev/name}
+    TOKEN_VALIDATOR: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
+    USAGE_PLAN: ${ssm:/omni/${self:provider.stage}/usage/plan/name}
     DEFAULT_AWS: ${self:provider.region} 
   package:
     individually: true

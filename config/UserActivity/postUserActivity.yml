@@ -3,7 +3,7 @@ PostUserActivity:
   layers:
     - { Ref: CommonLibsLambdaLayer }
   environment:
-    USER_ACTIVITY: ${ssm:/omni/devint/support/portal/useractivity/table/name}
+    USER_ACTIVITY: ${ssm:/omni/${self:provider.stage}/support/portal/useractivity/table/name}
     DEFAULT_AWS: ${self:provider.region}    
   package:
     individually: true
