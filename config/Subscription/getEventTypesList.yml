@@ -3,8 +3,8 @@ GetEventTypesList:
   layers:
     - { Ref: CommonLibsLambdaLayer }  
   environment:
-    EVENT_TOPIC_TABLE: ${ssm:/omni/devint/eventing/topics/table/name}
-    TOKEN_VALIDATOR_TABLE: ${ssm:/omni-dw/devint/tokenValidator/table}
+    EVENT_TOPIC_TABLE: ${ssm:/omni/${self:provider.stage}/eventing/topics/table/name}
+    TOKEN_VALIDATOR_TABLE: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
     DEFAULT_AWS: ${self:provider.region} 
   package:
     individually: true

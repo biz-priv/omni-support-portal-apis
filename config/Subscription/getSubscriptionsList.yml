@@ -3,7 +3,7 @@ GetSubscriptionsList:
   layers:
     - { Ref: CommonLibsLambdaLayer }
   environment:
-    EVENT_PREFERENCES_TABLE: ${ssm:/omni/devint/eventing/preferences/table/name}
+    EVENT_PREFERENCES_TABLE: ${ssm:/omni/${self:provider.stage}/eventing/preferences/table/name}
     DEFAULT_AWS: ${self:provider.region}     
   package:
     individually: true
