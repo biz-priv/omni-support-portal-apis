@@ -3,7 +3,7 @@ CustomersSummary:
   layers:
     - { Ref: CommonLibsLambdaLayer }  
   environment:
-    ACCOUNT_INFO: ${ssm:/omni/devint/account/info/table/dev/name}
+    ACCOUNT_INFO: ${ssm:/omni/${self:provider.stage}/account/info/table/dev/name}
     DEFAULT_AWS: ${self:provider.region} 
   package:
     individually: true
