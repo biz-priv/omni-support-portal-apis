@@ -4,7 +4,7 @@ PostKey:
     - { Ref: CommonLibsLambdaLayer }
   environment:
     TOKEN_VALIDATOR: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
-    USAGE_PLAN: ${ssm:/omni/${self:provider.stage}/usage/plan/name}
+    USAGE_PLAN: ${ssm:/omni-dw/${self:provider.stage}/usage/plan/id}
     DEFAULT_AWS: ${self:provider.region}       
   package:
     individually: true

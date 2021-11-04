@@ -27,7 +27,7 @@ pipeline {
                             sh """
                             npm i -g serverless@1.83.3
                             npm i
-                            sls invoke test
+                            sls invoke test -s ${env.ENVIRONMENT}
                             """
                     }
                 }   else if ("${GIT_BRANCH}".contains("master") || "${GIT_BRANCH}".contains("develop") || "${GIT_BRANCH}".contains("hotfix")){
@@ -35,7 +35,7 @@ pipeline {
                             sh """
                             npm i -g serverless@1.83.3
                             npm i
-                            sls invoke test
+                            sls invoke test -s ${env.ENVIRONMENT}
                             """
                         }
                     }
