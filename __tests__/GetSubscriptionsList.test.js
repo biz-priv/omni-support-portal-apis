@@ -10,6 +10,7 @@ const AWSMock = require('aws-sdk-mock');
 
 const scanResponse = require('../src/TestEvents/GetSubscriptionsList/MockResponses/dynamo-scan-with-lastevaluatedkey.json');
 const scanDataResponse = require('../src/TestEvents/GetSubscriptionsList/MockResponses/dynamo-scan.json');
+const apiKeysResponse = require('../src/TestEvents/GetSubscriptionsList/MockResponses/api-gw-apikeys.json');
 
 describe('module test', () => {
 
@@ -23,11 +24,31 @@ describe('module test', () => {
             callback(null, scanResponse);
         });
 
+        AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+            callback(null, apiKeysResponse);
+          });
+
         const event = require('../src/TestEvents/GetSubscriptionsList/Events/event.json');
         const result = await wrapped.run(event);
-        console.log(result);
         const expectedResponse = require('../src/TestEvents/GetSubscriptionsList/ExpectedResponses/result-no-lastevaluatedkey.json');
         expect(JSON.parse(result.body)).toStrictEqual(expectedResponse);
+
+    });
+
+    it('api gateway error', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+            callback(null, scanResponse);
+        });
+
+        AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+            callback({error: "error found"}, null);
+          });
+
+        const event = require('../src/TestEvents/GetSubscriptionsList/Events/event.json');
+        const result = await wrapped.run(event);
+        const expectedResponse = '{"httpStatus":400,"code":1009,"message":"Item not found."}'
+        expect(result.body).toStrictEqual(expectedResponse);
 
     });
 
@@ -36,6 +57,10 @@ describe('module test', () => {
         AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
             callback(null, { Items: [] });
         })
+
+        AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+            callback(null, apiKeysResponse);
+          });
 
         const event = require('../src/TestEvents/GetSubscriptionsList/Events/event.json');
         const result = await wrapped.run(event);
@@ -91,10 +116,31 @@ describe('module test', () => {
             callback(null, scanDataResponse);
         })
 
+        AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+            callback(null, apiKeysResponse);
+          });
+
         const event = require('../src/TestEvents/GetSubscriptionsList/Events/event-invalid-page.json');
         let actual = await wrapped.run(event);
         const expectedResponse = '{"httpStatus":404,"code":1018,"message":"Page not found."}';
         expect(actual.body).toStrictEqual(expectedResponse);
+
+    });
+
+    it('apikey not found in apigateway', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
+            callback(null, scanResponse);
+        });
+
+        AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+            callback(null, { items: []});
+          });
+
+        const event = require('../src/TestEvents/GetSubscriptionsList/Events/event.json');
+        const result = await wrapped.run(event);
+        const expectedResponse = '{"httpStatus":400,"code":1009,"message":"Item not found."}'
+        expect(result.body).toStrictEqual(expectedResponse);
 
     });
 

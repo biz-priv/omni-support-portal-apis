@@ -1,9 +1,20 @@
 const { send_response, handleError } = require('../../shared/utils/responses');
 const validate = require('./validate');
 const Dynamo = require('../../shared/dynamo/db');
-const { get } = require('lodash');
+const _ = require('lodash');
 const EVENT_PREFERENCE = process.env.EVENT_PREFERENCES_TABLE;
 const pagination = require('../../shared/utils/pagination');
+const { fetchApiKey } = require('./apigatewayFunction');
+
+function filterFinalData(data) {
+    let finalItems = [];
+    _.filter(data, (elem) => {
+            if (elem.ApiKey != "NA") {
+                finalItems.push(elem)
+            }
+    })
+    return finalItems
+}
 
 //get webhooks subscriptions list
 module.exports.handler = async (event) => {
@@ -11,16 +22,22 @@ module.exports.handler = async (event) => {
     event = await validate(event);
     if (!event.code) {
         let totalCount = 0;
-        let page = get(event, 'queryStringParameters.page')
-        let size = get(event, 'queryStringParameters.size')
+        let page = _.get(event, 'queryStringParameters.page')
+        let size = _.get(event, 'queryStringParameters.size')
         try {
             const fullRecords = await Dynamo.scanTableData(EVENT_PREFERENCE);
             if (fullRecords.length) {
-                totalCount = fullRecords.length;
-                if (page > Math.ceil(totalCount / size)) {
-                    return send_response(404, handleError(1018))
+                let apiGatewayRecords = await fetchApiKey(fullRecords);
+                let finalItems = filterFinalData(apiGatewayRecords)
+                if(finalItems.length){
+                    totalCount = finalItems.length;
+                    if (page > Math.ceil(totalCount / size)) {
+                        return send_response(404, handleError(1018))
+                    }
+                    return await getResponse(finalItems, totalCount, page, size, event);
+                }else{
+                    return send_response(404, handleError(1009))
                 }
-                return await getResponse(fullRecords, totalCount, page, size, event);
             } else {
                 const error = handleError(1009);
                 console.error("Error: ", JSON.stringify(error));
@@ -39,10 +56,10 @@ module.exports.handler = async (event) => {
 
 async function getResponse(results, count, page, size, event) {
     let selfPageLink = "N/A";
-    let host = "https://" + get(event, 'headers.Host', null) + "/" + get(event, 'requestContext.stage', 'devint');
-    let path = get(event, 'path', null) + "?";
+    let host = "https://" + _.get(event, 'headers.Host', null) + "/" + _.get(event, 'requestContext.stage', 'devint');
+    let path = _.get(event, 'path', null) + "?";
     selfPageLink = "page=" + page + "&size=" +
-        size + "&startkey=" + get(event, 'queryStringParameters.startkey') + "&endkey=" + get(event, 'queryStringParameters.endkey');
+        size + "&startkey=" + _.get(event, 'queryStringParameters.startkey') + "&endkey=" + _.get(event, 'queryStringParameters.endkey');
     let startkey = "Customer_Id"
     let endkey = "Event_Type"
     let responseArrayName = "Subscription"
