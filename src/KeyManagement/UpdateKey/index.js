@@ -5,6 +5,7 @@ const TOKENVALIDATORTABLE = process.env.TOKEN_VALIDATOR;
 const USAGEPLAN = process.env.USAGE_PLAN;
 const get = require('lodash.get');
 const { handleError } = require('../../shared/utils/responses');
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 //update key
 module.exports.handler = async (event) => {
@@ -22,6 +23,7 @@ module.exports.handler = async (event) => {
                 let apiKeyValue = await Dynamo.apiKeyCreate({ "description": get(event, 'body.CustomerId'), "enabled": true, "name": get(event, 'body.CustomerId') }, USAGEPLAN);
                 await Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "CustomerName": getItemResult.Items[0].CustomerName, "CustomerStatus": "Active", "ApiKey": apiKeyValue.value });
 
+                await UpdateActivity.postRequest(event, {"activity": "UpdateApiKey", "description": get(event, 'body.CustomerId') + " For this Customer" })
                 console.info("Info: ", JSON.stringify({ "ApiKey": apiKeyValue.value }));
                 return send_response(200, { "ApiKey": apiKeyValue.value });
 
