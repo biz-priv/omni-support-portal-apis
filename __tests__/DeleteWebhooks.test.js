@@ -7,6 +7,11 @@ const lambdaWrapper = jestPlugin.lambdaWrapper;
 const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
 const AWSMock = require('aws-sdk-mock');
+var axios = require("axios");
+var MockAdapter = require("axios-mock-adapter");
+
+// This sets the mock adapter on the default instance
+var mock = new MockAdapter(axios);
 
 const indexQueryResponse = require('../src/TestEvents/DeleteWebhooks/MockResponses/dynamo-query-response.json');
 const getResponse = require('../src/TestEvents/DeleteWebhooks/MockResponses/dynamo-get-response.json');
@@ -39,6 +44,38 @@ describe('module test', () => {
         AWSMock.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
             callback(null, {});
         });
+
+        mock.onPost().reply(200);
+
+        const event = require('../src/TestEvents/DeleteWebhooks/Events/event.json');
+        const result = await wrapped.run(event);
+        expect(result.statusCode).toStrictEqual(200);
+
+    });
+
+    it('error in update activity', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+            callback(null, indexQueryResponse);
+        });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+            callback(null, getResponse);
+        });
+
+        AWSMock.mock('SNS', 'unsubscribe', (params, callback) => {
+            callback(null, "successfully unsubscribe");
+        });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
+            callback(null, {});
+        });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
+            callback(null, {});
+        });
+
+        mock.onPost().reply(400);
 
         const event = require('../src/TestEvents/DeleteWebhooks/Events/event.json');
         const result = await wrapped.run(event);
