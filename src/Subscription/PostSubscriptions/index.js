@@ -46,11 +46,9 @@ module.exports.handler = async (event) => {
         subscriptionArn = snsTopicDetails.Event_Payload_Topic_Arn;
       }
 
-      await createCustomerPreference(customerId, value, subscriptionArn);
-
       //Create an SNS subscription with filter policy as CustomerID.
-      await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
-
+      let subscriptionResult = await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
+      await createCustomerPreference(customerId, value, subscriptionResult.SubscriptionArn);
       await UpdateActivity.postRequest(event, { "activity": "CreateSubscription", "description": "Subscription " + subscriptionArn + " Created" })
       return send_response(200, { message: "Subscription successfully added" });
     }
@@ -211,7 +209,7 @@ async function subscribeToTopic(topic_arn, endpoint, customer_id) {
     const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
     const data = await sns.subscribe(params).promise();
     if (data.ResponseMetadata) {
-      return true;
+      return data;
     }
     throw "Unable to subscribe";
   } catch (error) {

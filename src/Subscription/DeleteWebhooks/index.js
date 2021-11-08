@@ -24,7 +24,7 @@ module.exports.handler = async (event) => {
                     await UpdateActivity.postRequest(event, { "activity": "DeleteSubscription", "description": "Subscription " + eventPreferenceResult.Item.Subscription_arn + " deleted" })
                     return send_response(200);
                 } else {
-                    return send_response(400, handleError(1009))
+                    return send_response(400, handleError(1019))
                 }
             } else {
                 return send_response(400, handleError(1014))

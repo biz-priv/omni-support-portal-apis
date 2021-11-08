@@ -3,7 +3,7 @@ PostSubscription:
   layers:
     - { Ref: CommonLibsLambdaLayer }
   environment:
-    ACCOUNT_INFO: ${ssm:/omni/${self:provider.stage}/account/info/table/dev/name}
+    ACCOUNT_INFO: ${ssm:/omni-dw/${self:provider.stage}/accountInfo/table}
     TOKEN_VALIDATOR: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
     CUSTOMER_PREFERENCE_TABLE: ${ssm:/omni/${self:provider.stage}/eventing/preferences/table/name}
     EVENTING_TOPICS_TABLE: ${ssm:/omni/${self:provider.stage}/eventing/topics/table/name}

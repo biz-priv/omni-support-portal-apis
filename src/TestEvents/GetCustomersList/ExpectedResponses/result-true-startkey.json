@@ -11,9 +11,11 @@
             "CustomerStatus": "Active",
             "Created": "2021-06-18T06:54:54.000Z",
             "Updated": "2021-06-26T06:54:54.000Z",
-            "Age": 14
+            "Age": 14,
+            "ApiKey": "1234"
         },
         {
+            "ApiKey": "NA",
             "CustomerID": "12345",
             "CustomerName": "NA",
             "BillToAcct": "15733",

@@ -107,7 +107,7 @@ describe('module test', () => {
 
         const event = require('../src/TestEvents/DeleteWebhooks/Events/event.json');
         const result = await wrapped.run(event);
-        const error = '{"httpStatus":400,"code":1009,"message":"Item not found."}'
+        const error = '{"httpStatus":400,"code":1019,"message":"Invalid EventType."}'
         expect(result.body).toStrictEqual(error);
 
     });

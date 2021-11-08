@@ -1,6 +1,7 @@
 {
     "Customers": [
         {
+            "ApiKey": "1234",
             "CustomerID": "1234",
             "CustomerName": "SK Test",
             "BillToAcct": "15733",
@@ -14,6 +15,7 @@
             "Age": 70
         },
         {
+            "ApiKey": "NA",
             "Age": "NA",
             "BillToAcct": "15733",
             "Created": "NA",
