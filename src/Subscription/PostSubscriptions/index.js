@@ -13,6 +13,7 @@ const { apiKeyValidation, subscriptionValidator } = require("./validate");
 const TOKEN_VALIDATOR = process.env.TOKEN_VALIDATOR;
 const CUSTOMER_PREFERENCE_TABLE = process.env.CUSTOMER_PREFERENCE_TABLE;
 const EVENTING_TOPICS_TABLE = process.env.EVENTING_TOPICS_TABLE;
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 /*=================post subscription==============*/
 module.exports.handler = async (event) => {
@@ -49,6 +50,8 @@ module.exports.handler = async (event) => {
 
       //Create an SNS subscription with filter policy as CustomerID.
       await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
+
+      await UpdateActivity.postRequest(event, { "activity": "CreateSubscription", "description": "Subscription " + subscriptionArn + " Created" })
       return send_response(200, { message: "Subscription successfully added" });
     }
   } catch (error) {

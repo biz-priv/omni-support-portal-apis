@@ -4,7 +4,8 @@
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
     "cache-control": "no-cache",
-    "x-api-key": null
+    "x-api-key": null,
+    "userID": "13245"
   },
   "body": "{\n    \"EventType\": \"Milestone\",\n    \"Endpoint\": \"https://example.com\",\n    \"SharedSecret\": \"8888\",\n    \"Preference\": \"fullPayload\"\n}"
 }

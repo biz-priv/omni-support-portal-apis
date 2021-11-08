@@ -23,6 +23,7 @@ const createSubscriptionScema = Joi.object().keys({
 const createApikeyScema = Joi.object()
   .keys({
     "x-api-key": Joi.string().required(),
+    "userID": Joi.string().required()
   })
   .unknown(true);
 
