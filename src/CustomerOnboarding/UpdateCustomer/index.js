@@ -8,7 +8,7 @@ const UpdateActivity = require('../../shared/utils/requestPromise');
 //update customer
 module.exports.handler = async (event) => {
  
-    // console.info("Event\n" + JSON.stringify(event, null, 2));
+    console.info("Event\n" + JSON.stringify(event, null, 2));
     //validate customerId
     event = await validate(event);
     if (!event.code) {
