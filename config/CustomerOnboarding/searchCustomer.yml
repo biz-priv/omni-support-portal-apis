@@ -3,7 +3,7 @@ SearchCustomer:
   layers:
     - { Ref: CommonLibsLambdaLayer }  
   environment:
-    ACCOUNT_INFO: ${ssm:/omni/${self:provider.stage}/account/info/table/dev/name}
+    ACCOUNT_INFO: ${ssm:/omni-dw/${self:provider.stage}/accountInfo/table}
     TOKEN_VALIDATOR: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
     DEFAULT_AWS: ${self:provider.region} 
   package:
