@@ -5,8 +5,13 @@ const mod = require('./../src/CustomerOnboarding/PostCustomer/index');
 const jestPlugin = require('serverless-jest-plugin');
 const lambdaWrapper = jestPlugin.lambdaWrapper;
 const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
-
+ 
 const AWSMock = require('aws-sdk-mock');
+var axios = require("axios");
+var MockAdapter = require("axios-mock-adapter");
+
+// This sets the mock adapter on the default instance
+var mock = new MockAdapter(axios);
 
 const createApiGatewayResponse = require('../src/TestEvents/PostCustomer/MockResponses/apigateway-createapikey.json');
 const createUsagePlanResponse = require('../src/TestEvents/PostCustomer/MockResponses/apigateway-createusageplankey.json');
@@ -30,6 +35,30 @@ describe('post module test', () => {
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
             callback(null, createUsagePlanResponse)
         })
+
+        mock.onPost().reply(200);
+
+        const event = require('../src/TestEvents/PostCustomer/Events/event-valid-body.json');
+        let actual = await wrapped.run(event);
+        expect(actual.statusCode).toStrictEqual(202);
+    })
+
+    it('error in update user activity', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'put', (params, callback) => {
+            callback(null, 'successfully put item in database');
+        })
+
+        AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
+            callback(null, createApiGatewayResponse);
+        });
+
+        AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
+            callback(null, createUsagePlanResponse)
+        })
+
+        mock.onPost().reply(400);
+
         const event = require('../src/TestEvents/PostCustomer/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
         expect(actual.statusCode).toStrictEqual(202);

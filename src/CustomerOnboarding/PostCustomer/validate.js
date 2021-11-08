@@ -19,6 +19,9 @@ const custom = Joi.extend((joi) => {
 });
 
 const schema = Joi.object({
+    headers: Joi.object().keys({
+        "userID": Joi.string().required()
+      }).unknown(true),
     body: custom.object({
         BillToAccNumber: Joi.string().required(),
         SourceSystem: Joi.string().required(),

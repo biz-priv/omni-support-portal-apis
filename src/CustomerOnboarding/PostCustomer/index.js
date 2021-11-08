@@ -6,6 +6,7 @@ const USAGEPLAN = process.env.USAGE_PLAN;
 const validate = require("./validate");
 const { uuid } = require("uuidv4");
 const get = require("lodash.get");
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 //post customer
 module.exports.handler = async (event) => {
@@ -40,6 +41,7 @@ module.exports.handler = async (event) => {
       ]);
       tokenTableItems["ApiKey"] = apiKeyResult.value;
       await Dynamo.itemInsert(TOKENVALIDATOR, tokenTableItems);
+      await UpdateActivity.postRequest(event, {"activity": "CreateCustomer", "description": CustomerID + " New customer created" })
       return send_response(202);
     } catch (e) {
       console.error("Error: ", JSON.stringify(e));
