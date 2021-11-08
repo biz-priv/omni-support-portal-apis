@@ -19,10 +19,10 @@ module.exports.handler = async (event) => {
                 const eventPreferenceResult = await Dynamo.getItem(EVENT_PREFERENCE, { 'Customer_Id': tokenTableResult.Items[0].CustomerID, 'Event_Type': get(event, 'body.EventType') });
                 if (eventPreferenceResult.Item) {
                     await SNS_SERVICE.topicUnSubscription(eventPreferenceResult.Item.Subscription_arn);
-                    const [deletePreference, deleteTokenApiKey] = await Promise.all([Dynamo.deleteItem(EVENT_PREFERENCE, { 'Customer_Id': tokenTableResult.Items[0].CustomerID, 'Event_Type': get(event, 'body.EventType') }), Dynamo.deleteItem(TOKEN_VALIDATOR, { 'CustomerID': tokenTableResult.Items[0].CustomerID, 'ApiKey': get(event, 'headers.x-api-key') })]);
+                    const [deletePreference] = await Promise.all([Dynamo.deleteItem(EVENT_PREFERENCE, { 'Customer_Id': tokenTableResult.Items[0].CustomerID, 'Event_Type': get(event, 'body.EventType') })]);
                     return send_response(200);
                 } else {
-                    return send_response(400, handleError(1009))
+                    return send_response(400, handleError(1019))
                 }
             } else {
                 return send_response(400, handleError(1014))

@@ -19,7 +19,6 @@ function filterRecords(accountInfo, accountInfoResult) {
                     elem["CustomerName"] = "NA"
                 }
             }
-            delete elem["ApiKey"];
         })
     })
     return accountInfoResult
@@ -34,7 +33,6 @@ function filterAllCustomerRecords(accountInfo, accountInfoResult) {
                 } else {
                     elem["CustomerName"] = "NA"
                 }
-                delete elem["ApiKey"];
                 delete elem["Created"];
                 delete elem["Updated"];
                 delete elem["Age"];
