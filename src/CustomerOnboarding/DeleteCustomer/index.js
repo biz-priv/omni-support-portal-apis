@@ -5,6 +5,7 @@ const TOKENVALIDATORTABLE = process.env.TOKEN_VALIDATOR;
 const ACCOUNTINFOTABLE = process.env.ACCOUNT_INFO;
 const USAGEPLAN = process.env.USAGE_PLAN;
 const get = require('lodash.get');
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 //delete customer
 module.exports.handler = async (event) => {
@@ -18,6 +19,7 @@ module.exports.handler = async (event) => {
             if ((getItemResult.Items).length) {
                 await Dynamo.fetchApiKeyAndDisassociateUsagePlan(get(event, 'body.CustomerId'), USAGEPLAN);
                 await Promise.all([Dynamo.updateItems(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') }, 'set CustomerStatus = :x', { ':x': 'Inactive' }), Dynamo.updateItems(TOKENVALIDATORTABLE, { 'CustomerID': get(event, 'body.CustomerId'), 'ApiKey': getItemResult.Items[0].ApiKey }, 'set CustomerStatus = :x', { ':x': 'Inactive' })])
+                await UpdateActivity.postRequest(event, {"activity": "DeleteCustomer", "description": get(event, 'body.CustomerId') + " deleted" })
                 return send_response(202);
             } else {
                 return send_response(400, handleError(1009))
