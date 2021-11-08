@@ -1,12 +1,17 @@
 'use strict';
 
 const mod = require('./../src/CustomerOnboarding/UpdateCustomer/index');
-
+ 
 const jestPlugin = require('serverless-jest-plugin');
 const lambdaWrapper = jestPlugin.lambdaWrapper;
 const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
 const AWSMock = require('aws-sdk-mock');
+var axios = require("axios");
+var MockAdapter = require("axios-mock-adapter");
+
+// This sets the mock adapter on the default instance
+var mock = new MockAdapter(axios);
 
 const getItemResponse = require('../src/TestEvents/UpdateCustomer/MockResponses/getItem.json');
 const getItemResp = require('../src/TestEvents/UpdateCustomer/MockResponses/getItemResp.json')
@@ -26,6 +31,25 @@ describe('update module test', () => {
         AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
             callback(null, 'successfully update items in database');
         })
+
+        mock.onPost().reply(200);
+
+        const event = require('../src/TestEvents/UpdateCustomer/Events/event-valid-body.json');
+        let actual = await wrapped.run(event);
+        expect(actual.statusCode).toStrictEqual(202);
+    })
+
+    it('error in update user activity', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+            callback(null, getItemResponse);
+        })
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
+        mock.onPost().reply(400);
 
         const event = require('../src/TestEvents/UpdateCustomer/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
