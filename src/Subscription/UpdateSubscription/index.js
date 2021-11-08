@@ -5,6 +5,7 @@ const get = require('lodash.get');
 const TOKEN_VALIDATOR = process.env.TOKEN_VALIDATOR
 const EVENTING_TOPICS_TABLE = process.env.EVENTING_TOPICS_TABLE;
 const CUSTOMER_PREFERENCE_TABLE = process.env.CUSTOMER_PREFERENCE_TABLE;
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 //update subscription
 module.exports.handler = async (event) => {
@@ -37,6 +38,8 @@ module.exports.handler = async (event) => {
                             subscriptionARN = eventTypes.Item.Event_Payload_Topic_Arn
                         }
                         await Dynamo.updateItems(CUSTOMER_PREFERENCE_TABLE, { 'Customer_Id': result.Items[0].CustomerID, 'Event_Type': eventTypes.Item.Event_Type }, 'set Subscription_Preference = :x, Endpoint = :endpt, Shared_Secret = :y, Subscription_arn = :subARN ', { ':x': get(event, "body.Preference"), ':endpt': get(event, "body.Endpoint"), ':y': get(event, "body.SharedSecret"), ':subARN': subscriptionARN })
+
+                        await UpdateActivity.postRequest(event, { "activity": "UpdateSubscription", "description": "Subscription " + subscriptionARN + " Updated" })
                         return send_response(202);
                     } else {
                         return send_response(400, handleError(1020));

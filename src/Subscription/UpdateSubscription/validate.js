@@ -19,7 +19,8 @@ const custom = Joi.extend((joi) => {
 
 const schema = Joi.object({
     headers: Joi.object().keys({
-        "x-api-key": Joi.string().required()
+        "x-api-key": Joi.string().required(),
+        "userID": Joi.string().required()
     }).unknown(true),
     body: custom.object({
         Preference: Joi.any().valid('fullPayload', 'Change'),
