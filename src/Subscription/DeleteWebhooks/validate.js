@@ -20,10 +20,10 @@ const custom = Joi.extend((joi) => {
 
 const schema = Joi.object({
     headers: Joi.object().keys({
-        "x-api-key": Joi.string().required(),
-        "userID": Joi.string().required()
+        "x-api-key": Joi.string().required()        
     }).unknown(true),
     body: custom.object({
+        UserId: Joi.string().required(),
         EventType: Joi.string().required(),
         Endpoint: Joi.string().pattern(new RegExp('^(https?:\\/\\/)?' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))'+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ '(\\?[;&a-z\\d%_.~+=-]*)?'+ '(\\#[-a-z\\d_]*)?$','i')),
     })

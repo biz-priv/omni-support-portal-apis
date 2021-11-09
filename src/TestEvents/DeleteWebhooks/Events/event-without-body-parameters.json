@@ -27,8 +27,7 @@
         "X-Forwarded-For": "49.36.45.32, 130.176.76.172",
         "X-Forwarded-Port": "443",
         "X-Forwarded-Proto": "https",
-        "x-api-key": "abcdxyz1234",
-        "userID": "13245"
+        "x-api-key": "abcdxyz1234"
     },
     "multiValueHeaders": {
         "Accept": [
