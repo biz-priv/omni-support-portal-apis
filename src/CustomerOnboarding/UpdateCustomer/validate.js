@@ -18,13 +18,11 @@ const custom = Joi.extend((joi) => {
 });
 
 const schema = Joi.object({
-  headers: Joi.object().keys({
-    "userID": Joi.string().required()
-  }).unknown(true),
   body: custom.object({
     CustomerId: Joi.string().required(),
     DeclaredType: Joi.string(),
-    Station: Joi.string()
+    Station: Joi.string(),
+    UserId: Joi.string().required()
   }).or('DeclaredType', 'Station').required()
 }).unknown(true)
 
