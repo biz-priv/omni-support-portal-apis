@@ -22,7 +22,8 @@ module.exports.handler = async (event) => {
                     return send_response(400, handleError(1013))
                 }
                 let apiKeyResult = await Dynamo.apiKeyCreate({ name: get(event, 'body.CustomerId'), enabled: true, description: get(event, 'body.CustomerId') }, USAGEPLAN);
-                await Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "ApiKey": apiKeyResult.value, "CustomerStatus": 'Active', "CustomerName": getItemResult.Items[0].CustomerName })
+                
+                await Promise.all([Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "ApiKey": apiKeyResult.value, "CustomerStatus": 'Active', "CustomerName": getItemResult.Items[0].CustomerName }), Dynamo.updateItems(TOKENVALIDATORTABLE, { 'CustomerID': get(event, 'body.CustomerId'), 'ApiKey': getItemResult.Items[0].ApiKey }, 'set CustomerStatus = :x', { ':x': 'Inactive' })])
                 
                 await UpdateActivity.postRequest(event, {"activity": "CreateApiKey", "description": get(event, 'body.CustomerId') + " For this Customer" })
                 console.info("Info: ", JSON.stringify({ "ApiKey": apiKeyResult.value }));

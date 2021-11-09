@@ -39,6 +39,10 @@ describe('post module test', () => {
             callback(null, usagePlanResponse)
         })
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
             callback(null, createApiKeyResponse);
         });
@@ -75,6 +79,10 @@ describe('post module test', () => {
             callback(null, createApiKeyResponse);
         });
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
             callback(null, createUsagePlanResponse)
         })
@@ -109,6 +117,10 @@ describe('post module test', () => {
 
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
             callback(null, createUsagePlanResponse)
+        })
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
         })
 
         AWSMock.mock('DynamoDB.DocumentClient', 'put', (params, callback) => {
@@ -147,6 +159,10 @@ describe('post module test', () => {
             callback(null, {items: []});
         });
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'getUsagePlanKey', function (params, callback) {
             callback(null, usagePlanResponse)
         })
@@ -183,6 +199,10 @@ describe('post module test', () => {
             callback({"error": "apigateway error"}, null);
         });
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
             callback(null, createApiKeyResponse);
         });
@@ -215,6 +235,10 @@ describe('post module test', () => {
             callback({ "error": "apigateway error" }, null);
         });
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
             callback({ "error": "usageplan error" }, null)
         })
@@ -242,6 +266,10 @@ describe('post module test', () => {
         AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
             callback(null, apiKeysResponse);
         });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
 
         AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
             callback(null, createApiKeyResponse);
