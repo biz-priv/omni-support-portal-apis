@@ -19,16 +19,14 @@ const custom = Joi.extend((joi) => {
 });
 
 const schema = Joi.object({
-    headers: Joi.object().keys({
-        "userID": Joi.string().required()
-      }).unknown(true),
     body: custom.object({
         BillToAccNumber: Joi.string().required(),
         SourceSystem: Joi.string().required(),
         CustomerNumber: Joi.string().default('NA'),
         DeclaredType: Joi.string().default('NA'),
         Station: Joi.string().default('NA'),
-        CustomerName: Joi.string().default('NA')
+        CustomerName: Joi.string().default('NA'),
+        UserId: Joi.string().required()
     })
 }).unknown(true)
 
