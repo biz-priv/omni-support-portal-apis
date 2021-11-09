@@ -4,8 +4,7 @@
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
     "cache-control": "no-cache",
-    "x-api-key": "9jM8ATQQYB2XmJsETRAq77EuqcY522Xu3pszdmcY",
-    "userID": "13245"
+    "x-api-key": "9jM8ATQQYB2XmJsETRAq77EuqcY522Xu3pszdmcY"
   },
-  "body": "{\n    \"Endpoint\": \"https://example.com\",\n    \"SharedSecret\": \"1234\",\n    \"Preference\": \"fullPayload\"\n}"
+  "body": "{\n    \"UserId\": \"13245\",\n    \"Endpoint\": \"https://example.com\",\n    \"SharedSecret\": \"1234\",\n    \"Preference\": \"fullPayload\"\n}"
 }

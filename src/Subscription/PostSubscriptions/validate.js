@@ -3,6 +3,7 @@ const get = require("lodash.get");
 const { handleError } = require("../../shared/utils/responses");
 
 const createSubscriptionScema = Joi.object().keys({
+  UserId: Joi.string().required(),
   EventType: Joi.string().required(),
   Preference: Joi.string().required(),
   Endpoint: Joi.string()
@@ -22,8 +23,7 @@ const createSubscriptionScema = Joi.object().keys({
 });
 const createApikeyScema = Joi.object()
   .keys({
-    "x-api-key": Joi.string().required(),
-    "userID": Joi.string().required()
+    "x-api-key": Joi.string().required()
   })
   .unknown(true);
 

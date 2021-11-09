@@ -49,7 +49,8 @@ module.exports.handler = async (event) => {
       //Create an SNS subscription with filter policy as CustomerID.
       let subscriptionResult = await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
       await createCustomerPreference(customerId, value, subscriptionResult.SubscriptionArn);
-      await UpdateActivity.postRequest(event, { "activity": "CreateSubscription", "description": "Subscription " + subscriptionArn + " Created" })
+
+      await UpdateActivity.postRequest(event, { "activity": "CreateSubscription", "description": "Subscription " + subscriptionResult.SubscriptionArn + " Created" })
       return send_response(200, { message: "Subscription successfully added" });
     }
   } catch (error) {
