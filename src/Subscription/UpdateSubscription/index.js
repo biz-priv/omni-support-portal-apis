@@ -31,13 +31,14 @@ module.exports.handler = async (event) => {
                         }
                     );
                     if ((preferenceResult.Items).length) {
+                        const splitdata = (preferenceResult.Items[0].Subscription_arn).split(":")
                         let subscriptionARN
                         if (get(event, "body.Preference") == "fullPayload") {
-                            subscriptionARN = eventTypes.Item.Full_Payload_Topic_Arn
+                            subscriptionARN = eventTypes.Item.Full_Payload_Topic_Arn + ":" + splitdata[(splitdata.length - 1)]
                         } else {
-                            subscriptionARN = eventTypes.Item.Event_Payload_Topic_Arn
+                            subscriptionARN = eventTypes.Item.Event_Payload_Topic_Arn + ":" + splitdata[(splitdata.length - 1)]
                         }
-                        await Dynamo.updateItems(CUSTOMER_PREFERENCE_TABLE, { 'Customer_Id': result.Items[0].CustomerID, 'Event_Type': eventTypes.Item.Event_Type }, 'set Subscription_Preference = :x, Endpoint = :endpt, Shared_Secret = :y, Subscription_arn = :subARN ', { ':x': get(event, "body.Preference"), ':endpt': get(event, "body.Endpoint"), ':y': get(event, "body.SharedSecret"), ':subARN': subscriptionARN })
+                        await Dynamo.updateItems(CUSTOMER_PREFERENCE_TABLE, { 'Customer_Id': result.Items[0].CustomerID, 'Event_Type': eventTypes.Item.Event_Type }, 'set Subscription_Preference = :x, Endpoint = :endpt, Shared_Secret = :y, Subscription_arn = :subARN ', { ':x': get(event, "body.Preference"), ':endpt': get(event, "body.Endpoint"), ':y': get(event, "body.SharedSecret"), ':subARN': subscriptionARN  })
 
                         await UpdateActivity.postRequest(event, { "activity": "UpdateSubscription", "description": "Subscription " + subscriptionARN + " Updated" })
                         return send_response(202);

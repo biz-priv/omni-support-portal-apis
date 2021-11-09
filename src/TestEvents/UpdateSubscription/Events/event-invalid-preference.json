@@ -27,8 +27,7 @@
         "X-Forwarded-For": "49.36.45.32, 130.176.76.172",
         "X-Forwarded-Port": "443",
         "X-Forwarded-Proto": "https",
-        "x-api-key": "abcdxyz",
-        "userID": "13245"
+        "x-api-key": "abcdxyz"
     },
     "multiValueHeaders": {
         "Accept": [
@@ -138,6 +137,6 @@
         "domainName": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com",
         "apiId": "cqa8nhinr1"
     },
-    "body": "{\r\n    \"Preference\": \"testing\",\r\n    \"Endpoint\": \"https://exampletest.com\",\r\n    \"SharedSecret\": \"1234\",\r\n    \"EventType\": \"eventTypeTest\"\r\n}",
+    "body": "{\r\n    \"UserId\": \"13245\",\r\n    \"Preference\": \"testing\",\r\n    \"Endpoint\": \"https://exampletest.com\",\r\n    \"SharedSecret\": \"1234\",\r\n    \"EventType\": \"eventTypeTest\"\r\n}",
     "isBase64Encoded": false
 }
