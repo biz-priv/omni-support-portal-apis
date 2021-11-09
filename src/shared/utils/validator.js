@@ -17,11 +17,9 @@ const custom = Joi.extend((joi) => {
 });
 
 const customerIdSchema = Joi.object({
-  headers: Joi.object().keys({
-    "userID": Joi.string().required()
-  }).unknown(true),
   body: custom.object({
     CustomerId: Joi.string().required(),
+    UserId: Joi.string().required()
   }),
 }).unknown(true);
 
