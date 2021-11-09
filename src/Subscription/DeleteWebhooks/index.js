@@ -6,7 +6,7 @@ const { get } = require('lodash');
 const { handleError } = require('../../shared/utils/responses');
 const EVENT_PREFERENCE = process.env.EVENT_PREFERENCES_TABLE;
 const TOKEN_VALIDATOR = process.env.TOKEN_VALIDATOR_TABLE;
-
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 //delete webhooks
 module.exports.handler = async (event) => {
@@ -20,6 +20,8 @@ module.exports.handler = async (event) => {
                 if (eventPreferenceResult.Item) {
                     await SNS_SERVICE.topicUnSubscription(eventPreferenceResult.Item.Subscription_arn);
                     const [deletePreference] = await Promise.all([Dynamo.deleteItem(EVENT_PREFERENCE, { 'Customer_Id': tokenTableResult.Items[0].CustomerID, 'Event_Type': get(event, 'body.EventType') })]);
+
+                    await UpdateActivity.postRequest(event, { "activity": "DeleteSubscription", "description": "Subscription " + eventPreferenceResult.Item.Subscription_arn + " deleted" })
                     return send_response(200);
                 } else {
                     return send_response(400, handleError(1019))

@@ -5,6 +5,7 @@ const TOKENVALIDATORTABLE = process.env.TOKEN_VALIDATOR;
 const USAGEPLAN = process.env.USAGE_PLAN;
 const get = require('lodash.get');
 const { handleError } = require('../../shared/utils/responses');
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 //post key
 module.exports.handler = async (event) => {
@@ -20,11 +21,16 @@ module.exports.handler = async (event) => {
                 if (checkUsagePlan != undefined) {
                     return send_response(400, handleError(1013))
                 }
+                let apiKeyResult = await Dynamo.apiKeyCreate({ name: get(event, 'body.CustomerId'), enabled: true, description: get(event, 'body.CustomerId') }, USAGEPLAN);
+                
+                await Promise.all([Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "ApiKey": apiKeyResult.value, "CustomerStatus": 'Active', "CustomerName": getItemResult.Items[0].CustomerName }), Dynamo.updateItems(TOKENVALIDATORTABLE, { 'CustomerID': get(event, 'body.CustomerId'), 'ApiKey': getItemResult.Items[0].ApiKey }, 'set CustomerStatus = :x', { ':x': 'Inactive' })])
+                
+                await UpdateActivity.postRequest(event, {"activity": "CreateApiKey", "description": get(event, 'body.CustomerId') + " For this Customer" })
+                console.info("Info: ", JSON.stringify({ "ApiKey": apiKeyResult.value }));
+                return send_response(200, { "ApiKey": apiKeyResult.value })
+            }else {
+                return send_response(400, handleError(1009))
             }
-            let apiKeyResult = await Dynamo.apiKeyCreate({ name: get(event, 'body.CustomerId'), enabled: true, description: get(event, 'body.CustomerId') }, USAGEPLAN);
-            await Dynamo.itemInsert(TOKENVALIDATORTABLE, { "CustomerID": get(event, 'body.CustomerId'), "ApiKey": apiKeyResult.value, "CustomerStatus": 'Active', "CustomerName": 'NA' })
-            console.info("Info: ", JSON.stringify({ "ApiKey": apiKeyResult.value }));
-            return send_response(200, { "ApiKey": apiKeyResult.value })
         } catch (e) {
             console.error("Error: ", JSON.stringify(e));
             return send_response(e.httpStatus, e)

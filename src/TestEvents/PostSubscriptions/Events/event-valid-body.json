@@ -6,5 +6,5 @@
     "cache-control": "no-cache",
     "x-api-key": "Et6ArVzmNX5UzYacdaVTn28lNlFG2xtn9z6HKU8V"
   },
-  "body": "{\n    \"EventType\": \"Milestone\",\n    \"Endpoint\": \"https://example.com\",\n    \"SharedSecret\": \"8888\",\n    \"Preference\": \"fullPayload\"\n}"
+  "body": "{\n    \"UserId\": \"13245\",\n    \"EventType\": \"Milestone\",\n    \"Endpoint\": \"https://example.com\",\n    \"SharedSecret\": \"8888\",\n    \"Preference\": \"fullPayload\"\n}"
 }

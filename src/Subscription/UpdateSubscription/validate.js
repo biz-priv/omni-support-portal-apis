@@ -22,6 +22,7 @@ const schema = Joi.object({
         "x-api-key": Joi.string().required()
     }).unknown(true),
     body: custom.object({
+        UserId: Joi.string().required(),
         Preference: Joi.any().valid('fullPayload', 'Change'),
         EventType: Joi.string().required(),
         Endpoint: Joi.string()

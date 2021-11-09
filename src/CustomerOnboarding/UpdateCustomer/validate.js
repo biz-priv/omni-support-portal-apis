@@ -21,7 +21,8 @@ const schema = Joi.object({
   body: custom.object({
     CustomerId: Joi.string().required(),
     DeclaredType: Joi.string(),
-    Station: Joi.string()
+    Station: Joi.string(),
+    UserId: Joi.string().required()
   }).or('DeclaredType', 'Station').required()
 }).unknown(true)
 

@@ -7,6 +7,11 @@ const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
 const AWSMock = require('aws-sdk-mock');
 const sinon = require("sinon");
+const axios = require("axios");
+const MockAdapter = require("axios-mock-adapter");
+
+// This sets the mock adapter on the default instance
+const mock = new MockAdapter(axios);
 
 const scanResponse = require('../src/TestEvents/UpdateSubscription/MockResponses/dynamo-scan-response.json');
 const getResponse = require('../src/TestEvents/UpdateSubscription/MockResponses/dynamo-get-response.json');
@@ -34,11 +39,33 @@ describe('put module test', () => {
         AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
             callback(null, "update successfully");
         })
-
+        mock.onPost().reply(200);
         const event = require('../src/TestEvents/UpdateSubscription/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
         expect(actual.statusCode).toStrictEqual(202);
     })
+
+    it('error in update activity', async () => {
+
+      const stub = sinon.stub();
+      stub.onCall(0).returns(scanResponse);
+      stub.onCall(1).returns(scanPreferenceResponse);
+      AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
+        callback(null, stub());
+      });
+
+      AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+          callback(null, getResponse);
+      })
+
+      AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+          callback(null, "update successfully");
+      })
+      mock.onPost().reply(400);
+      const event = require('../src/TestEvents/UpdateSubscription/Events/event-valid-body.json');
+      let actual = await wrapped.run(event);
+      expect(actual.statusCode).toStrictEqual(202);
+  })
 
     it('record update successfully preference Change', async () => {
 

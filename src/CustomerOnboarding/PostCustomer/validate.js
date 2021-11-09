@@ -25,7 +25,8 @@ const schema = Joi.object({
         CustomerNumber: Joi.string().default('NA'),
         DeclaredType: Joi.string().default('NA'),
         Station: Joi.string().default('NA'),
-        CustomerName: Joi.string().default('NA')
+        CustomerName: Joi.string().default('NA'),
+        UserId: Joi.string().required()
     })
 }).unknown(true)
 
