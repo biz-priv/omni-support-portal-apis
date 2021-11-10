@@ -6,6 +6,7 @@
             "Event_Type": "ShipmentDueDate",
             "Subscription_arn": "arn:aws:sns:us-test-1:123:test_topic_fullPayload",
             "Shared_Secret": "2233",
+            "Customer_Name": "NA",
             "Subscription_Preference": "fullPayload"
         },
         {
@@ -14,6 +15,7 @@
             "Event_Type": "ShipmentDueDate",
             "Subscription_arn": "arn:aws:sns:us-test-1:123:Mile_Change",
             "Shared_Secret": "2233",
+            "Customer_Name": "NA",
             "Subscription_Preference": "Change"
         }
     ],

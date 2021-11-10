@@ -53,6 +53,7 @@ functions:
     - ${file(config/CustomerOnboarding/updateCustomer.yml)}
     - ${file(config/CustomerOnboarding/customersSummary.yml)}    
     - ${file(config/CustomerOnboarding/searchCustomer.yml)}
+    - ${file(config/CustomerOnboarding/getActiveCustomersList.yml)}    
 
     - ${file(config/KeyManagement/postKey.yml)}    
     - ${file(config/KeyManagement/updateKey.yml)}

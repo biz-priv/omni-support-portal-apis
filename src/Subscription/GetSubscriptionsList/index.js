@@ -10,6 +10,7 @@ function filterFinalData(data) {
     let finalItems = [];
     _.filter(data, (elem) => {
             if (elem.ApiKey != "NA") {
+                elem["Customer_Name"] = (elem["Customer_Name"] == undefined) ? "NA" : elem["Customer_Name"]
                 finalItems.push(elem)
             }
     })

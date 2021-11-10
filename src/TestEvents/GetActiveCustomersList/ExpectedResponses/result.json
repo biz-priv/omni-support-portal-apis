@@ -1,0 +1,28 @@
+{
+    "Customers": [
+        {
+            "ApiKey": "d2cYuDqiH82zcDxJgacT4a2s3KDJyGBF8rmc3Uur",
+            "CustomerStatus": "Active",
+            "CustomerID": "1234",
+            "CustomerName": "SK Test"
+        },
+        {
+            "ApiKey": "zwRpdERf042rvQ8c1xZ5y7V2sK7e7LIIEyjQlUJf",
+            "CustomerStatus": "Active",
+            "CustomerID": "12345",
+            "CustomerName": ""
+        },
+        {
+            "ApiKey": "UeHJ7zN0HV8l153yhznc34J3Uqo2eCfH8lahv6P7",
+            "CustomerStatus": "Active",
+            "CustomerID": "123456",
+            "CustomerName": "SK Test"
+        },
+        {
+            "ApiKey": "TK9kQQkzn93FtdEMyZpsu255yvNIxGju3ZCJwMjm",
+            "CustomerStatus": "Active",
+            "CustomerID": "1234567",
+            "CustomerName": "NA"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+GetActiveCustomersList:
+  handler: src/CustomerOnboarding/GetActiveCustomersList/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  environment:
+    TOKEN_VALIDATOR: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
+    DEFAULT_AWS: ${self:provider.region} 
+  package:
+    individually: true
+    include:
+        - 'src/CustomerOnboarding/GetActiveCustomersList/**'
+        - 'src/shared/**'
+  events:
+    - http:
+        path: customers/active
+        method: get
+        cors: true
+            

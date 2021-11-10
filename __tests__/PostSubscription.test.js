@@ -190,6 +190,37 @@ describe("post user subscriptions module test", () => {
     expect(actual).toStrictEqual(error);
   });
 
+  it("Unable to subscribe", async () => {
+    const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
+    const stub = sinon.stub();
+    stub.onCall(0).returns(getCustomer);
+    stub.onCall(1).returns({});
+    AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
+      callback(null, stub());
+    });
+
+    AWSMock.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
+      callback(null, getSnsTopicDetails);
+    });
+
+    AWSMock.mock("DynamoDB.DocumentClient", "put", (params, callback) => {
+      callback(null, {});
+    });
+
+    AWSMock.mock("SNS", "subscribe", (params, callback) => {
+      callback(null, "unable to get");
+    });
+
+    mock.onPost().reply(200);
+    let actual = await wrapped.run(event);
+    const error = {
+      statusCode: 400,
+      headers,
+      body: '{"errorDescription":"Unable to subscribe"}',
+    };
+    expect(actual).toStrictEqual(error);
+  });
+
   it("Unable to create customer", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
     const stub = sinon.stub();
@@ -201,6 +232,10 @@ describe("post user subscriptions module test", () => {
 
     AWSMock.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
       callback(null, getSnsTopicDetails);
+    });
+
+    AWSMock.mock("SNS", "subscribe", (params, callback) => {
+      callback(null, snsSubscribe);
     });
 
     AWSMock.mock("DynamoDB.DocumentClient", "put", (params, callback) => {
@@ -242,7 +277,7 @@ describe("post user subscriptions module test", () => {
     expect(actual).toStrictEqual(eventSuccess);
   });
 
-  it("error in update activity", async () => {
+  it("user activity update error", async () => {
     const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
     const stub = sinon.stub();
 
@@ -265,37 +300,7 @@ describe("post user subscriptions module test", () => {
     });
     mock.onPost().reply(400);
     let actual = await wrapped.run(event);
-    expect(actual).toStrictEqual(eventSuccess);
+    expect(actual.body).toStrictEqual("{\"errorDescription\":\"Something went wrong\"}");
   });
 
-  it("Unable to subscribe", async () => {
-    const event = require("../src/TestEvents/PostSubscriptions/Events/event-valid-body.json");
-    const stub = sinon.stub();
-
-    stub.onCall(0).returns(getCustomer);
-    stub.onCall(1).returns({});
-    AWSMock.mock("DynamoDB.DocumentClient", "scan", (params, callback) => {
-      callback(null, stub());
-    });
-
-    AWSMock.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
-      callback(null, getSnsTopicDetails);
-    });
-
-    AWSMock.mock("DynamoDB.DocumentClient", "put", (params, callback) => {
-      callback(null, {});
-    });
-
-    AWSMock.mock("SNS", "subscribe", (params, callback) => {
-      callback(null, {});
-    });
-
-    let actual = await wrapped.run(event);
-    const error = {
-      statusCode: 400,
-      headers,
-      body: '{"errorDescription":"Unable to subscribe"}',
-    };
-    expect(actual).toStrictEqual(error);
-  });
 });
