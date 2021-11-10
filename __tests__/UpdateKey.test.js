@@ -7,6 +7,11 @@ const lambdaWrapper = jestPlugin.lambdaWrapper;
 const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
 const AWSMock = require('aws-sdk-mock');
+const axios = require("axios");
+const MockAdapter = require("axios-mock-adapter");
+
+// This sets the mock adapter on the default instance
+const mock = new MockAdapter(axios);
 
 const createApiKeyResponse = require('../src/TestEvents/UpdateKey/MockResponses/apigateway-createapikey.json');
 const createUsagePlanResponse = require('../src/TestEvents/UpdateKey/MockResponses/apigateway-createusageplankey.json');
@@ -52,6 +57,50 @@ describe('update module test', () => {
         AWSMock.mock('DynamoDB.DocumentClient', 'put', (params, callback) => {
             callback(null, 'successfully put item in database');
         })
+
+        mock.onPost().reply(200);
+
+        const event = require('../src/TestEvents/UpdateKey/Events/event-valid-body.json');
+        let actual = await wrapped.run(event);
+        const response = '{\"ApiKey\":\"JGGqZ2LFE840rZYwWzlkRa3jFPT76PU32vs9p0K1\"}'
+        expect(actual.body).toStrictEqual(response);
+    })
+
+    it('error in update activity', async () => {
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+            callback(null, queryResponse);
+        })
+
+        AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
+            callback(null, apiKeysResponse);
+        });
+
+        AWSMock.mock('APIGateway', 'deleteApiKey', function (APIparams, callback) {
+            callback(null, {});
+        });
+
+        AWSMock.mock('APIGateway', 'deleteUsagePlanKey', function (APIparams, callback) {
+            callback(null, {});
+        });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
+            callback(null, 'record updated successfully');
+        });
+
+        AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
+            callback(null, createApiKeyResponse);
+        });
+
+        AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
+            callback(null, createUsagePlanResponse)
+        })
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'put', (params, callback) => {
+            callback(null, 'successfully put item in database');
+        })
+
+        mock.onPost().reply(400);
 
         const event = require('../src/TestEvents/UpdateKey/Events/event-valid-body.json');
         let actual = await wrapped.run(event);

@@ -3,10 +3,11 @@ const Dynamo = require('../../shared/dynamo/db');
 const ACCOUNTINFOTABLE = process.env.ACCOUNT_INFO;
 const validate = require('./validate');
 const get = require('lodash.get');
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 //update customer
 module.exports.handler = async (event) => {
-
+ 
     console.info("Event\n" + JSON.stringify(event, null, 2));
     //validate customerId
     event = await validate(event);
@@ -28,6 +29,7 @@ module.exports.handler = async (event) => {
             const result = await Dynamo.getItem(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') });
             if (result.Item) {
                 await Dynamo.updateItems(ACCOUNTINFOTABLE, { 'CustomerID': get(event, 'body.CustomerId') }, updateExpression, attributesValues);
+                await UpdateActivity.postRequest(event, {"activity": "UpdateCustomer", "description": get(event, 'body.CustomerId') + " Customer updated" })
                 return send_response(202);
             } else {
                 const error = handleError(1009);

@@ -13,6 +13,7 @@ const { apiKeyValidation, subscriptionValidator } = require("./validate");
 const TOKEN_VALIDATOR = process.env.TOKEN_VALIDATOR;
 const CUSTOMER_PREFERENCE_TABLE = process.env.CUSTOMER_PREFERENCE_TABLE;
 const EVENTING_TOPICS_TABLE = process.env.EVENTING_TOPICS_TABLE;
+const UpdateActivity = require('../../shared/utils/requestPromise');
 
 /*=================post subscription==============*/
 module.exports.handler = async (event) => {
@@ -45,10 +46,11 @@ module.exports.handler = async (event) => {
         subscriptionArn = snsTopicDetails.Event_Payload_Topic_Arn;
       }
 
-      await createCustomerPreference(customerId, value, subscriptionArn);
-
       //Create an SNS subscription with filter policy as CustomerID.
-      await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
+      let subscriptionResult = await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
+      await createCustomerPreference(customerId, value, subscriptionResult.SubscriptionArn);
+
+      await UpdateActivity.postRequest(event, { "activity": "CreateSubscription", "description": "Subscription " + subscriptionResult.SubscriptionArn + " Created" })
       return send_response(200, { message: "Subscription successfully added" });
     }
   } catch (error) {
@@ -208,7 +210,7 @@ async function subscribeToTopic(topic_arn, endpoint, customer_id) {
     const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
     const data = await sns.subscribe(params).promise();
     if (data.ResponseMetadata) {
-      return true;
+      return data;
     }
     throw "Unable to subscribe";
   } catch (error) {

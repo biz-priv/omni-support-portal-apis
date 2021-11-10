@@ -1,6 +1,6 @@
 {
     "Responses": {
-        "account-info-dev": [
+        "omni-dw-account-info-devint": [
             {
                 "BillToAcct": "009011",
                 "SourceSystem": "AAA",

@@ -136,6 +136,6 @@
         "domainName": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com",
         "apiId": "cqa8nhinr1"
     },
-    "body": "{\r\n    \"CustomerId\": \"123456\",\r\n    \"DeclaredType\": \"LL1\",\r\n    \"Station\": \"LAX1\"\r\n}",
+    "body": "{\r\n    \"UserId\": \"13245\",\r\n    \"CustomerId\": \"123456\",\r\n    \"DeclaredType\": \"LL1\",\r\n    \"Station\": \"LAX1\"\r\n}",
     "isBase64Encoded": false
 }

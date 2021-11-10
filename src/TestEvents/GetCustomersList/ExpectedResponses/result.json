@@ -8,7 +8,8 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
-            "CustomerStatus": "Active"
+            "CustomerStatus": "Active",
+            "ApiKey": "NA"
         },
         {
             "CustomerID": "12345",
@@ -18,7 +19,8 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
-            "CustomerStatus": "Active"
+            "CustomerStatus": "Active",
+            "ApiKey": "NA"
         },
         {
             "CustomerID": "123456",
@@ -28,7 +30,8 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
-            "CustomerStatus": "Inactive"
+            "CustomerStatus": "Inactive",
+            "ApiKey": "NA"
         },
         {
             "CustomerID": "1234567",
@@ -38,7 +41,8 @@
             "DeclaredType": "LL",
             "SourceSystem": "TR",
             "Station": "TT",
-            "CustomerStatus": "Inactive"
+            "CustomerStatus": "Inactive",
+            "ApiKey": "NA"
         }
     ],
     "Page": {

@@ -23,6 +23,7 @@
   "devDependencies": {
     "aws-sdk": "^2.930.0",
     "aws-sdk-mock": "^5.2.1",
+    "axios-mock-adapter": "^1.20.0",
     "cors": "^2.8.5",
     "joi": "^17.4.0",
     "lodash.get": "^4.4.2",
@@ -35,6 +36,7 @@
     "uuidv4": "^6.2.10"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "sinon": "^11.1.2"
   }
 }

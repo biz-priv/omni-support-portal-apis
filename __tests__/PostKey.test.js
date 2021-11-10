@@ -7,6 +7,11 @@ const lambdaWrapper = jestPlugin.lambdaWrapper;
 const wrapped = lambdaWrapper.wrap(mod, { handler: 'handler' });
 
 const AWSMock = require('aws-sdk-mock');
+const axios = require("axios");
+const MockAdapter = require("axios-mock-adapter");
+
+// This sets the mock adapter on the default instance
+const mock = new MockAdapter(axios);
 
 const createApiKeyResponse = require('../src/TestEvents/PostKey/MockResponses/apigateway-createapikey.json');
 const createUsagePlanResponse = require('../src/TestEvents/PostKey/MockResponses/apigateway-createusageplankey.json');
@@ -32,6 +37,10 @@ describe('post module test', () => {
 
         AWSMock.mock('APIGateway', 'getUsagePlanKey', function (params, callback) {
             callback(null, usagePlanResponse)
+        })
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
         })
 
         AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
@@ -70,6 +79,10 @@ describe('post module test', () => {
             callback(null, createApiKeyResponse);
         });
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
             callback(null, createUsagePlanResponse)
         })
@@ -104,6 +117,10 @@ describe('post module test', () => {
 
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
             callback(null, createUsagePlanResponse)
+        })
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
         })
 
         AWSMock.mock('DynamoDB.DocumentClient', 'put', (params, callback) => {
@@ -142,6 +159,10 @@ describe('post module test', () => {
             callback(null, {items: []});
         });
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'getUsagePlanKey', function (params, callback) {
             callback(null, usagePlanResponse)
         })
@@ -178,6 +199,10 @@ describe('post module test', () => {
             callback({"error": "apigateway error"}, null);
         });
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
             callback(null, createApiKeyResponse);
         });
@@ -210,13 +235,17 @@ describe('post module test', () => {
             callback({ "error": "apigateway error" }, null);
         });
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
+
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
             callback({ "error": "usageplan error" }, null)
         })
 
         const event = require('../src/TestEvents/PostKey/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
-        const error = '{"httpStatus":400,"code":1006,"message":"Error creating apikey."}'
+        const error = '{"httpStatus":400,"code":1009,"message":"Item not found."}'
         expect(actual.body).toStrictEqual(error);
     })
 
@@ -226,13 +255,21 @@ describe('post module test', () => {
             callback(null, 'successfully put item in database');
         })
 
+        AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+            callback(null, queryResponse);
+        })
+
         AWSMock.mock('APIGateway', 'getUsagePlanKey', function (params, callback) {
-            callback({"error": "getusageplan error"}, null)
+            callback({ "error": "getusageplan error" }, null)
         })
 
         AWSMock.mock('APIGateway', 'getApiKeys', function (APIparams, callback) {
             callback(null, apiKeysResponse);
         });
+
+        AWSMock.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+            callback(null, 'successfully update items in database');
+        })
 
         AWSMock.mock('APIGateway', 'createApiKey', function (APIparams, callback) {
             callback(null, createApiKeyResponse);
@@ -241,6 +278,8 @@ describe('post module test', () => {
         AWSMock.mock('APIGateway', 'createUsagePlanKey', function (params, callback) {
             callback(null, createUsagePlanResponse)
         })
+
+        mock.onPost().reply(200);
 
         const event = require('../src/TestEvents/PostKey/Events/event-valid-body.json');
         let actual = await wrapped.run(event);

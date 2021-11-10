@@ -137,6 +137,6 @@
         "domainName": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com",
         "apiId": "cqa8nhinr1"
     },
-    "body": "{\r\n    \"Preference\": \"fullPayload\",\r\n    \"Endpoint\": \"https://exampletest.com\",\r\n    \"SharedSecret\": \"1234\"\r\n}",
+    "body": "{\r\n    \"UserId\": \"13245\",\r\n    \"Preference\": \"fullPayload\",\r\n    \"Endpoint\": \"https://exampletest.com\",\r\n    \"SharedSecret\": \"1234\"\r\n}",
     "isBase64Encoded": false
 }
