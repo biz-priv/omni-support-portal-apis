@@ -352,6 +352,27 @@ async function fetchBatchItems(keyValueArray, tableName) {
   }
 }
 
+/* retrieve all items using index from table */
+async function getAllItemsQuery(tableName, status) {
+  const documentClient = new AWS.DynamoDB.DocumentClient({
+    region: process.env.DEFAULT_AWS,
+  });
+  const params = {
+    TableName: tableName,
+    IndexName: "CustomerStatusIndex",
+    KeyConditionExpression: "CustomerStatus = :hkey",
+    ExpressionAttributeValues: {
+      ":hkey": status,
+    },
+  };
+  try {
+    return await documentClient.query(params).promise();
+  } catch (e) {
+    console.error("getAllItemsQueryCount Error: ", e);
+    throw handleError(1003, e, get(e, "details[0].message", null));
+  }
+}
+
 module.exports = {
   getAllItemsQueryCount,
   itemInsert,
@@ -369,4 +390,5 @@ module.exports = {
   getAllItemsQueryFilter,
   fetchBatchItems,
   scanTableData,
+  getAllItemsQuery,
 };
