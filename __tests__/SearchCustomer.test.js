@@ -164,7 +164,7 @@ describe('module test', () => {
 
     const event = require('../src/TestEvents/SearchCustomer/Events/event-invalid-path-param.json');
     const result = await wrapped.run(event);
-    const expectedResponse = '{"httpStatus":400,"code":1001,"message":"\\"pathParameters.id\\" must be one of [number, string]"}';
+    const expectedResponse = '{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"pathParameters.id\\\" must be a string\"}';
     expect(result.body).toStrictEqual(expectedResponse);
 
   });
