@@ -75,7 +75,7 @@ module.exports.handler = async (event, context) => {
         let size = _.get(event, 'queryStringParameters.size')
         const status = _.get(event, 'queryStringParameters.status') === true ? "Active" : "Inactive";
         try {
-            if (typeof (_.get(event, "pathParameters.id")) === "number") {
+            if ((/^\d+$/.test(_.get(event, "pathParameters.id")))) {
                 fetchRecords = await Dynamo.getAllItemsQueryFilter(ACCOUNT_INFO_TABLE, "contains(#customer_no, :customer_no) and #customer_status = :customer_status", { "#customer_no": "CustomerNo", "#customer_status": "CustomerStatus" }, { ":customer_no": (_.get(event, "pathParameters.id")).toString(), ":customer_status": status });
                 if ((fetchRecords.Items).length) {
                     totalCount = fetchRecords.Items.length;
