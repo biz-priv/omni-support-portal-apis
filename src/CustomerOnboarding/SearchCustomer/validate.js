@@ -4,7 +4,7 @@ const { handleError } = require('../../shared/utils/responses');
 
 const schema = Joi.object({
     pathParameters: Joi.object({
-        id: Joi.alternatives().try(Joi.number(), Joi.string()).required()
+        id: Joi.string().required()
     }),
     queryStringParameters: Joi.object({
         page: Joi.number().integer().default(1),
