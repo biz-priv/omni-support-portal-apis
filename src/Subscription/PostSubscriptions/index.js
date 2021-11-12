@@ -32,9 +32,9 @@ module.exports.handler = async (event) => {
     if (value.httpStatus) {
       return send_response(value.httpStatus, generateErrorMsg(value.message));
     } else {
-      const customerId = await getCustomerId(ApiKey);
+      const customerDetails = await getCustomerId(ApiKey);
       await getCustomerPreference(
-        customerId,
+        customerDetails.customerId,
         value.EventType,
         value.Preference
       );
@@ -47,9 +47,9 @@ module.exports.handler = async (event) => {
       }
 
       //Create an SNS subscription with filter policy as CustomerID.
-      let subscriptionResult = await subscribeToTopic(subscriptionArn, value.Endpoint, customerId);
-      await createCustomerPreference(customerId, value, subscriptionResult.SubscriptionArn);
-
+      let subscriptionResult = await subscribeToTopic(subscriptionArn, value.Endpoint, customerDetails.customerId);
+      await createCustomerPreference(customerDetails, value, subscriptionResult.SubscriptionArn);
+      event["body"] = JSON.parse(event["body"])
       await UpdateActivity.postRequest(event, { "activity": "CreateSubscription", "description": "Subscription " + subscriptionResult.SubscriptionArn + " Created" })
       return send_response(200, { message: "Subscription successfully added" });
     }
@@ -87,7 +87,7 @@ async function getCustomerId(ApiKey) {
       response.Items.length > 0 &&
       response.Items[0].CustomerID
     ) {
-      return response.Items[0].CustomerID;
+      return {"customerId": response.Items[0].CustomerID, "customerName": response.Items[0].CustomerName};
     }
     throw "Invalid API Key";
   } catch (error) {
@@ -167,20 +167,21 @@ async function getSnsTopicDetails(eventType) {
 
 /**
  * create Customer Preference
- * @param {*} custId
+ * @param {*} custDetails
  * @param {*} eventBody
  * @param {*} arnResponse
  * @returns
  */
-async function createCustomerPreference(custId, eventBody, subscriptionArn) {
+async function createCustomerPreference(custDetails, eventBody, subscriptionArn) {
   try {
     await itemInsert(CUSTOMER_PREFERENCE_TABLE, {
       Event_Type: eventBody.EventType,
       Subscription_Preference: eventBody.Preference,
-      Customer_Id: custId,
+      Customer_Id: custDetails.customerId,
       Endpoint: eventBody.Endpoint,
       Shared_Secret: eventBody.SharedSecret,
       Subscription_arn: subscriptionArn,
+      Customer_Name: (custDetails.customerName == undefined) ? "NA" : custDetails.customerName
     });
     return true;
   } catch (error) {

@@ -106,7 +106,6 @@ describe('update module test', () => {
 
         const event = require('../src/TestEvents/UpdateCustomer/Events/event-valid-body.json');
         let actual = await wrapped.run(event);
-        console.log(actual)
         const error = '{\"httpStatus\":400,\"code\":1003,\"message\":\"Error getting items.\"}'
         expect(actual.body).toStrictEqual(error);
     })
