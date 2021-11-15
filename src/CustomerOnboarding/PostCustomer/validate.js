@@ -20,7 +20,6 @@ const custom = Joi.extend((joi) => {
 
 const schema = Joi.object({
     body: custom.object({
-        BillToAccNumber: Joi.string().required(),
         SourceSystem: Joi.string().required(),
         CustomerNumber: Joi.string().default('NA'),
         DeclaredType: Joi.string().default('NA'),
