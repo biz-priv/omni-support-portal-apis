@@ -6,7 +6,9 @@ provider:
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'devint'}
   memorySize: 128 
-  timeout: 15 
+  timeout: 15
+  environment:
+    stage: ${self:provider.stage}}
   iam: 
     role:
       statements:
