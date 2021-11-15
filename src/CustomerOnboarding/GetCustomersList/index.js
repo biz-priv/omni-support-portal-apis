@@ -128,7 +128,7 @@ module.exports.handler = async (event, context) => {
 
 async function getResponse(results, count, page, size, status, event) {
     let selfPageLink = "N/A";
-    let host = "https://" + _.get(event, 'headers.Host', null) + "/" + _.get(event, 'requestContext.stage', 'devint');
+    let host = "https://" + _.get(event, 'headers.Host', null) + "/" + _.get(event, 'requestContext.stage', process.env.stage);
     let path = _.get(event, 'path', null) + "?status=" + status + "&";
     selfPageLink = "page=" + page + "&size=" +
         size + "&startkey=" + _.get(event, 'queryStringParameters.startkey') 
