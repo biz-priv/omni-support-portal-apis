@@ -17,7 +17,7 @@ module.exports.handler = async (event) => {
     const CustomerID = uuid();
     const accountInfoTableItems = {
       CustomerID: CustomerID,
-      BillToAcct: get(event, "body.BillToAccNumber"),
+      BillToAcct: get(event, "body.CustomerNumber"),
       CustomerNo: get(event, "body.CustomerNumber"),
       CustomerStatus: "Active",
       DeclaredType: get(event, "body.DeclaredType"),
