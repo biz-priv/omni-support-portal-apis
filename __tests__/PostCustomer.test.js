@@ -104,19 +104,19 @@ describe('post module test', () => {
         expect(actual.body).toStrictEqual(error);
     })
 
-    xit('validation missing field error', async () => {
+    it('validation missing field error', async () => {
 
         const event = require('../src/TestEvents/PostCustomer/Events/event-missing-body-parameter.json');
         let actual = await wrapped.run(event);
-        const error = '{"httpStatus":400,"code":1001,"message":"\\"body.BillToAccNumber\\" is required"}'
+        const error = '{"httpStatus":400,"code":1001,"message":"\\"body.SourceSystem\\" is required"}'
         expect(actual.body).toStrictEqual(error);
     });
 
-    xit('validation invalid request parameter type', async () => {
+    it('validation invalid request parameter type', async () => {
 
         const event = require('../src/TestEvents/PostCustomer/Events/event-invalid-body-parameter.json');
         let actual = await wrapped.run(event);
-        const error = '{"httpStatus":400,"code":1001,"message":"\\"body.BillToAccNumber\\" must be a string"}'
+        const error = '{"httpStatus":400,"code":1001,"message":"\\"body.BillToAccNumber\\" is not allowed\"}'
         expect(actual.body).toStrictEqual(error);
     });
 
