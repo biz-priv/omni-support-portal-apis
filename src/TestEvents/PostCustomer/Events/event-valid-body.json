@@ -136,6 +136,6 @@
         "domainName": "cqa8nhinr1.execute-api.us-east-1.amazonaws.com",
         "apiId": "cqa8nhinr1"
     },
-    "body": "{\r\n    \"UserId\": \"13245\",\r\n    \"BillToAccNumber\": \"2356\",\r\n    \"SourceSystem\": \"WT\",\r\n    \"CustomerNumber\": \"987656\",\r\n    \"DeclaredType\": \"LL\",\r\n    \"Station\": \"LAX\",\r\n    \"CustomerName\": \"test1\"\r\n}",
+    "body": "{\r\n    \"UserId\": \"13245\",\r\n    \"SourceSystem\": \"WT\",\r\n    \"CustomerNumber\": \"987656\",\r\n    \"DeclaredType\": \"LL\",\r\n    \"Station\": \"LAX\",\r\n    \"CustomerName\": \"test1\"\r\n}",
     "isBase64Encoded": false
 }
