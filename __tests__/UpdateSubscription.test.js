@@ -113,7 +113,7 @@ describe('put module test', () => {
       it("event invalid preference parameter", async () => {
         const event = require("../src/TestEvents/UpdateSubscription/Events/event-invalid-preference.json");
         let actual = await wrapped.run(event);
-        const error = '{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"body.Preference\\\" must be one of [fullPayload, Change]\"}'
+        const error = '{\"httpStatus\":400,\"code\":1001,\"message\":\"\\\"body.Preference\\\" must be one of [fullPayload, change]\"}'
         expect(actual.body).toStrictEqual(error);
       });
     

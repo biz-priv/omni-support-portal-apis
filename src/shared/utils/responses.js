@@ -39,6 +39,8 @@ const errors = [
   { code: 1018, httpStatus: 404, message: "Page not found." },
   { code: 1019, httpStatus: 400, message: "Invalid EventType." },
   { code: 1020, httpStatus: 400, message: "Topic not subscribed." },
+  { code: 1021, httpStatus: 400, message: "Customer already exists." },
+  { code: 1022, httpStatus: 400, message: "Customer does not exists." },
 ];
 
 function getError(code) {
