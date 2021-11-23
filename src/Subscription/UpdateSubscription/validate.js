@@ -23,7 +23,7 @@ const schema = Joi.object({
     }).unknown(true),
     body: custom.object({
         UserId: Joi.string().required(),
-        Preference: Joi.any().valid('fullPayload', 'Change'),
+        Preference: Joi.any().valid('fullPayload', 'change'),
         EventType: Joi.string().required(),
         Endpoint: Joi.string()
             .pattern(

@@ -21,7 +21,7 @@ const custom = Joi.extend((joi) => {
 const schema = Joi.object({
     body: custom.object({
         SourceSystem: Joi.string().required(),
-        CustomerNumber: Joi.string().default('NA'),
+        CustomerNumber: Joi.string().required(),
         DeclaredType: Joi.string().default('NA'),
         Station: Joi.string().default('NA'),
         CustomerName: Joi.string().default('NA'),
