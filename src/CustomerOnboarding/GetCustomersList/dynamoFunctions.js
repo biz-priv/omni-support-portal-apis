@@ -19,7 +19,7 @@ async function fetchNameWiseApiKey(customerObject){
         apigateway.getApiKeys(params, function (err, data) {
             if (err) {
                 console.error("API Gateway Key Error : ", err); // an error occurred
-                resolve(noDataHandler(custResults));
+                resolve(noDataHandler(customerObject));
             }
             else {
                 if ((data.items).length) {
