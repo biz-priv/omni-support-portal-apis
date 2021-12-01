@@ -13,6 +13,10 @@ const batchGetAccountResponse = require('../src/TestEvents/SearchCustomer/MockRe
 const batchGetTokenResponse = require('../src/TestEvents/SearchCustomer/MockResponses/dynamo-tokentable-batchget.json');
 const batchGetAccountInfoResponse = require('../src/TestEvents/SearchCustomer/MockResponses/dynamo-accountInfotable-batchget.json');
 const batchGetActiveResponse = require('../src/TestEvents/SearchCustomer/MockResponses/dynamo-accountInfoActivetable-batchget.json')
+batchGetAccountResponse["Responses"][process.env.ACCOUNT_INFO] = batchGetAccountResponse["Responses"]["omni-dw-account-info-devint"]
+batchGetTokenResponse["Responses"][process.env.TOKEN_VALIDATOR] = batchGetTokenResponse["Responses"]["omni-dw-token-validator-devint"]
+batchGetAccountInfoResponse["Responses"][process.env.ACCOUNT_INFO] = batchGetAccountInfoResponse["Responses"]["omni-dw-account-info-devint"]
+batchGetActiveResponse["Responses"][process.env.ACCOUNT_INFO] = batchGetActiveResponse["Responses"]["omni-dw-account-info-devint"]
 describe('module test', () => {
 
   afterEach(() => {
