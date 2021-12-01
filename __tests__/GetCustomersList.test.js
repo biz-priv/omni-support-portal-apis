@@ -14,6 +14,7 @@ const apiKeysResponse = require('../src/TestEvents/GetCustomersList/MockResponse
 const apiKeysTwoResponse = require('../src/TestEvents/GetCustomersList/MockResponses/api-gw-apikeys-startkey.json');
 const batchGetResponse = require('../src/TestEvents/GetCustomersList/MockResponses/dynamo-batchget.json');
 
+batchGetResponse["Responses"][process.env.TOKEN_VALIDATOR] = batchGetResponse["Responses"]["omni-dw-token-validator-devint"]
 describe('module test', () => {
 
   afterEach(() => {
