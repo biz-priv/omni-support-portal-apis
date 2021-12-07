@@ -9,9 +9,7 @@ provider:
   timeout: 15
   environment:
     stage: ${self:provider.stage}}
-  # iam: 
-  #   role: arn:aws:iam::083868342691:role/omni-support-portal-api-devint-us-east-1-lambdaRole
-  #   deploymentRole: arn:aws:iam::083868342691:role/omni-support-portal-api-devint-us-east-1-lambdaRole
+  role: ${ssm:/omni-support-dw/${self:provider.stage}/lambda/role}      
 
 custom:
   prune:

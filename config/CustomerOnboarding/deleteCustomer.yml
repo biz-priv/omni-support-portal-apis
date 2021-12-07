@@ -1,6 +1,5 @@
 DeleteCustomer:
   handler: src/CustomerOnboarding/DeleteCustomer/index.handler
-  role: arn:aws:iam::083868342691:role/omni-support-portal-api-devint-us-east-1-lambdaRole  
   layers:
     - { Ref: CommonLibsLambdaLayer }
   environment:
