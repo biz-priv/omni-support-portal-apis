@@ -18,11 +18,11 @@ PostCustomer:
     include:
       - 'src/CustomerOnboarding/PostCustomer/**'
       - 'src/shared/**'
-  # vpc:
-  #   securityGroupIds:
-  #     - ${ssm:/omni-dw/${self:provider.stage}/lambda/sgId}
-  #   subnetIds:
-  #     - ${ssm:/omni-dw/${self:provider.stage}/lambda/subnetA}      
+  vpc:
+    securityGroupIds:
+      - ${ssm:/omni-dw/${self:provider.stage}/lambda/sgId}
+    subnetIds:
+      - ${ssm:/omni-dw/${self:provider.stage}/lambda/subnetA}      
   events:
     - http:
         path: customers
