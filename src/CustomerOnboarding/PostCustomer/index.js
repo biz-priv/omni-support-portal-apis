@@ -56,7 +56,6 @@ module.exports.handler = async (event) => {
       };
       try {
         let getItemResult = await Dynamo.getItemQueryFilter(ACCOUNTINFOTABLE, 'CustomerID = :hkey', 'CustomerStatus = :statuskey', { ':hkey': CustomerID, ':statuskey': 'Active' });
-        console.log(getItemResult)
         if (!(getItemResult.Items).length) {
           const [accountTableResult, apiKeyResult] = await Promise.all([
             Dynamo.itemInsert(ACCOUNTINFOTABLE, accountInfoTableItems),
