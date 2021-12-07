@@ -10,23 +10,7 @@ provider:
   environment:
     stage: ${self:provider.stage}}
   iam: 
-    role:
-      statements:
-        - Effect: 'Allow'
-          Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-          Resource: '*'
-        - Effect: Allow
-          Action:
-            - logs:CreateLogGroup
-            - logs:CreateLogStream
-            - logs:PutLogEvents
-          Resource: '*'
+    deploymentRole: arn:aws:iam::083868342691:role/omni-support-portal-api-devint-us-east-1-lambdaRole
 
 custom:
   prune:
