@@ -9,24 +9,7 @@ provider:
   timeout: 15
   environment:
     stage: ${self:provider.stage}}
-  iam: 
-    role:
-      statements:
-        - Effect: 'Allow'
-          Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-          Resource: '*'
-        - Effect: Allow
-          Action:
-            - logs:CreateLogGroup
-            - logs:CreateLogStream
-            - logs:PutLogEvents
-          Resource: '*'
+  role: ${ssm:/omni-support-dw/${self:provider.stage}/lambda/role}      
 
 custom:
   prune:
