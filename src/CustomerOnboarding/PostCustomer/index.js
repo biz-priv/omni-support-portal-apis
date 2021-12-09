@@ -34,7 +34,7 @@ module.exports.handler = async (event) => {
       return send_response(400, error);
     }
     if ((response.rows).length) {
-      const CustomerID = response.rows[0].id
+      const CustomerID = (response.rows[0].id).toString();
       const accountInfoTableItems = {
         CustomerID: CustomerID,
         BillToAcct: get(event, "body.CustomerNumber"),
