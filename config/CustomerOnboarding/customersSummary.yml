@@ -1,0 +1,18 @@
+CustomersSummary:
+  handler: src/CustomerOnboarding/CustomersSummary/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  environment:
+    ACCOUNT_INFO: ${ssm:/omni-dw/${self:provider.stage}/accountInfo/table}
+    DEFAULT_AWS: ${self:provider.region} 
+  package:
+    individually: true
+    include:
+        - 'src/CustomerOnboarding/CustomersSummary/**'
+        - 'src/shared/**'
+  events:
+    - http:
+        path: customers/summary
+        method: get
+        cors: true
+            

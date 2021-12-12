@@ -1,0 +1,40 @@
+{
+    "Customers": [
+        {
+            "Age": "NA",
+            "BillToAcct": "009011",
+            "Created": "NA",
+            "CustomerID": "123",
+            "CustomerName": "abcd",
+            "CustomerNo": "321321WQ",
+            "CustomerStatus": "Active",
+            "DeclaredType": "FF",
+            "SourceSystem": "AAA",
+            "Station": "GGG",
+            "Updated": "NA"
+        }
+    ],
+    "Page": {
+        "Number": 1,
+        "Size": 1,
+        "TotalElement": 1,
+        "TotalPages": 1
+    },
+    "_links": {
+        "first": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/search/abcd?status=false&page=1&size=10&startkey=0"
+        },
+        "last": {
+            "href": "N/A"
+        },
+        "next": {
+            "href": "N/A"
+        },
+        "previous": {
+            "href": "N/A"
+        },
+        "self": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/search/abcd?status=false&page=1&size=10&startkey=0"
+        }
+    }
+}

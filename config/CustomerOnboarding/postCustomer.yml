@@ -1,0 +1,29 @@
+PostCustomer:
+  handler: src/CustomerOnboarding/PostCustomer/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  environment:
+    ACCOUNT_INFO: ${ssm:/omni-dw/${self:provider.stage}/accountInfo/table}
+    TOKEN_VALIDATOR: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
+    USAGE_PLAN: ${ssm:/omni-dw/${self:provider.stage}/usage/plan/id}
+    DB_PORT: ${ssm:/omni-dw/${self:provider.stage}/db/port}
+    DB_HOST: ${ssm:/omni-dw/${self:provider.stage}/db/host~true}
+    DB_PASSWORD: ${ssm:/omni-dw/${self:provider.stage}/db/password~true}      
+    DB_DATABASE: ${ssm:/omni-dw/${self:provider.stage}/db/name}
+    DB_USER: ${ssm:/omni-dw/${self:provider.stage}/db/user~true}
+    DEFAULT_AWS: ${self:provider.region} 
+  package:
+    individually: true
+    include:
+      - 'src/CustomerOnboarding/PostCustomer/**'
+      - 'src/shared/**'
+  vpc:
+    securityGroupIds:
+      - ${ssm:/omni-dw/${self:provider.stage}/lambda/sgId}
+    subnetIds:
+      - ${ssm:/omni-dw/${self:provider.stage}/lambda/subnetA}      
+  events:
+    - http:
+        path: customers
+        method: post
+        cors: true

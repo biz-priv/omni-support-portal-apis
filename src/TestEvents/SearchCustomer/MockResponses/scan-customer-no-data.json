@@ -1,0 +1,33 @@
+{ 
+    "Items": [
+        {
+            "BillToAcct": "12341568",
+            "SourceSystem": "dgi",
+            "CustomerStatus": "Active",
+            "Station": "gvfg",
+            "CustomerNo": "123",
+            "DeclaredType": "test",
+            "CustomerID": "123"
+        },
+        {
+            "BillToAcct": "12341568",
+            "SourceSystem": "dgi",
+            "CustomerStatus": "Active",
+            "Station": "gvfg",
+            "CustomerNo": "12345",
+            "DeclaredType": "test",
+            "CustomerID": "12365"
+        },
+        {
+            "BillToAcct": "12341568",
+            "SourceSystem": "dgi",
+            "CustomerStatus": "Active",
+            "Station": "gvfg",
+            "CustomerNo": "12347",
+            "DeclaredType": "test",
+            "CustomerID": "12356"
+        }
+    ],
+    "Count": 1,
+    "ScannedCount": 177
+}

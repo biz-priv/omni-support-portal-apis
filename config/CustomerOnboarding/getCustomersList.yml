@@ -1,0 +1,19 @@
+GetCustomersList:
+  handler: src/CustomerOnboarding/GetCustomersList/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  environment:
+    ACCOUNT_INFO: ${ssm:/omni-dw/${self:provider.stage}/accountInfo/table}
+    TOKEN_VALIDATOR: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
+    DEFAULT_AWS: ${self:provider.region} 
+  package:
+    individually: true
+    include:
+        - 'src/CustomerOnboarding/GetCustomersList/**'
+        - 'src/shared/**'
+  events:
+    - http:
+        path: customers
+        method: get
+        cors: true
+            

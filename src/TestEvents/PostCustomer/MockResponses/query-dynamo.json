@@ -1,0 +1,15 @@
+{
+    "Items": [
+      {
+        "BillToAcct": "12345",
+        "SourceSystem": "WT",
+        "CustomerStatus": "Active",
+        "Station": "LAX",
+        "CustomerNo": "987656",
+        "DeclaredType": "LL",
+        "CustomerID": "12345"
+      }
+    ],
+    "Count": 1,
+    "ScannedCount": 1
+  }

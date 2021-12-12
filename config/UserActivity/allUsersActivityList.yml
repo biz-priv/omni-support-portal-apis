@@ -1,0 +1,17 @@
+AllUsersActivityList:
+  handler: src/UserActivity/AllUsersActivityList/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  environment:
+    USER_ACTIVITY: ${ssm:/omni/${self:provider.stage}/support/portal/useractivity/table/name}
+    DEFAULT_AWS: ${self:provider.region}    
+  package:
+    individually: true
+    include:
+        - 'src/UserActivity/AllUsersActivityList/**'
+        - 'src/shared/**'    
+  events:
+    - http:
+        path: /activity
+        method: get
+        cors: true

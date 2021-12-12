@@ -1,0 +1,34 @@
+{
+    "Responses": {
+        "omni-dw-account-info-devint": [
+            {
+                "BillToAcct": "009011",
+                "SourceSystem": "AAA",
+                "CustomerStatus": "Active",
+                "Station": "GGG",
+                "CustomerNo": "321321WQ",
+                "DeclaredType": "FF",
+                "CustomerID": "123"
+            },
+            {
+                "BillToAcct": "00009",
+                "SourceSystem": "kkl",
+                "CustomerStatus": "Active",
+                "Station": "kkl",
+                "CustomerNo": "7856",
+                "DeclaredType": "ppo",
+                "CustomerID": "12365"
+            },
+            {
+                "BillToAcct": "00009",
+                "SourceSystem": "kkl",
+                "CustomerStatus": "Inactive",
+                "Station": "kkl",
+                "CustomerNo": "5356",
+                "DeclaredType": "ppo",
+                "CustomerID": "12356"
+            }
+        ]
+    },
+    "UnprocessedKeys": {}
+}

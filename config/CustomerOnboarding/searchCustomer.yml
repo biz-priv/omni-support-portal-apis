@@ -1,0 +1,19 @@
+SearchCustomer:
+  handler: src/CustomerOnboarding/SearchCustomer/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }  
+  environment:
+    ACCOUNT_INFO: ${ssm:/omni-dw/${self:provider.stage}/accountInfo/table}
+    TOKEN_VALIDATOR: ${ssm:/omni-dw/${self:provider.stage}/tokenValidator/table}
+    DEFAULT_AWS: ${self:provider.region} 
+  package:
+    individually: true
+    include:
+        - 'src/CustomerOnboarding/SearchCustomer/**'
+        - 'src/shared/**'
+  events:
+    - http:
+        path: /search/{id}
+        method: get
+        cors: true
+            

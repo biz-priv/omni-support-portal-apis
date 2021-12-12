@@ -1,0 +1,17 @@
+GetSubscriptionsList:
+  handler: src/Subscription/GetSubscriptionsList/index.handler
+  layers:
+    - { Ref: CommonLibsLambdaLayer }
+  environment:
+    EVENT_PREFERENCES_TABLE: ${ssm:/omni/${self:provider.stage}/eventing/preferences/table/name}
+    DEFAULT_AWS: ${self:provider.region}     
+  package:
+    individually: true
+    include:
+        - 'src/Subscription/GetSubscriptionsList/**'
+        - 'src/shared/**'    
+  events:
+    - http:
+        path: webhooks/subscription
+        method: get
+        cors: true

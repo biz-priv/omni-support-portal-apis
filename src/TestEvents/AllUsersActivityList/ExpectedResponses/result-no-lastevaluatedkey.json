@@ -1,0 +1,57 @@
+{
+    "Activity": [
+        {
+            "UserId": "4213",
+            "Timestamp": "July 20th 2021, 5:20:24 pm",
+            "Activity": "test1",
+            "Description": "testing1"
+        },
+        {
+            "UserId": "123",
+            "Timestamp": "July 20th 2021, 5:20:28 pm",
+            "Activity": "test2",
+            "Description": "testing2"
+        },
+        {
+            "UserId": "1234",
+            "Timestamp": "July 20th 2021, 5:20:40 pm",
+            "Activity": "test3",
+            "Description": "testing3"
+        },
+        {
+            "UserId": "12345",
+            "Timestamp": "July 20th 2021, 5:24:28 pm",
+            "Activity": "test4",
+            "Description": "testing4"
+        },
+        {
+            "UserId": "3214",
+            "Timestamp": "July 20th 2021, 6:20:28 pm",
+            "Activity": "test5",
+            "Description": "testing5"
+        }
+    ],
+    "Page": {
+        "Size": 5,
+        "TotalElement": 5,
+        "TotalPages": 1,
+        "Number": 1
+    }, 
+    "_links": {
+        "first": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity?page=1&size=10&startkey=0&endkey=0"
+        },
+        "last": {
+            "href": "N/A"
+        },
+        "next": {
+            "href": "N/A"
+        },
+        "previous": {
+            "href": "N/A"
+        },
+        "self": {
+            "href": "https://cqa8nhinr1.execute-api.us-east-1.amazonaws.com/devint/activity?page=1&size=10&startkey=0&endkey=0"
+        }
+    }
+}

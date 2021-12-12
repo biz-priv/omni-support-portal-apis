@@ -1,0 +1,34 @@
+{
+    "Items": [
+        {
+            "UserId": "4213",
+            "Timestamp": "July 20th 2021, 5:20:24 pm",
+            "Activity": "test",
+            "Description": "testing"
+        },
+        {
+            "UserId": "4213",
+            "Timestamp": "July 20th 2021, 5:26:28 pm",
+            "Activity": "test1",
+            "Description": "testing1"
+        },
+        {
+            "UserId": "4213",
+            "Timestamp": "July 20th 2021, 5:32:28 pm",
+            "Activity": "test2",
+            "Description": "testing2"
+        },
+        {
+            "UserId": "123",
+            "Timestamp": "July 20th 2021, 4:20:28 pm",
+            "Activity": "test",
+            "Description": "testing"
+        },
+        {
+            "UserId": "123",
+            "Timestamp": "July 20th 2021, 2:20:28 pm",
+            "Activity": "test",
+            "Description": "testing"
+        }
+    ]
+}
